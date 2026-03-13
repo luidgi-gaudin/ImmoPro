@@ -7,8 +7,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="Initial project setup with Laravel and Angular, including basic structure and configuration files.">
-      <change beforePath="$PROJECT_DIR$/backend/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.env.example" afterDir="false" />
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="Remove unnecessary blank line in .env.example">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/config/cors.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/cors.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/angular.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/proxy.conf.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/proxy.conf.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/services/api.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +43,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -65,43 +75,43 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.width&quot;: &quot;414&quot;,
-    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.x&quot;: &quot;646&quot;,
-    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.y&quot;: &quot;309&quot;,
-    &quot;laravel_idea.dialogs.code_generation:createClass.width&quot;: &quot;414&quot;,
-    &quot;laravel_idea.dialogs.code_generation:createClass.x&quot;: &quot;646&quot;,
-    &quot;laravel_idea.dialogs.code_generation:createClass.y&quot;: &quot;340&quot;,
-    &quot;laravel_idea.dialogs.stringEdit.Class suffix.width&quot;: &quot;314&quot;,
-    &quot;laravel_idea.dialogs.stringEdit.Class suffix.x&quot;: &quot;696&quot;,
-    &quot;laravel_idea.dialogs.stringEdit.Class suffix.y&quot;: &quot;349&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/luidg/PhpstormProjects/ImmoPro&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "feat/intialisation-projet",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "laravel_idea.dialogs.codeGeneration.window.createClass.width": "414",
+    "laravel_idea.dialogs.codeGeneration.window.createClass.x": "646",
+    "laravel_idea.dialogs.codeGeneration.window.createClass.y": "309",
+    "laravel_idea.dialogs.code_generation:createClass.width": "414",
+    "laravel_idea.dialogs.code_generation:createClass.x": "646",
+    "laravel_idea.dialogs.code_generation:createClass.y": "340",
+    "laravel_idea.dialogs.stringEdit.Class suffix.width": "314",
+    "laravel_idea.dialogs.stringEdit.Class suffix.x": "696",
+    "laravel_idea.dialogs.stringEdit.Class suffix.y": "349",
+    "last_opened_file_path": "C:/Users/luidg/PhpstormProjects/ImmoPro",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecapSpentCounter">
     <option name="endsOfQuotaMs" value="1775044817654" />
-    <option name="spentUsd" value="0.0165041" />
+    <option name="spentUsd" value="0.02275165" />
   </component>
   <component name="RecapUselessUpdatesCounter">
-    <option name="suspendCountdown" value="1" />
+    <option name="suspendCountdown" value="0" />
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -122,7 +132,7 @@
       <workItem from="1770973827578" duration="958000" />
       <workItem from="1770974799963" duration="677000" />
       <workItem from="1773047431117" duration="4316000" />
-      <workItem from="1773391591028" duration="1112000" />
+      <workItem from="1773391591028" duration="3836000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -140,7 +150,23 @@
       <option name="project" value="LOCAL" />
       <updated>1773392441315</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="test">
+      <option name="closed" value="true" />
+      <created>1773392723442</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1773392723442</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Remove unnecessary blank line in .env.example">
+      <option name="closed" value="true" />
+      <created>1773393023874</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1773393023874</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,7 +175,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus" />
     <MESSAGE value="Initial project setup with Laravel and Angular, including basic structure and configuration files." />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial project setup with Laravel and Angular, including basic structure and configuration files." />
+    <MESSAGE value="test" />
+    <MESSAGE value="Remove unnecessary blank line in .env.example" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove unnecessary blank line in .env.example" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
