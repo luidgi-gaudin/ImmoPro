@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(ls /c/Users/luidg/PhpstormProjects/ImmoPro/frontend/proxy.conf.json 2>/dev/null; echo \"exit:$?\")"
-    ]
-  }
-}

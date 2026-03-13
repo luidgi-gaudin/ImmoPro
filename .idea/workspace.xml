@@ -7,13 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="Remove unnecessary blank line in .env.example">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/config/cors.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/cors.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/angular.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/proxy.conf.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/proxy.conf.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/services/api.ts" afterDir="false" />
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend">
+      <change beforePath="$PROJECT_DIR$/.claude/settings.local.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,7 +127,7 @@
       <workItem from="1770973827578" duration="958000" />
       <workItem from="1770974799963" duration="677000" />
       <workItem from="1773047431117" duration="4316000" />
-      <workItem from="1773391591028" duration="3836000" />
+      <workItem from="1773391591028" duration="4139000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -166,7 +161,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773393023874</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend">
+      <option name="closed" value="true" />
+      <created>1773398148819</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1773398148819</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,7 +180,8 @@
     <MESSAGE value="Initial project setup with Laravel and Angular, including basic structure and configuration files." />
     <MESSAGE value="test" />
     <MESSAGE value="Remove unnecessary blank line in .env.example" />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove unnecessary blank line in .env.example" />
+    <MESSAGE value="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
