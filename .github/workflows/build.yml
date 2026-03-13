@@ -1,0 +1,47 @@
+name: Build Check
+
+on:
+  push:
+    branches: [ master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+
+      # ---------- FRONT ----------
+      - name: Install front dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Build front
+        working-directory: ./frontend
+        run: npm run build
+
+      # ---------- BACK ----------
+      - name: Install composer dependencies
+        working-directory: ./backend
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install back npm dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Build back assets
+        working-directory: ./backend
+        run: npm run build
