@@ -7,9 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend">
-      <change beforePath="$PROJECT_DIR$/.claude/settings.local.json" beforeDir="false" />
-    </list>
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -127,7 +125,7 @@
       <workItem from="1770973827578" duration="958000" />
       <workItem from="1770974799963" duration="677000" />
       <workItem from="1773047431117" duration="4316000" />
-      <workItem from="1773391591028" duration="4139000" />
+      <workItem from="1773391591028" duration="4217000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -169,7 +167,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773398148819</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend">
+      <option name="closed" value="true" />
+      <created>1773398447882</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1773398447882</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
