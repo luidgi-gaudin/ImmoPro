@@ -7,178 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/proxy.conf.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.editorconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/lint.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/tests.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.prettierignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.prettierrc" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/CreateNewUser.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/PasswordValidationRules.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Actions/Fortify/ResetUserPassword.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Controller.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Settings/PasswordController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Settings/ProfileController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Settings/TwoFactorAuthenticationController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/HandleAppearance.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/HandleInertiaRequests.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Settings/ProfileUpdateRequest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Settings/TwoFactorAuthenticationRequest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/User.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/FortifyServiceProvider.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/artisan" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/app.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/cache/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/providers.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/auth.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/cache.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/database.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/filesystems.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/fortify.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/inertia.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/logging.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/mail.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/queue.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/services.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/session.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/factories/UserFactory.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/0001_01_01_000000_create_users_table.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/0001_01_01_000001_create_cache_table.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/0001_01_01_000002_create_jobs_table.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2025_08_26_100418_add_two_factor_columns_to_users_table.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/eslint.config.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/phpunit.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/.htaccess" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/apple-touch-icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/favicon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/logo.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/robots.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/css/app.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/app.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/alert-error.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/app-content.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/app-header.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/app-logo-icon.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/app-logo.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/app-shell.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/app-sidebar-header.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/app-sidebar.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/appearance-dropdown.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/appearance-tabs.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/breadcrumbs.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/delete-user.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/heading-small.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/heading.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/icon.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/input-error.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/nav-footer.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/nav-main.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/nav-user.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/text-link.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/two-factor-recovery-codes.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/two-factor-setup-modal.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/alert.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/avatar.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/badge.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/breadcrumb.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/button.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/card.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/checkbox.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/collapsible.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/dialog.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/dropdown-menu.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/icon.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/input-otp.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/input.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/label.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/navigation-menu.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/placeholder-pattern.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/select.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/separator.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/sheet.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/sidebar.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/skeleton.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/spinner.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/toggle-group.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/toggle.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/ui/tooltip.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/user-info.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/user-menu-content.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/hooks/use-appearance.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/hooks/use-clipboard.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/hooks/use-initials.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/hooks/use-mobile-navigation.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/hooks/use-mobile.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/hooks/use-two-factor-auth.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/layouts/app-layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/layouts/app/app-header-layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/layouts/app/app-sidebar-layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/layouts/auth-layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/layouts/auth/auth-card-layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/layouts/auth/auth-simple-layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/layouts/auth/auth-split-layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/layouts/settings/layout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/lib/utils.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/auth/confirm-password.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/auth/forgot-password.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/auth/login.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/auth/register.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/auth/reset-password.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/auth/two-factor-challenge.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/auth/verify-email.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/dashboard.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/settings/appearance.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/settings/password.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/settings/profile.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/settings/two-factor.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/pages/welcome.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/ssr.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/types/index.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/types/vite-env.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/app.blade.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/console.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/settings.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/private/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/public/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/cache/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/cache/data/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/testing/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/views/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/logs/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Auth/AuthenticationTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Auth/EmailVerificationTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Auth/PasswordConfirmationTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Auth/PasswordResetTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Auth/RegistrationTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Auth/TwoFactorChallengeTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Auth/VerificationNotificationTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/DashboardTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Settings/PasswordUpdateTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Settings/ProfileUpdateTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Settings/TwoFactorAuthenticationTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/TestCase.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Unit/ExampleTest.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vite.config.ts" beforeDir="false" />
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="Initial project setup with Laravel and Angular, including basic structure and configuration files.">
+      <change beforePath="$PROJECT_DIR$/backend/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.env.example" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -292,7 +122,7 @@
       <workItem from="1770973827578" duration="958000" />
       <workItem from="1770974799963" duration="677000" />
       <workItem from="1773047431117" duration="4316000" />
-      <workItem from="1773391591028" duration="785000" />
+      <workItem from="1773391591028" duration="1112000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -302,7 +132,15 @@
       <option name="project" value="LOCAL" />
       <updated>1770974626092</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Initial project setup with Laravel and Angular, including basic structure and configuration files.">
+      <option name="closed" value="true" />
+      <created>1773392441315</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1773392441315</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -310,7 +148,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus" />
-    <option name="LAST_COMMIT_MESSAGE" value="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus" />
+    <MESSAGE value="Initial project setup with Laravel and Angular, including basic structure and configuration files." />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial project setup with Laravel and Angular, including basic structure and configuration files." />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
