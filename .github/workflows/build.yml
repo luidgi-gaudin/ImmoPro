@@ -2,7 +2,7 @@ name: Build Check
 
 on:
   push:
-    branches: [ master]
+    branches: [master]
   pull_request:
 
 jobs:
@@ -34,14 +34,6 @@ jobs:
         run: npm run build
 
       # ---------- BACK ----------
-      - name: Install composer dependencies
-        working-directory: ./backend
-        run: composer install --no-interaction --prefer-dist
-
       - name: Install back npm dependencies
         working-directory: ./backend
         run: npm install
-
-      - name: Build back assets
-        working-directory: ./backend
-        run: npm run build
