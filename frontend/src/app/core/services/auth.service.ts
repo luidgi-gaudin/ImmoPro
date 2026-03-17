@@ -34,6 +34,7 @@ export class AuthService {
 
   register(credentials: RegisterCredentials): Observable<User> {
     return this.http
+
       .post<UserResource>(`${environment.apiUrl}/auth/register`, credentials)
       .pipe(
         map((response) => response.data),

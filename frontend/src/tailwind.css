@@ -1,1 +1,11 @@
+/* 
+ * This file is intentionally left empty.
+ *
+ * Tailwind CSS is not currently wired into the Angular build
+ * (this file is not referenced from angular.json or styles.scss).
+ * If you decide to enable Tailwind, either:
+ *   - add this file to angular.json "styles", or
+ *   - import it from your global styles (e.g. styles.scss),
+ * and then add the appropriate @tailwind directives here.
+ */
 @import "tailwindcss";
