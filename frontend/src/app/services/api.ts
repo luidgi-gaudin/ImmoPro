@@ -9,19 +9,24 @@ export class Api {
 
   constructor(private http: HttpClient) {}
 
+  private buildUrl(path: string): string {
+    const normalizedPath = path.replace(/^\/+/, '');
+    return `${this.baseUrl}/${normalizedPath}`;
+  }
+
   get<T>(path: string) {
-    return this.http.get<T>(`${this.baseUrl}/${path}`);
+    return this.http.get<T>(this.buildUrl(path));
   }
 
   post<T>(path: string, body: unknown) {
-    return this.http.post<T>(`${this.baseUrl}/${path}`, body);
+    return this.http.post<T>(this.buildUrl(path), body);
   }
 
   put<T>(path: string, body: unknown) {
-    return this.http.put<T>(`${this.baseUrl}/${path}`, body);
+    return this.http.put<T>(this.buildUrl(path), body);
   }
 
   delete<T>(path: string) {
-    return this.http.delete<T>(`${this.baseUrl}/${path}`);
+    return this.http.delete<T>(this.buildUrl(path));
   }
 }
