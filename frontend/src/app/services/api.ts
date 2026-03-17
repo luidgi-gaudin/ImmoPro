@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class Api {
+export class ApiService {
   private readonly baseUrl = '/api';
   private http: HttpClient | null;
 
