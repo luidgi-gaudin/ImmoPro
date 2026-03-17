@@ -27,7 +27,7 @@ Application de gestion immobilière avec une architecture découplée backend/fr
 ## Prérequis
 
 - PHP >= 8.2 + Composer
-- Node.js (npm 11+)
+- Node.js >= 20.19.0 (npm 10+)
 
 ## Installation
 
