@@ -12,8 +12,16 @@ export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error) => {
       if (error.status === HttpStatusCode.Unauthorized) {
-        authService.clearSession();
-        void router.navigate(['/login']);
+        const url = req.url || '';
+        const isAuthProbeOrAuthRequest =
+          url.includes('/auth/user') ||
+          url.includes('/auth/login') ||
+          url.includes('/auth/register');
+
+        if (!isAuthProbeOrAuthRequest) {
+          authService.clearSession();
+          void router.navigate(['/login']);
+        }
       }
       return throwError(() => error);
     }),
