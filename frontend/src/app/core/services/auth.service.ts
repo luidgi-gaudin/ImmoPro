@@ -5,8 +5,8 @@ import { catchError, EMPTY, firstValueFrom, map, Observable, of, switchMap, tap 
 import { environment } from '../../../environments/environment';
 import { LoginCredentials, RegisterCredentials, User } from '../models/user.model';
 
-interface ApiResponse<T> {
-  data: T;
+interface UserResource {
+  data: User;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -34,7 +34,8 @@ export class AuthService {
 
   register(credentials: RegisterCredentials): Observable<User> {
     return this.http
-      .post<ApiResponse<User>>(`${environment.apiUrl}/auth/register`, credentials)
+
+      .post<UserResource>(`${environment.apiUrl}/auth/register`, credentials)
       .pipe(
         map((response) => response.data),
         tap((user) => this._currentUser.set(user)),
@@ -43,7 +44,7 @@ export class AuthService {
 
   login(credentials: LoginCredentials): Observable<User> {
     return this.http
-      .post<ApiResponse<User>>(`${environment.apiUrl}/auth/login`, credentials)
+      .post<UserResource>(`${environment.apiUrl}/auth/login`, credentials)
       .pipe(
         map((response) => response.data),
         tap((user) => this._currentUser.set(user)),
@@ -62,7 +63,7 @@ export class AuthService {
 
   fetchCurrentUser(): Observable<User> {
     return this.http
-      .get<ApiResponse<User>>(`${environment.apiUrl}/auth/user`)
+      .get<UserResource>(`${environment.apiUrl}/auth/user`)
       .pipe(
         map((response) => response.data),
         tap((user) => this._currentUser.set(user)),
