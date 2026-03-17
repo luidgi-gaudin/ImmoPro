@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, EMPTY, firstValueFrom, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { LoginCredentials, RegisterCredentials, User } from '../models/user.model';
@@ -30,14 +30,14 @@ export class AuthService {
 
   register(credentials: RegisterCredentials): Observable<User> {
     return this.http
-      .post<User>(`${environment.apiUrl}/auth/register`, credentials)
-      .pipe(tap((user) => this._currentUser.set(user)));
+      .post<{ data: User }>(`${environment.apiUrl}/auth/register`, credentials)
+      .pipe(map(({ data }) => data), tap((user) => this._currentUser.set(user)));
   }
 
   login(credentials: LoginCredentials): Observable<User> {
     return this.http
-      .post<User>(`${environment.apiUrl}/auth/login`, credentials)
-      .pipe(tap((user) => this._currentUser.set(user)));
+      .post<{ data: User }>(`${environment.apiUrl}/auth/login`, credentials)
+      .pipe(map(({ data }) => data), tap((user) => this._currentUser.set(user)));
   }
 
   logout(): Observable<void> {
@@ -52,8 +52,8 @@ export class AuthService {
 
   fetchCurrentUser(): Observable<User> {
     return this.http
-      .get<User>(`${environment.apiUrl}/auth/user`)
-      .pipe(tap((user) => this._currentUser.set(user)));
+      .get<{ data: User }>(`${environment.apiUrl}/auth/user`)
+      .pipe(map(({ data }) => data), tap((user) => this._currentUser.set(user)));
   }
 
   /**
