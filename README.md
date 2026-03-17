@@ -57,5 +57,5 @@ cd frontend && ng serve
 ## Communication frontend ↔ backend
 
 - Le frontend Angular (port `4200`) communique avec l'API Laravel (port `8000`) via des appels HTTP REST sur les routes `api/*`.
-- L'authentification est gérée par **Laravel Sanctum** (SPA cookie-based).
-- Le CORS est configuré côté Laravel pour accepter `http://localhost:4200` avec `supports_credentials: true`.
+- En développement, il est recommandé d'utiliser un proxy Angular (ex. `proxy.conf.json`) pour rediriger `/api` et `/sanctum` vers le backend (http://localhost:8000), afin de simplifier la gestion du CORS et des cookies.
+- Le CORS est configuré côté Laravel via la variable d'environnement `SPA_ORIGIN` (voir `config/cors.php`, par défaut `http://localhost:4200`) avec `supports_credentials: true`.
