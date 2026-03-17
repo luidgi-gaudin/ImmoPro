@@ -19,6 +19,13 @@ return [
 
     'allowed_methods' => ['*'],
 
+    /*
+     * The allowed SPA/frontend origin is driven by the SPA_ORIGIN environment variable.
+     *
+     * Make sure to define SPA_ORIGIN in your .env (and document it in .env.example / README)
+     * for each environment (e.g. https://app.example.com). If SPA_ORIGIN is not set,
+     * it will fall back to http://localhost:4200 for local development.
+     */
     'allowed_origins' => [env('SPA_ORIGIN', 'http://localhost:4200')],
 
     'allowed_origins_patterns' => [],
