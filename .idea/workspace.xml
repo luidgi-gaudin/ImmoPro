@@ -68,37 +68,9 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "feat/intialisation-projet",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "laravel_idea.dialogs.codeGeneration.window.createClass.width": "414",
-    "laravel_idea.dialogs.codeGeneration.window.createClass.x": "646",
-    "laravel_idea.dialogs.codeGeneration.window.createClass.y": "309",
-    "laravel_idea.dialogs.code_generation:createClass.width": "414",
-    "laravel_idea.dialogs.code_generation:createClass.x": "646",
-    "laravel_idea.dialogs.code_generation:createClass.y": "340",
-    "laravel_idea.dialogs.stringEdit.Class suffix.width": "314",
-    "laravel_idea.dialogs.stringEdit.Class suffix.x": "696",
-    "laravel_idea.dialogs.stringEdit.Class suffix.y": "349",
-    "last_opened_file_path": "C:/Users/luidg/PhpstormProjects/ImmoPro",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
-  }
-}]]></component>
+  <component name="PropertiesComponent">
+    <!-- User-specific IDE properties have been intentionally omitted from version control. -->
+  </component>
   <component name="RecapSpentCounter">
     <option name="endsOfQuotaMs" value="1775044817654" />
     <option name="spentUsd" value="0.02275165" />
