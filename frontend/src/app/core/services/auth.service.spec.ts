@@ -13,6 +13,8 @@ const mockUser: User = {
   created_at: '2024-01-01T00:00:00Z',
 };
 
+const mockUserResponse = { data: mockUser };
+
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
@@ -46,7 +48,7 @@ describe('AuthService', () => {
       service.login({ email: 'alice@test.com', password: 'password1' }),
     );
     const req = httpMock.expectOne('/api/auth/login');
-    req.flush({ data: mockUser });
+    req.flush(mockUserResponse);
     await loginPromise;
     expect(service.isAuthenticated()).toBe(true);
   });
@@ -60,7 +62,7 @@ describe('AuthService', () => {
     csrfReq.flush(null);
 
     const userReq = httpMock.expectOne('/api/auth/user');
-    userReq.flush({ data: mockUser });
+    userReq.flush(mockUserResponse);
 
     await initPromise;
 
@@ -109,7 +111,7 @@ describe('AuthService', () => {
     const req = httpMock.expectOne('/api/auth/login');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ email: 'alice@test.com', password: 'password1' });
-    req.flush({ data: mockUser });
+    req.flush(mockUserResponse);
 
     const result = await loginPromise;
     expect(result).toEqual(mockUser);
@@ -124,7 +126,7 @@ describe('AuthService', () => {
     const loginPromise = firstValueFrom(
       service.login({ email: 'alice@test.com', password: 'password1' }),
     );
-    httpMock.expectOne('/api/auth/login').flush({ data: mockUser });
+    httpMock.expectOne('/api/auth/login').flush(mockUserResponse);
     await loginPromise;
     expect(service.isAuthenticated()).toBe(true);
 
@@ -153,7 +155,7 @@ describe('AuthService', () => {
 
     const req = httpMock.expectOne('/api/auth/register');
     expect(req.request.method).toBe('POST');
-    req.flush({ data: mockUser });
+    req.flush(mockUserResponse);
 
     const result = await registerPromise;
     expect(result).toEqual(mockUser);
@@ -167,7 +169,7 @@ describe('AuthService', () => {
     const loginPromise = firstValueFrom(
       service.login({ email: 'alice@test.com', password: 'pass12345' }),
     );
-    httpMock.expectOne('/api/auth/login').flush({ data: mockUser });
+    httpMock.expectOne('/api/auth/login').flush(mockUserResponse);
     await loginPromise;
     expect(service.currentUser()).toEqual(mockUser);
     expect(service.currentUser()?.name).toBe('Alice Dupont');
