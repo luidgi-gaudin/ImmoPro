@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable  // implements MustVerifyEmail  Décommenter pour force la verification par mail
+class User extends Authenticatable  // implements MustVerifyEmail  Décommenter pour forcer la verification par mail
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
