@@ -8,6 +8,7 @@
     </option>
   </component>
   <component name="LaravelIdeaMainSettings">
+    <option name="appDirectory" value="backend/app" />
     <option name="codeGeneration">
       <LaravelCodeGeneration>
         <option name="generationStringSettings">
@@ -18,7 +19,10 @@
         </option>
       </LaravelCodeGeneration>
     </option>
+    <option name="configDirectory" value="backend/config" />
+    <option name="defaultLanguage" value="fr" />
     <option name="frameworkFound" value="true" />
+    <option name="publicDirectory" value="backend/public" />
     <option name="userClassName" value="\App\Models\User" />
   </component>
 </project>
