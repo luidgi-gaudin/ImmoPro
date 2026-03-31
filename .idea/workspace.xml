@@ -7,13 +7,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: add Portfolio model, migrations, and controller">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/PortfolioController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/PortfolioController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Portfolio.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Portfolio.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: add Portfolio feature with policy, tests, and factory&#10;&#10;- Implemented PortfolioController with all basic CRUD operations.&#10;- Added PortfolioPolicy for authorization.&#10;- Created tests for Portfolio CRUD functionality and validation.&#10;- Set up PortfolioFactory for test data generation.">
+      <change afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/PropertyController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/Models/Property.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/database/migrations/2026_03_31_090722_create_properties_table.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -338,7 +335,7 @@
       <workItem from="1773912462340" duration="38000" />
       <workItem from="1773912740557" duration="1989000" />
       <workItem from="1774881010759" duration="1685000" />
-      <workItem from="1774943601459" duration="652000" />
+      <workItem from="1774943601459" duration="5106000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -452,7 +449,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774881980447</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="feat: add Portfolio feature with policy, tests, and factory&#10;&#10;- Implemented PortfolioController with all basic CRUD operations.&#10;- Added PortfolioPolicy for authorization.&#10;- Created tests for Portfolio CRUD functionality and validation.&#10;- Set up PortfolioFactory for test data generation.">
+      <option name="closed" value="true" />
+      <created>1774944284531</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1774944284531</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -471,7 +476,9 @@
     <MESSAGE value="feat: add new fields to User table for role, banking details, and soft deletes" />
     <MESSAGE value="fix: ensure safe deletion of current access token during logout" />
     <MESSAGE value="feat: add Portfolio model, migrations, and controller" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add Portfolio model, migrations, and controller" />
+    <MESSAGE value="feat: add Portfolio model, controller, migrations, and authorization policies" />
+    <MESSAGE value="feat: add Portfolio feature with policy, tests, and factory&#10;&#10;- Implemented PortfolioController with all basic CRUD operations.&#10;- Added PortfolioPolicy for authorization.&#10;- Created tests for Portfolio CRUD functionality and validation.&#10;- Set up PortfolioFactory for test data generation." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add Portfolio feature with policy, tests, and factory&#10;&#10;- Implemented PortfolioController with all basic CRUD operations.&#10;- Added PortfolioPolicy for authorization.&#10;- Created tests for Portfolio CRUD functionality and validation.&#10;- Set up PortfolioFactory for test data generation." />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
