@@ -4,10 +4,13 @@ namespace App\Models;
 
 use App\Enums\Dpe;
 use App\Enums\PropertyType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Property extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'title',
         'portfolio_id',

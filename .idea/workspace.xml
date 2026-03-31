@@ -7,10 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: add Portfolio feature with policy, tests, and factory&#10;&#10;- Implemented PortfolioController with all basic CRUD operations.&#10;- Added PortfolioPolicy for authorization.&#10;- Created tests for Portfolio CRUD functionality and validation.&#10;- Set up PortfolioFactory for test data generation.">
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/PropertyController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Models/Property.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/database/migrations/2026_03_31_090722_create_properties_table.php" afterDir="false" />
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: add properties relationship to Portfolio model">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/PropertyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/PropertyController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/Property.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Property.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -335,7 +336,7 @@
       <workItem from="1773912462340" duration="38000" />
       <workItem from="1773912740557" duration="1989000" />
       <workItem from="1774881010759" duration="1685000" />
-      <workItem from="1774943601459" duration="5106000" />
+      <workItem from="1774943601459" duration="6331000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -457,7 +458,23 @@
       <option name="project" value="LOCAL" />
       <updated>1774944284531</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="feat: add Property feature with model, controller, and migrations&#10;&#10;- Created `Property` model with `Dpe` and `PropertyType` enums.&#10;- Implemented `PropertyController` with CRUD operations and validation.&#10;- Added migration for `properties` table with relevant fields and relationships.">
+      <option name="closed" value="true" />
+      <created>1774949128082</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1774949128082</updated>
+    </task>
+    <task id="LOCAL-00017" summary="feat: add properties relationship to Portfolio model">
+      <option name="closed" value="true" />
+      <created>1774949435835</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1774949435835</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -478,7 +495,10 @@
     <MESSAGE value="feat: add Portfolio model, migrations, and controller" />
     <MESSAGE value="feat: add Portfolio model, controller, migrations, and authorization policies" />
     <MESSAGE value="feat: add Portfolio feature with policy, tests, and factory&#10;&#10;- Implemented PortfolioController with all basic CRUD operations.&#10;- Added PortfolioPolicy for authorization.&#10;- Created tests for Portfolio CRUD functionality and validation.&#10;- Set up PortfolioFactory for test data generation." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add Portfolio feature with policy, tests, and factory&#10;&#10;- Implemented PortfolioController with all basic CRUD operations.&#10;- Added PortfolioPolicy for authorization.&#10;- Created tests for Portfolio CRUD functionality and validation.&#10;- Set up PortfolioFactory for test data generation." />
+    <MESSAGE value="feat: add Property model, migrations, and controller with validation" />
+    <MESSAGE value="feat: add Property feature with model, controller, and migrations&#10;&#10;- Created `Property` model with `Dpe` and `PropertyType` enums.&#10;- Implemented `PropertyController` with CRUD operations and validation.&#10;- Added migration for `properties` table with relevant fields and relationships." />
+    <MESSAGE value="feat: add properties relationship to Portfolio model" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add properties relationship to Portfolio model" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

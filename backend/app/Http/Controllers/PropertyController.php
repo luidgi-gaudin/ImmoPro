@@ -2,68 +2,78 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Dpe;
+use App\Enums\PropertyType;
+use App\Models\Portfolio;
 use App\Models\Property;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PropertyController extends Controller
 {
-    public function index()
+    public function index(Portfolio $portfolio)
     {
-        return Property::all();
+        $this->authorize('view', $portfolio);
+
+        return $portfolio->properties()->get();
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Portfolio $portfolio)
     {
+        $this->authorize('update', $portfolio);
+
         $data = $request->validate([
-            'title' => ['required'],
-            'portfolio_id' => ['required', 'exists:portfolios'],
-            'property_type' => ['required'],
-            'address' => ['required'],
-            'city' => ['required'],
-            'postal_code' => ['required'],
-            'latitude' => ['nullable', 'decimal:2'],
-            'longitude' => ['nullable', 'decimal:2'],
-            'dpe' => ['required'],
-            'rooms' => ['nullable', 'integer'],
-            'area_sqm' => ['nullable', 'decimal:2'],
-            'has_balcony' => ['boolean'],
-            'has_garden' => ['boolean'],
-            'has_parking' => ['boolean'],
-            'has_cave' => ['boolean'],
-            'is_rented' => ['boolean'],
-            'monthly_rent' => ['nullable', 'decimal:2'],
-            'description' => ['nullable'],
+            'title'         => ['required', 'string'],
+            'property_type' => ['required', Rule::enum(PropertyType::class)],
+            'address'       => ['required', 'string'],
+            'city'          => ['required', 'string'],
+            'postal_code'   => ['required', 'string'],
+            'latitude'      => ['nullable', 'numeric'],
+            'longitude'     => ['nullable', 'numeric'],
+            'dpe'           => ['required', Rule::enum(Dpe::class)],
+            'rooms'         => ['nullable', 'integer'],
+            'area_sqm'      => ['nullable', 'numeric'],
+            'has_balcony'   => ['boolean'],
+            'has_garden'    => ['boolean'],
+            'has_parking'   => ['boolean'],
+            'has_cave'      => ['boolean'],
+            'is_rented'     => ['boolean'],
+            'monthly_rent'  => ['nullable', 'numeric'],
+            'description'   => ['nullable', 'string'],
         ]);
 
-        return Property::create($data);
+        return $portfolio->properties()->create($data);
     }
 
-    public function show(Property $property)
+    public function show(Portfolio $portfolio, Property $property)
     {
+        $this->authorize('view', $portfolio);
+
         return $property;
     }
 
-    public function update(Request $request, Property $property)
+    public function update(Request $request, Portfolio $portfolio, Property $property)
     {
+        $this->authorize('update', $portfolio);
+
         $data = $request->validate([
-            'title' => ['required'],
-            'portfolio_id' => ['required', 'exists:portfolios'],
-            'property_type' => ['required'],
-            'address' => ['required'],
-            'city' => ['required'],
-            'postal_code' => ['required'],
-            'latitude' => ['nullable', 'decimal:2'],
-            'longitude' => ['nullable', 'decimal:2'],
-            'dpe' => ['required'],
-            'rooms' => ['nullable', 'integer'],
-            'area_sqm' => ['nullable', 'decimal:2'],
-            'has_balcony' => ['boolean'],
-            'has_garden' => ['boolean'],
-            'has_parking' => ['boolean'],
-            'has_cave' => ['boolean'],
-            'is_rented' => ['boolean'],
-            'monthly_rent' => ['nullable', 'decimal:2'],
-            'description' => ['nullable'],
+            'title'         => ['required', 'string'],
+            'property_type' => ['required', Rule::enum(PropertyType::class)],
+            'address'       => ['required', 'string'],
+            'city'          => ['required', 'string'],
+            'postal_code'   => ['required', 'string'],
+            'latitude'      => ['nullable', 'numeric'],
+            'longitude'     => ['nullable', 'numeric'],
+            'dpe'           => ['required', Rule::enum(Dpe::class)],
+            'rooms'         => ['nullable', 'integer'],
+            'area_sqm'      => ['nullable', 'numeric'],
+            'has_balcony'   => ['boolean'],
+            'has_garden'    => ['boolean'],
+            'has_parking'   => ['boolean'],
+            'has_cave'      => ['boolean'],
+            'is_rented'     => ['boolean'],
+            'monthly_rent'  => ['nullable', 'numeric'],
+            'description'   => ['nullable', 'string'],
         ]);
 
         $property->update($data);
@@ -71,8 +81,10 @@ class PropertyController extends Controller
         return $property;
     }
 
-    public function destroy(Property $property)
+    public function destroy(Portfolio $portfolio, Property $property)
     {
+        $this->authorize('delete', $portfolio);
+
         $property->delete();
 
         return response()->json();
