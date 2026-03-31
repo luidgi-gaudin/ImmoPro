@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Portfolio extends Model
 {
+    use HasFactory;
 
     protected $table = 'portfolios';
+
     protected $fillable = [
         'name',
         'description',
         'user_id',
     ];
 
-    protected $cast = [
+    protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

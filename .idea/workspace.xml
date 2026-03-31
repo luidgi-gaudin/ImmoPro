@@ -7,11 +7,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="fix: ensure safe deletion of current access token during logout">
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/PortfolioController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Models/Portfolio.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/database/migrations/2026_03_30_143948_create_portfolios_table.php" afterDir="false" />
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: add Portfolio model, migrations, and controller">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/PortfolioController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/PortfolioController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/Portfolio.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Portfolio.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +42,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="197" />
+    <option name="cachedIndexableFilesCount" value="201" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -210,63 +212,69 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Composer Script.serveur backend.executor": "Run",
-    "Constants": "false",
-    "HTTP Request.All in laravel.executor": "Run",
-    "HTTP Request.laravel | auth.register.executor": "Run",
-    "HTTP Request.laravel | auth.user.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "PHPUnit.AuthControllerTest.executor": "Debug",
-    "PHPUnit.Main.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "Bdd/create-model-and-migrations",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "laravel_idea.dialogs.codeGeneration.window.createClass.width": "414",
-    "laravel_idea.dialogs.codeGeneration.window.createClass.x": "646",
-    "laravel_idea.dialogs.codeGeneration.window.createClass.y": "309",
-    "laravel_idea.dialogs.code_generation:createClass.width": "414",
-    "laravel_idea.dialogs.code_generation:createClass.x": "646",
-    "laravel_idea.dialogs.code_generation:createClass.y": "340",
-    "laravel_idea.dialogs.code_generation:createDatabaseMigration.width": "416",
-    "laravel_idea.dialogs.code_generation:createDatabaseMigration.x": "752",
-    "laravel_idea.dialogs.code_generation:createDatabaseMigration.y": "339",
-    "laravel_idea.dialogs.new_model_settings.width": "622",
-    "laravel_idea.dialogs.new_model_settings.x": "649",
-    "laravel_idea.dialogs.new_model_settings.y": "133",
-    "laravel_idea.dialogs.route_server_address_settings.width": "575",
-    "laravel_idea.dialogs.route_server_address_settings.x": "2592",
-    "laravel_idea.dialogs.route_server_address_settings.y": "420",
-    "laravel_idea.dialogs.stringEdit.Class suffix.width": "314",
-    "laravel_idea.dialogs.stringEdit.Class suffix.x": "696",
-    "laravel_idea.dialogs.stringEdit.Class suffix.y": "349",
-    "laravel_routing.server_address": "true",
-    "last_opened_file_path": "C:/Users/luidg/PhpstormProjects/ImmoPro",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\prettier",
-    "settings.editor.selected.configurable": "com.laravel_idea.plugin.extension.ui.LaravelIdeaSettingsForm",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Composer Script.serveur backend.executor&quot;: &quot;Run&quot;,
+    &quot;Constants&quot;: &quot;false&quot;,
+    &quot;HTTP Request.All in laravel.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.laravel | auth.register.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.laravel | auth.user.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;PHPUnit.AuthControllerTest.executor&quot;: &quot;Debug&quot;,
+    &quot;PHPUnit.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Bdd/create-model-and-migrations&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.width&quot;: &quot;414&quot;,
+    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.x&quot;: &quot;646&quot;,
+    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.y&quot;: &quot;309&quot;,
+    &quot;laravel_idea.dialogs.code_generation:createClass.width&quot;: &quot;414&quot;,
+    &quot;laravel_idea.dialogs.code_generation:createClass.x&quot;: &quot;646&quot;,
+    &quot;laravel_idea.dialogs.code_generation:createClass.y&quot;: &quot;340&quot;,
+    &quot;laravel_idea.dialogs.code_generation:createDatabaseMigration.width&quot;: &quot;416&quot;,
+    &quot;laravel_idea.dialogs.code_generation:createDatabaseMigration.x&quot;: &quot;752&quot;,
+    &quot;laravel_idea.dialogs.code_generation:createDatabaseMigration.y&quot;: &quot;339&quot;,
+    &quot;laravel_idea.dialogs.new_model_settings.width&quot;: &quot;622&quot;,
+    &quot;laravel_idea.dialogs.new_model_settings.x&quot;: &quot;649&quot;,
+    &quot;laravel_idea.dialogs.new_model_settings.y&quot;: &quot;133&quot;,
+    &quot;laravel_idea.dialogs.route_server_address_settings.width&quot;: &quot;575&quot;,
+    &quot;laravel_idea.dialogs.route_server_address_settings.x&quot;: &quot;2592&quot;,
+    &quot;laravel_idea.dialogs.route_server_address_settings.y&quot;: &quot;420&quot;,
+    &quot;laravel_idea.dialogs.stringEdit.Class suffix.width&quot;: &quot;314&quot;,
+    &quot;laravel_idea.dialogs.stringEdit.Class suffix.x&quot;: &quot;696&quot;,
+    &quot;laravel_idea.dialogs.stringEdit.Class suffix.y&quot;: &quot;349&quot;,
+    &quot;laravel_routing.server_address&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/luidg/PhpstormProjects/ImmoPro&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\prettier&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.laravel_idea.plugin.extension.ui.LaravelIdeaSettingsForm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecapSpentCounter">
     <option name="endsOfQuotaMs" value="1775044817654" />
     <option name="spentUsd" value="0.02275165" />
   </component>
   <component name="RecapUselessUpdatesCounter">
     <option name="suspendCountdown" value="0" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\LuidgiGAUDIN\PhpstormProjects\ImmoPro\backend\database\migrations" />
+      <recent name="C:\Users\LuidgiGAUDIN\PhpstormProjects\ImmoPro\backend" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="configurationStatuses">
@@ -329,7 +337,8 @@
       <workItem from="1773753557782" duration="4292000" />
       <workItem from="1773912462340" duration="38000" />
       <workItem from="1773912740557" duration="1989000" />
-      <workItem from="1774881010759" duration="923000" />
+      <workItem from="1774881010759" duration="1685000" />
+      <workItem from="1774943601459" duration="652000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -435,7 +444,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774877385699</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="feat: add Portfolio model, migrations, and controller">
+      <option name="closed" value="true" />
+      <created>1774881980447</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1774881980447</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -453,7 +470,8 @@
     <MESSAGE value="feat: enhance User model with soft deletes and anonymization method" />
     <MESSAGE value="feat: add new fields to User table for role, banking details, and soft deletes" />
     <MESSAGE value="fix: ensure safe deletion of current access token during logout" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: ensure safe deletion of current access token during logout" />
+    <MESSAGE value="feat: add Portfolio model, migrations, and controller" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add Portfolio model, migrations, and controller" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
