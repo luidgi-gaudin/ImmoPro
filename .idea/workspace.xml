@@ -7,13 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend">
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/TenantController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Requests/TenantRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Models/Tenant.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/database/migrations/2026_04_07_071047_create_tenants_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: add Tenant model, controller, request, and migration">
+      <change afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/Http/Requests/LeaseRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/Models/Lease.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/database/migrations/2026_04_07_071852_create_leases_table.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -201,7 +199,7 @@
       <path value="$PROJECT_DIR$/backend/vendor/symfony/var-dumper" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/yaml" />
       <path value="$PROJECT_DIR$/backend/vendor/theseer/tokenizer" />
-      <path value="$PROJECT_DIR$/vendor/_laravel_idea" />
+      <path value="$PROJECT_DIR$/backend/vendor/_laravel_idea" />
     </include_path>
   </component>
   <component name="ProjectColorInfo">{
@@ -276,6 +274,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\luidg\PhpstormProjects\ImmoPro\backend\database\migrations" />
       <recent name="C:\Users\LuidgiGAUDIN\PhpstormProjects\ImmoPro\backend\database\migrations" />
       <recent name="C:\Users\LuidgiGAUDIN\PhpstormProjects\ImmoPro\backend" />
     </key>
@@ -311,7 +310,7 @@
       <workItem from="1773912740557" duration="1989000" />
       <workItem from="1774881010759" duration="1685000" />
       <workItem from="1774943601459" duration="6331000" />
-      <workItem from="1775545582346" duration="574000" />
+      <workItem from="1775545582346" duration="1294000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -449,7 +448,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774949435835</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="feat: add Tenant model, controller, request, and migration">
+      <option name="closed" value="true" />
+      <created>1775546176995</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1775546176995</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -460,7 +467,6 @@
     <MESSAGE value="Initial project setup with Laravel and Angular, including basic structure and configuration files." />
     <MESSAGE value="test" />
     <MESSAGE value="Remove unnecessary blank line in .env.example" />
-    <MESSAGE value="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend" />
     <MESSAGE value="feat: implement authentication with login and registration components" />
     <MESSAGE value="chore: remove authentication functionality and related components" />
     <MESSAGE value="feat: update authentication to use API tokens and improve response structure" />
@@ -473,7 +479,9 @@
     <MESSAGE value="feat: add Property model, migrations, and controller with validation" />
     <MESSAGE value="feat: add Property feature with model, controller, and migrations&#10;&#10;- Created `Property` model with `Dpe` and `PropertyType` enums.&#10;- Implemented `PropertyController` with CRUD operations and validation.&#10;- Added migration for `properties` table with relevant fields and relationships." />
     <MESSAGE value="feat: add properties relationship to Portfolio model" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add properties relationship to Portfolio model" />
+    <MESSAGE value="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend" />
+    <MESSAGE value="feat: add Tenant model, controller, request, and migration" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add Tenant model, controller, request, and migration" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
