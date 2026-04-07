@@ -18,7 +18,9 @@
         </option>
       </LaravelCodeGeneration>
     </option>
+    <option name="defaultLanguage" value="fr" />
     <option name="frameworkFound" value="true" />
+    <option name="laravelBasePath" value="backend" />
     <option name="userClassName" value="\App\Models\User" />
   </component>
 </project>

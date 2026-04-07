@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\PropertyController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->name('auth.')->group(function () {
@@ -13,4 +15,9 @@ Route::prefix('auth')->name('auth.')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/user', [AuthController::class, 'user'])->name('user');
     });
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('portfolios', PortfolioController::class);
+    Route::apiResource('portfolios.properties', PropertyController::class)->scoped();
 });

@@ -7,8 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: update authentication to use API tokens and improve response structure">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: add Tenant model, controller, request, and migration">
+      <change afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/Http/Requests/LeaseRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/app/Models/Lease.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/database/migrations/2026_04_07_071852_create_leases_table.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +40,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="192" />
+    <option name="cachedIndexableFilesCount" value="151" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -50,7 +53,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="feat/mise-en-place-authentification" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -61,12 +64,12 @@
     &quot;assignee&quot;: &quot;luidgi-gaudin&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/luidgi-gaudin/ImmoPro.git&quot;,
-    &quot;accountId&quot;: &quot;ce422560-d1d5-4562-a004-fd2af3f89cf6&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/luidgi-gaudin/ImmoPro.git",
+    "accountId": "ab3f5b9c-bd9e-44d1-bbf4-2bb54e30b5fa"
   }
-}</component>
+}]]></component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -81,7 +84,7 @@
     </commands>
     <urls />
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 8.4">
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 8.4.15">
     <include_path>
       <path value="$PROJECT_DIR$/backend/vendor/carbonphp/carbon-doctrine-types" />
       <path value="$PROJECT_DIR$/backend/vendor/fruitcake/php-cors" />
@@ -196,6 +199,7 @@
       <path value="$PROJECT_DIR$/backend/vendor/symfony/var-dumper" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/yaml" />
       <path value="$PROJECT_DIR$/backend/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/backend/vendor/_laravel_idea" />
     </include_path>
   </component>
   <component name="ProjectColorInfo">{
@@ -206,48 +210,61 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;HTTP Request.All in laravel.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.laravel | auth.register.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.laravel | auth.user.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;PHPUnit.AuthControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#8 on feat/authentification-backend&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.width&quot;: &quot;414&quot;,
-    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.x&quot;: &quot;646&quot;,
-    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.y&quot;: &quot;309&quot;,
-    &quot;laravel_idea.dialogs.code_generation:createClass.width&quot;: &quot;414&quot;,
-    &quot;laravel_idea.dialogs.code_generation:createClass.x&quot;: &quot;646&quot;,
-    &quot;laravel_idea.dialogs.code_generation:createClass.y&quot;: &quot;340&quot;,
-    &quot;laravel_idea.dialogs.route_server_address_settings.width&quot;: &quot;575&quot;,
-    &quot;laravel_idea.dialogs.route_server_address_settings.x&quot;: &quot;2592&quot;,
-    &quot;laravel_idea.dialogs.route_server_address_settings.y&quot;: &quot;420&quot;,
-    &quot;laravel_idea.dialogs.stringEdit.Class suffix.width&quot;: &quot;314&quot;,
-    &quot;laravel_idea.dialogs.stringEdit.Class suffix.x&quot;: &quot;696&quot;,
-    &quot;laravel_idea.dialogs.stringEdit.Class suffix.y&quot;: &quot;349&quot;,
-    &quot;laravel_routing.server_address&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/luidg/PhpstormProjects/ImmoPro&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\prettier&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.webide.settings.project.settings.php&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Composer Script.serveur backend.executor": "Run",
+    "Constants": "false",
+    "HTTP Request.All in laravel.executor": "Run",
+    "HTTP Request.laravel | auth.register.executor": "Run",
+    "HTTP Request.laravel | auth.user.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "PHPUnit.AuthControllerTest.executor": "Debug",
+    "PHPUnit.Main.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "Bdd/create-model-and-migrations",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "laravel_idea.dialogs.codeGeneration.window.createClass.width": "414",
+    "laravel_idea.dialogs.codeGeneration.window.createClass.x": "646",
+    "laravel_idea.dialogs.codeGeneration.window.createClass.y": "309",
+    "laravel_idea.dialogs.code_generation:createClass.width": "414",
+    "laravel_idea.dialogs.code_generation:createClass.x": "646",
+    "laravel_idea.dialogs.code_generation:createClass.y": "340",
+    "laravel_idea.dialogs.code_generation:createDatabaseMigration.width": "416",
+    "laravel_idea.dialogs.code_generation:createDatabaseMigration.x": "752",
+    "laravel_idea.dialogs.code_generation:createDatabaseMigration.y": "339",
+    "laravel_idea.dialogs.new_model_relation_settings.width": "602",
+    "laravel_idea.dialogs.new_model_relation_settings.x": "552",
+    "laravel_idea.dialogs.new_model_relation_settings.y": "365",
+    "laravel_idea.dialogs.new_model_settings.width": "622",
+    "laravel_idea.dialogs.new_model_settings.x": "649",
+    "laravel_idea.dialogs.new_model_settings.y": "133",
+    "laravel_idea.dialogs.route_server_address_settings.width": "575",
+    "laravel_idea.dialogs.route_server_address_settings.x": "2592",
+    "laravel_idea.dialogs.route_server_address_settings.y": "420",
+    "laravel_idea.dialogs.stringEdit.Class suffix.width": "314",
+    "laravel_idea.dialogs.stringEdit.Class suffix.x": "696",
+    "laravel_idea.dialogs.stringEdit.Class suffix.y": "349",
+    "laravel_routing.server_address": "true",
+    "last_opened_file_path": "C:/Users/luidg/PhpstormProjects/ImmoPro",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\luidg\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\prettier",
+    "settings.editor.selected.configurable": "com.laravel_idea.plugin.extension.ui.LaravelIdeaSettingsForm",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecapSpentCounter">
     <option name="endsOfQuotaMs" value="1775044817654" />
     <option name="spentUsd" value="0.02275165" />
@@ -255,53 +272,24 @@
   <component name="RecapUselessUpdatesCounter">
     <option name="suspendCountdown" value="0" />
   </component>
-  <component name="RunDashboard">
-    <option name="configurationStatuses">
-      <map>
-        <entry key="HttpClient.HttpRequestRunConfigurationType">
-          <value>
-            <map>
-              <entry key="All in laravel" value="STOPPED" />
-              <entry key="laravel | auth.register" value="STOPPED" />
-              <entry key="laravel | auth.user" value="STOPPED" />
-            </map>
-          </value>
-        </entry>
-      </map>
-    </option>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\luidg\PhpstormProjects\ImmoPro\backend\database\migrations" />
+      <recent name="C:\Users\LuidgiGAUDIN\PhpstormProjects\ImmoPro\backend\database\migrations" />
+      <recent name="C:\Users\LuidgiGAUDIN\PhpstormProjects\ImmoPro\backend" />
+    </key>
   </component>
-  <component name="RunManager" selected="HTTP Request.All in laravel">
-    <configuration name="All in laravel" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$APPLICATION_CONFIG_DIR$/scratches/laravel.http">
-      <method v="2" />
-    </configuration>
-    <configuration name="laravel | auth.register" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/laravel.http" executionIdentifier="auth.register" runType="Run single request">
-      <method v="2" />
-    </configuration>
-    <configuration name="laravel | auth.user" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$APPLICATION_CONFIG_DIR$/scratches/laravel.http" executionIdentifier="auth.user" index="2" runType="Run single request">
-      <method v="2" />
-    </configuration>
-    <configuration name="AuthControllerTest" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
-      <TestRunner class="Tests\Feature\Auth\AuthControllerTest" configuration_file="$PROJECT_DIR$/backend/phpunit.xml" file="$PROJECT_DIR$/backend/tests/Feature/Auth/AuthControllerTest.php" scope="Class" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager">
     <configuration name="Main" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
       <TestRunner configuration_file="$PROJECT_DIR$/backend/phpunit.xml" scope="XML" use_alternative_configuration_file="true" />
       <method v="2" />
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="HTTP Request.All in laravel" />
-        <item itemvalue="HTTP Request.laravel | auth.user" />
-        <item itemvalue="HTTP Request.laravel | auth.register" />
-        <item itemvalue="PHPUnit.AuthControllerTest" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PS-253.31033.138" />
-        <option value="bundled-php-predefined-a98d8de5180a-0e0d91225499-com.jetbrains.php.sharedIndexes-PS-253.31033.138" />
+        <option value="bundled-js-predefined-d6986cc7102b-3bd3a6803838-JavaScript-PS-261.22158.283" />
+        <option value="bundled-php-predefined-a98d8de5180a-a9a4ea3ee0f4-com.jetbrains.php.sharedIndexes-PS-261.22158.283" />
       </set>
     </attachedChunks>
   </component>
@@ -320,6 +308,9 @@
       <workItem from="1773753557782" duration="4292000" />
       <workItem from="1773912462340" duration="38000" />
       <workItem from="1773912740557" duration="1989000" />
+      <workItem from="1774881010759" duration="1685000" />
+      <workItem from="1774943601459" duration="6331000" />
+      <workItem from="1775545582346" duration="1294000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -393,7 +384,79 @@
       <option name="project" value="LOCAL" />
       <updated>1773757443825</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="feat: enhance User model with soft deletes and anonymization method">
+      <option name="closed" value="true" />
+      <created>1774876235383</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1774876235383</updated>
+    </task>
+    <task id="LOCAL-00011" summary="feat: enhance User model with soft deletes and anonymization method">
+      <option name="closed" value="true" />
+      <created>1774876371428</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1774876371428</updated>
+    </task>
+    <task id="LOCAL-00012" summary="feat: add new fields to User table for role, banking details, and soft deletes">
+      <option name="closed" value="true" />
+      <created>1774876742801</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1774876742801</updated>
+    </task>
+    <task id="LOCAL-00013" summary="fix: ensure safe deletion of current access token during logout">
+      <option name="closed" value="true" />
+      <created>1774877385699</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1774877385699</updated>
+    </task>
+    <task id="LOCAL-00014" summary="feat: add Portfolio model, migrations, and controller">
+      <option name="closed" value="true" />
+      <created>1774881980447</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1774881980447</updated>
+    </task>
+    <task id="LOCAL-00015" summary="feat: add Portfolio feature with policy, tests, and factory&#10;&#10;- Implemented PortfolioController with all basic CRUD operations.&#10;- Added PortfolioPolicy for authorization.&#10;- Created tests for Portfolio CRUD functionality and validation.&#10;- Set up PortfolioFactory for test data generation.">
+      <option name="closed" value="true" />
+      <created>1774944284531</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1774944284531</updated>
+    </task>
+    <task id="LOCAL-00016" summary="feat: add Property feature with model, controller, and migrations&#10;&#10;- Created `Property` model with `Dpe` and `PropertyType` enums.&#10;- Implemented `PropertyController` with CRUD operations and validation.&#10;- Added migration for `properties` table with relevant fields and relationships.">
+      <option name="closed" value="true" />
+      <created>1774949128082</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1774949128082</updated>
+    </task>
+    <task id="LOCAL-00017" summary="feat: add properties relationship to Portfolio model">
+      <option name="closed" value="true" />
+      <created>1774949435835</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1774949435835</updated>
+    </task>
+    <task id="LOCAL-00018" summary="feat: add Tenant model, controller, request, and migration">
+      <option name="closed" value="true" />
+      <created>1775546176995</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1775546176995</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -404,11 +467,32 @@
     <MESSAGE value="Initial project setup with Laravel and Angular, including basic structure and configuration files." />
     <MESSAGE value="test" />
     <MESSAGE value="Remove unnecessary blank line in .env.example" />
-    <MESSAGE value="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend" />
     <MESSAGE value="feat: implement authentication with login and registration components" />
     <MESSAGE value="chore: remove authentication functionality and related components" />
     <MESSAGE value="feat: update authentication to use API tokens and improve response structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: update authentication to use API tokens and improve response structure" />
+    <MESSAGE value="feat: enhance User model with soft deletes and anonymization method" />
+    <MESSAGE value="feat: add new fields to User table for role, banking details, and soft deletes" />
+    <MESSAGE value="fix: ensure safe deletion of current access token during logout" />
+    <MESSAGE value="feat: add Portfolio model, migrations, and controller" />
+    <MESSAGE value="feat: add Portfolio model, controller, migrations, and authorization policies" />
+    <MESSAGE value="feat: add Portfolio feature with policy, tests, and factory&#10;&#10;- Implemented PortfolioController with all basic CRUD operations.&#10;- Added PortfolioPolicy for authorization.&#10;- Created tests for Portfolio CRUD functionality and validation.&#10;- Set up PortfolioFactory for test data generation." />
+    <MESSAGE value="feat: add Property model, migrations, and controller with validation" />
+    <MESSAGE value="feat: add Property feature with model, controller, and migrations&#10;&#10;- Created `Property` model with `Dpe` and `PropertyType` enums.&#10;- Implemented `PropertyController` with CRUD operations and validation.&#10;- Added migration for `properties` table with relevant fields and relationships." />
+    <MESSAGE value="feat: add properties relationship to Portfolio model" />
+    <MESSAGE value="Ajout du fichier `package-lock.json` généré pour les dépendances NPM dans le backend" />
+    <MESSAGE value="feat: add Tenant model, controller, request, and migration" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add Tenant model, controller, request, and migration" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="PHPUnitRunConfigurationType">
+        <watch expression="$request-&gt;query" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
