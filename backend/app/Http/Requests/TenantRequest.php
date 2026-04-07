@@ -9,7 +9,6 @@ class TenantRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => ['required', 'exists:users'],
             'first_name' => ['required'],
             'last_name' => ['required'],
             'email' => ['nullable', 'email', 'max:254'],

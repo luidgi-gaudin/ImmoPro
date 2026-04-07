@@ -37,6 +37,11 @@ class Property extends Model
         return $this->belongsTo(Portfolio::class);
     }
 
+    public function leases()
+    {
+        return $this->hasMany(Lease::class);
+    }
+
     protected function casts()
     {
         return [

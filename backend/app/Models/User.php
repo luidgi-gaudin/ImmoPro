@@ -54,6 +54,11 @@ class User extends Authenticatable  // implements MustVerifyEmail  Décommenter 
         return $this->hasMany(Portfolio::class);
     }
 
+    public function tenants(): HasMany
+    {
+        return $this->hasMany(Tenant::class);
+    }
+
     /**
      * Anonymise les données personnelles sans casser les FK.
      * À appeler avant ou à la place d'un hard delete.
