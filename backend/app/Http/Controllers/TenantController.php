@@ -9,21 +9,28 @@ class TenantController extends Controller
 {
     public function index()
     {
-        return Tenant::all();
+        return auth()->user()->tenants;
     }
 
     public function store(TenantRequest $request)
     {
-        return Tenant::create($request->validated());
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
+
+        return Tenant::create($data);
     }
 
     public function show(Tenant $tenant)
     {
+        $this->authorize('view', $tenant);
+
         return $tenant;
     }
 
     public function update(TenantRequest $request, Tenant $tenant)
     {
+        $this->authorize('update', $tenant);
+
         $tenant->update($request->validated());
 
         return $tenant;
@@ -31,6 +38,8 @@ class TenantController extends Controller
 
     public function destroy(Tenant $tenant)
     {
+        $this->authorize('delete', $tenant);
+
         $tenant->delete();
 
         return response()->json();
