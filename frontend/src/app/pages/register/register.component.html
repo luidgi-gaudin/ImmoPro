@@ -2,9 +2,11 @@
   <div class="register-card">
     <h1>Inscription</h1>
 
-    <div *ngIf="error" class="alert alert-error">
-      {{ error }}
-    </div>
+    @if (error) {
+      <div class="alert alert-error">
+        {{ error }}
+      </div>
+    }
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-group">
@@ -17,10 +19,16 @@
           placeholder="Votre nom"
           [class.is-invalid]="submitted && name?.invalid"
         />
-        <div *ngIf="submitted && name?.invalid" class="invalid-feedback">
-          <span *ngIf="name?.hasError('required')">Le nom est requis</span>
-          <span *ngIf="name?.hasError('minlength')">Le nom doit contenir au moins 3 caractères</span>
-        </div>
+        @if (submitted && name?.invalid) {
+          <div class="invalid-feedback">
+            @if (name?.hasError('required')) {
+              <span>Le nom est requis</span>
+            }
+            @if (name?.hasError('minlength')) {
+              <span>Le nom doit contenir au moins 3 caractères</span>
+            }
+          </div>
+        }
       </div>
 
       <div class="form-group">
@@ -33,10 +41,16 @@
           placeholder="Votre email"
           [class.is-invalid]="submitted && email?.invalid"
         />
-        <div *ngIf="submitted && email?.invalid" class="invalid-feedback">
-          <span *ngIf="email?.hasError('required')">L'email est requis</span>
-          <span *ngIf="email?.hasError('email')">Email invalide</span>
-        </div>
+        @if (submitted && email?.invalid) {
+          <div class="invalid-feedback">
+            @if (email?.hasError('required')) {
+              <span>L'email est requis</span>
+            }
+            @if (email?.hasError('email')) {
+              <span>Email invalide</span>
+            }
+          </div>
+        }
       </div>
 
       <div class="form-group">
@@ -49,10 +63,16 @@
           placeholder="Minimum 8 caractères"
           [class.is-invalid]="submitted && password?.invalid"
         />
-        <div *ngIf="submitted && password?.invalid" class="invalid-feedback">
-          <span *ngIf="password?.hasError('required')">Le mot de passe est requis</span>
-          <span *ngIf="password?.hasError('minlength')">Le mot de passe doit contenir au moins 8 caractères</span>
-        </div>
+        @if (submitted && password?.invalid) {
+          <div class="invalid-feedback">
+            @if (password?.hasError('required')) {
+              <span>Le mot de passe est requis</span>
+            }
+            @if (password?.hasError('minlength')) {
+              <span>Le mot de passe doit contenir au moins 8 caractères</span>
+            }
+          </div>
+        }
       </div>
 
       <div class="form-group">
@@ -65,10 +85,16 @@
           placeholder="Confirmer votre mot de passe"
           [class.is-invalid]="submitted && passwordConfirmation?.invalid"
         />
-        <div *ngIf="submitted && passwordConfirmation?.invalid" class="invalid-feedback">
-          <span *ngIf="passwordConfirmation?.hasError('required')">La confirmation est requise</span>
-          <span *ngIf="passwordConfirmation?.hasError('passwordMismatch')">Les mots de passe ne correspondent pas</span>
-        </div>
+        @if (submitted && passwordConfirmation?.invalid) {
+          <div class="invalid-feedback">
+            @if (passwordConfirmation?.hasError('required')) {
+              <span>La confirmation est requise</span>
+            }
+            @if (passwordConfirmation?.hasError('passwordMismatch')) {
+              <span>Les mots de passe ne correspondent pas</span>
+            }
+          </div>
+        }
       </div>
 
       <button
@@ -76,8 +102,12 @@
         class="btn btn-primary"
         [disabled]="loading"
       >
-        <span *ngIf="!loading">S'inscrire</span>
-        <span *ngIf="loading">Inscription en cours...</span>
+        @if (!loading) {
+          <span>S'inscrire</span>
+        }
+        @if (loading) {
+          <span>Inscription en cours...</span>
+        }
       </button>
     </form>
 
