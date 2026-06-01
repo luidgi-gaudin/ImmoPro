@@ -2,19 +2,21 @@
   <div class="welcome-card">
     <h1>Bienvenue sur ImmoPro</h1>
 
-    <div class="auth-status" *ngIf="(isAuthenticated$ | async) as isAuth; else notAuthenticated">
-      <div class="user-info" *ngIf="(currentUser$ | async) as user">
-        <h2>Bonjour {{ user.name }}!</h2>
-        <p class="email">{{ user.email }}</p>
-        <p class="member-since">Membre depuis {{ user.created_at | date: 'longDate' }}</p>
+    @if (isAuthenticated$ | async; as isAuth) {
+      <div class="auth-status">
+        @if (currentUser$ | async; as user) {
+          <div class="user-info">
+            <h2>Bonjour {{ user.name }}!</h2>
+            <p class="email">{{ user.email }}</p>
+            <p class="member-since">Membre depuis {{ user.created_at | date: 'longDate' }}</p>
+          </div>
+        }
+
+        <button class="btn btn-logout" (click)="logout()">
+          Se déconnecter
+        </button>
       </div>
-
-      <button class="btn btn-logout" (click)="logout()">
-        Se déconnecter
-      </button>
-    </div>
-
-    <ng-template #notAuthenticated>
+    } @else {
       <div class="not-authenticated">
         <p>Connectez-vous pour accéder à votre compte</p>
         <div class="button-group">
@@ -22,6 +24,6 @@
           <a routerLink="/register" class="btn btn-secondary">S'inscrire</a>
         </div>
       </div>
-    </ng-template>
+    }
   </div>
 </div>

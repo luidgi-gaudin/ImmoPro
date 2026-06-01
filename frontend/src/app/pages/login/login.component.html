@@ -2,9 +2,11 @@
   <div class="login-card">
     <h1>Connexion</h1>
 
-    <div *ngIf="error" class="alert alert-error">
-      {{ error }}
-    </div>
+    @if (error) {
+      <div class="alert alert-error">
+        {{ error }}
+      </div>
+    }
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-group">
@@ -17,10 +19,16 @@
           placeholder="Votre email"
           [class.is-invalid]="submitted && email?.invalid"
         />
-        <div *ngIf="submitted && email?.invalid" class="invalid-feedback">
-          <span *ngIf="email?.hasError('required')">L'email est requis</span>
-          <span *ngIf="email?.hasError('email')">Email invalide</span>
-        </div>
+        @if (submitted && email?.invalid) {
+          <div class="invalid-feedback">
+            @if (email?.hasError('required')) {
+              <span>L'email est requis</span>
+            }
+            @if (email?.hasError('email')) {
+              <span>Email invalide</span>
+            }
+          </div>
+        }
       </div>
 
       <div class="form-group">
@@ -33,9 +41,13 @@
           placeholder="Votre mot de passe"
           [class.is-invalid]="submitted && password?.invalid"
         />
-        <div *ngIf="submitted && password?.invalid" class="invalid-feedback">
-          <span *ngIf="password?.hasError('required')">Le mot de passe est requis</span>
-        </div>
+        @if (submitted && password?.invalid) {
+          <div class="invalid-feedback">
+            @if (password?.hasError('required')) {
+              <span>Le mot de passe est requis</span>
+            }
+          </div>
+        }
       </div>
 
       <button
@@ -43,8 +55,12 @@
         class="btn btn-primary"
         [disabled]="loading"
       >
-        <span *ngIf="!loading">Se connecter</span>
-        <span *ngIf="loading">Connexion en cours...</span>
+        @if (!loading) {
+          <span>Se connecter</span>
+        }
+        @if (loading) {
+          <span>Connexion en cours...</span>
+        }
       </button>
     </form>
 
