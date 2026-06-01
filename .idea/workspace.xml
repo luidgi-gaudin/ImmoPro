@@ -7,18 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: update authentication to use API tokens and improve response structure">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/TenantController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/TenantController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Requests/LeaseRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Requests/LeaseRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Requests/TenantRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Requests/TenantRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Lease.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Lease.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Property.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Property.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Tenant.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Tenant.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
-    </list>
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: add Tenant model, controller, request, and migration" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -74,7 +63,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/luidgi-gaudin/ImmoPro.git&quot;,
-    &quot;accountId&quot;: &quot;ce422560-d1d5-4562-a004-fd2af3f89cf6&quot;
+    &quot;accountId&quot;: &quot;ab3f5b9c-bd9e-44d1-bbf4-2bb54e30b5fa&quot;
   }
 }</component>
   <component name="KubernetesApiPersistence">{}</component>
@@ -230,7 +219,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "feat/add-tests-on-models",
+    "git-widget-placeholder": "add-login-page",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "laravel_idea.dialogs.codeGeneration.window.createClass.width": "414",
@@ -296,8 +285,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PS-253.31033.138" />
-        <option value="bundled-php-predefined-a98d8de5180a-0e0d91225499-com.jetbrains.php.sharedIndexes-PS-253.31033.138" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-WS-261.23567.141" />
       </set>
     </attachedChunks>
   </component>
@@ -316,6 +304,10 @@
       <workItem from="1773753557782" duration="4292000" />
       <workItem from="1773912462340" duration="38000" />
       <workItem from="1773912740557" duration="1989000" />
+      <workItem from="1774881010759" duration="1685000" />
+      <workItem from="1774943601459" duration="6331000" />
+      <workItem from="1775545582346" duration="1294000" />
+      <workItem from="1780298277271" duration="741000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />

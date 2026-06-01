@@ -1,0 +1,88 @@
+<div class="register-container">
+  <div class="register-card">
+    <h1>Inscription</h1>
+
+    <div *ngIf="error" class="alert alert-error">
+      {{ error }}
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Nom</label>
+        <input
+          id="name"
+          type="text"
+          class="form-control"
+          formControlName="name"
+          placeholder="Votre nom"
+          [class.is-invalid]="submitted && name?.invalid"
+        />
+        <div *ngIf="submitted && name?.invalid" class="invalid-feedback">
+          <span *ngIf="name?.hasError('required')">Le nom est requis</span>
+          <span *ngIf="name?.hasError('minlength')">Le nom doit contenir au moins 3 caractères</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="Votre email"
+          [class.is-invalid]="submitted && email?.invalid"
+        />
+        <div *ngIf="submitted && email?.invalid" class="invalid-feedback">
+          <span *ngIf="email?.hasError('required')">L'email est requis</span>
+          <span *ngIf="email?.hasError('email')">Email invalide</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          class="form-control"
+          formControlName="password"
+          placeholder="Minimum 8 caractères"
+          [class.is-invalid]="submitted && password?.invalid"
+        />
+        <div *ngIf="submitted && password?.invalid" class="invalid-feedback">
+          <span *ngIf="password?.hasError('required')">Le mot de passe est requis</span>
+          <span *ngIf="password?.hasError('minlength')">Le mot de passe doit contenir au moins 8 caractères</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password_confirmation">Confirmer le mot de passe</label>
+        <input
+          id="password_confirmation"
+          type="password"
+          class="form-control"
+          formControlName="password_confirmation"
+          placeholder="Confirmer votre mot de passe"
+          [class.is-invalid]="submitted && passwordConfirmation?.invalid"
+        />
+        <div *ngIf="submitted && passwordConfirmation?.invalid" class="invalid-feedback">
+          <span *ngIf="passwordConfirmation?.hasError('required')">La confirmation est requise</span>
+          <span *ngIf="passwordConfirmation?.hasError('passwordMismatch')">Les mots de passe ne correspondent pas</span>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loading"
+      >
+        <span *ngIf="!loading">S'inscrire</span>
+        <span *ngIf="loading">Inscription en cours...</span>
+      </button>
+    </form>
+
+    <p class="login-link">
+      Déjà inscrit? <a routerLink="/login">Se connecter</a>
+    </p>
+  </div>
+</div>
