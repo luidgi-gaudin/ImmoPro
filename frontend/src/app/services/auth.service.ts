@@ -32,7 +32,7 @@ export interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/auth';
+  private apiUrl = 'http://localhost:8000/api/auth';
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -50,7 +50,7 @@ export class AuthService {
         this.setToken(response.token);
         this.currentUserSubject.next(response.data);
         this.isAuthenticatedSubject.next(true);
-      })
+      }),
     );
   }
 
@@ -60,7 +60,7 @@ export class AuthService {
         this.setToken(response.token);
         this.currentUserSubject.next(response.data);
         this.isAuthenticatedSubject.next(true);
-      })
+      }),
     );
   }
 
@@ -70,7 +70,7 @@ export class AuthService {
         this.clearToken();
         this.currentUserSubject.next(null);
         this.isAuthenticatedSubject.next(false);
-      })
+      }),
     );
   }
 
