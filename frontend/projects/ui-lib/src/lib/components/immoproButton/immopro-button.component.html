@@ -1,0 +1,9 @@
+<button
+  mat-raised-button
+  [color]="color()"
+  [disabled]="disabled()"
+  class="immopro-btn"
+  (click)="onClick.emit($event)"
+>
+  {{ label() }}
+</button>
