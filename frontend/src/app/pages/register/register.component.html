@@ -1,6 +1,7 @@
 <div class="register-container">
   <div class="register-card">
-    <h1>Inscription</h1>
+    <h1>Créer un compte</h1>
+    <p class="subtitle">Commencez à gérer votre patrimoine aujourd'hui</p>
 
     @if (error) {
       <div class="alert alert-error">
@@ -8,15 +9,14 @@
       </div>
     }
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
       <div class="form-group">
-        <label for="name">Nom</label>
+        <label for="name">Nom complet</label>
         <input
           id="name"
           type="text"
-          class="form-control"
           formControlName="name"
-          placeholder="Votre nom"
+          placeholder="Jean Dupont"
           [class.is-invalid]="submitted && name?.invalid"
         />
         @if (submitted && name?.invalid) {
@@ -36,9 +36,8 @@
         <input
           id="email"
           type="email"
-          class="form-control"
           formControlName="email"
-          placeholder="Votre email"
+          placeholder="jean@exemple.com"
           [class.is-invalid]="submitted && email?.invalid"
         />
         @if (submitted && email?.invalid) {
@@ -58,7 +57,6 @@
         <input
           id="password"
           type="password"
-          class="form-control"
           formControlName="password"
           placeholder="Minimum 8 caractères"
           [class.is-invalid]="submitted && password?.invalid"
@@ -80,7 +78,6 @@
         <input
           id="password_confirmation"
           type="password"
-          class="form-control"
           formControlName="password_confirmation"
           placeholder="Confirmer votre mot de passe"
           [class.is-invalid]="submitted && passwordConfirmation?.invalid"
@@ -103,10 +100,10 @@
         [disabled]="loading"
       >
         @if (!loading) {
-          <span>S'inscrire</span>
+          <span>Créer mon compte</span>
         }
         @if (loading) {
-          <span>Inscription en cours...</span>
+          <span>Création en cours...</span>
         }
       </button>
     </form>

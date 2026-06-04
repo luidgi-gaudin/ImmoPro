@@ -1,6 +1,7 @@
 <div class="login-container">
   <div class="login-card">
-    <h1>Connexion</h1>
+    <h1>Bon retour</h1>
+    <p class="subtitle">Connectez-vous à votre espace ImmoPro</p>
 
     @if (error) {
       <div class="alert alert-error">
@@ -14,9 +15,8 @@
         <input
           id="email"
           type="email"
-          class="form-control"
           formControlName="email"
-          placeholder="Votre email"
+          placeholder="nom@exemple.com"
           [class.is-invalid]="submitted && email?.invalid"
         />
         @if (submitted && email?.invalid) {
@@ -36,9 +36,8 @@
         <input
           id="password"
           type="password"
-          class="form-control"
           formControlName="password"
-          placeholder="Votre mot de passe"
+          placeholder="••••••••"
           [class.is-invalid]="submitted && password?.invalid"
         />
         @if (submitted && password?.invalid) {
@@ -65,7 +64,7 @@
     </form>
 
     <p class="register-link">
-      Pas encore inscrit? <a routerLink="/register">S'inscrire</a>
+      Pas encore membre? <a routerLink="/register">Créer un compte</a>
     </p>
   </div>
 </div>
