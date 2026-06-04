@@ -1,0 +1,16 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <header class="auth-header">
+      <h1>{{ title() }}</h1>
+      <p class="subtitle" *ngIf="subtitle()">{{ subtitle() }}</p>
+    </header>
+
+    <div class="auth-content">
+      <ng-content></ng-content>
+    </div>
+
+    <footer class="auth-footer">
+      <ng-content select="[footer]"></ng-content>
+    </footer>
+  </div>
+</div>

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService } from '../../services/dashboard.service';
+import { ImmoproStatCardComponent } from 'ui-lib';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImmoproStatCardComponent],
   template: `
     <div class="dashboard-container">
       <header class="dashboard-header">
@@ -17,23 +18,27 @@ import { DashboardService } from '../../services/dashboard.service';
 
       <main class="dashboard-content">
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">Portfolios</div>
-            <div class="stat-value">{{ data?.portfoliosCount ?? '0' }}</div>
-            <div class="stat-trend success">Actif</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Propriétés</div>
-            <div class="stat-value">{{ data?.propertiesCount ?? '0' }}</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Locataires</div>
-            <div class="stat-value">{{ data?.tenantsCount ?? '0' }}</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Baux en cours</div>
-            <div class="stat-value">{{ data?.leasesCount ?? '0' }}</div>
-          </div>
+          <immopro-stat-card
+            label="Portfolios"
+            [value]="data?.portfoliosCount ?? '0'"
+            trend="Actif"
+            trendType="success"
+          ></immopro-stat-card>
+          
+          <immopro-stat-card
+            label="Propriétés"
+            [value]="data?.propertiesCount ?? '0'"
+          ></immopro-stat-card>
+
+          <immopro-stat-card
+            label="Locataires"
+            [value]="data?.tenantsCount ?? '0'"
+          ></immopro-stat-card>
+
+          <immopro-stat-card
+            label="Baux en cours"
+            [value]="data?.leasesCount ?? '0'"
+          ></immopro-stat-card>
         </div>
 
         <div class="content-grid">

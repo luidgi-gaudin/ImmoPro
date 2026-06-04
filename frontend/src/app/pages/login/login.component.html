@@ -1,70 +1,42 @@
-<div class="login-container">
-  <div class="login-card">
-    <h1>Bon retour</h1>
-    <p class="subtitle">Connectez-vous à votre espace ImmoPro</p>
+<immopro-auth-card
+  title="Bon retour"
+  subtitle="Connectez-vous à votre espace ImmoPro"
+>
+  @if (error) {
+    <div class="alert alert-error">
+      {{ error }}
+    </div>
+  }
 
-    @if (error) {
-      <div class="alert alert-error">
-        {{ error }}
-      </div>
-    }
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <immopro-input
+      id="email"
+      label="Email"
+      type="email"
+      formControlName="email"
+      placeholder="nom@exemple.com"
+      [error]="submitted && email?.invalid ? (email?.hasError('required') ? 'L\'email est requis' : 'Email invalide') : null"
+    ></immopro-input>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="nom@exemple.com"
-          [class.is-invalid]="submitted && email?.invalid"
-        />
-        @if (submitted && email?.invalid) {
-          <div class="invalid-feedback">
-            @if (email?.hasError('required')) {
-              <span>L'email est requis</span>
-            }
-            @if (email?.hasError('email')) {
-              <span>Email invalide</span>
-            }
-          </div>
-        }
-      </div>
+    <immopro-input
+      id="password"
+      label="Mot de passe"
+      type="password"
+      formControlName="password"
+      placeholder="••••••••"
+      [error]="submitted && password?.invalid ? 'Le mot de passe est requis' : null"
+    ></immopro-input>
 
-      <div class="form-group">
-        <label for="password">Mot de passe</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          placeholder="••••••••"
-          [class.is-invalid]="submitted && password?.invalid"
-        />
-        @if (submitted && password?.invalid) {
-          <div class="invalid-feedback">
-            @if (password?.hasError('required')) {
-              <span>Le mot de passe est requis</span>
-            }
-          </div>
-        }
-      </div>
+    <immopro-button
+      type="submit"
+      [loading]="loading"
+      [disabled]="loading"
+    >
+      Se connecter
+    </immopro-button>
+  </form>
 
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="loading"
-      >
-        @if (!loading) {
-          <span>Se connecter</span>
-        }
-        @if (loading) {
-          <span>Connexion en cours...</span>
-        }
-      </button>
-    </form>
-
-    <p class="register-link">
-      Pas encore membre? <a routerLink="/register">Créer un compte</a>
-    </p>
+  <div footer>
+    Pas encore membre? <a routerLink="/register">Créer un compte</a>
   </div>
-</div>
+</immopro-auth-card>

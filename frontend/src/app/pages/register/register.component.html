@@ -1,115 +1,59 @@
-<div class="register-container">
-  <div class="register-card">
-    <h1>Créer un compte</h1>
-    <p class="subtitle">Commencez à gérer votre patrimoine aujourd'hui</p>
+<immopro-auth-card
+  title="Créer un compte"
+  subtitle="Commencez à gérer votre patrimoine aujourd'hui"
+>
+  @if (error) {
+    <div class="alert alert-error">
+      {{ error }}
+    </div>
+  }
 
-    @if (error) {
-      <div class="alert alert-error">
-        {{ error }}
-      </div>
-    }
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+    <immopro-input
+      id="name"
+      label="Nom complet"
+      formControlName="name"
+      placeholder="Jean Dupont"
+      [error]="submitted && name?.invalid ? (name?.hasError('required') ? 'Le nom est requis' : 'Minimum 3 caractères') : null"
+    ></immopro-input>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
-      <div class="form-group">
-        <label for="name">Nom complet</label>
-        <input
-          id="name"
-          type="text"
-          formControlName="name"
-          placeholder="Jean Dupont"
-          [class.is-invalid]="submitted && name?.invalid"
-        />
-        @if (submitted && name?.invalid) {
-          <div class="invalid-feedback">
-            @if (name?.hasError('required')) {
-              <span>Le nom est requis</span>
-            }
-            @if (name?.hasError('minlength')) {
-              <span>Le nom doit contenir au moins 3 caractères</span>
-            }
-          </div>
-        }
-      </div>
+    <immopro-input
+      id="email"
+      label="Email"
+      type="email"
+      formControlName="email"
+      placeholder="jean@exemple.com"
+      [error]="submitted && email?.invalid ? (email?.hasError('required') ? 'L\'email est requis' : 'Email invalide') : null"
+    ></immopro-input>
 
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="jean@exemple.com"
-          [class.is-invalid]="submitted && email?.invalid"
-        />
-        @if (submitted && email?.invalid) {
-          <div class="invalid-feedback">
-            @if (email?.hasError('required')) {
-              <span>L'email est requis</span>
-            }
-            @if (email?.hasError('email')) {
-              <span>Email invalide</span>
-            }
-          </div>
-        }
-      </div>
+    <immopro-input
+      id="password"
+      label="Mot de passe"
+      type="password"
+      formControlName="password"
+      placeholder="Minimum 8 caractères"
+      [error]="submitted && password?.invalid ? (password?.hasError('required') ? 'Le mot de passe est requis' : 'Minimum 8 caractères') : null"
+    ></immopro-input>
 
-      <div class="form-group">
-        <label for="password">Mot de passe</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          placeholder="Minimum 8 caractères"
-          [class.is-invalid]="submitted && password?.invalid"
-        />
-        @if (submitted && password?.invalid) {
-          <div class="invalid-feedback">
-            @if (password?.hasError('required')) {
-              <span>Le mot de passe est requis</span>
-            }
-            @if (password?.hasError('minlength')) {
-              <span>Le mot de passe doit contenir au moins 8 caractères</span>
-            }
-          </div>
-        }
-      </div>
+    <immopro-input
+      id="password_confirmation"
+      label="Confirmer le mot de passe"
+      type="password"
+      formControlName="password_confirmation"
+      placeholder="Confirmer votre mot de passe"
+      [error]="submitted && passwordConfirmation?.invalid ? (passwordConfirmation?.hasError('required') ? 'La confirmation est requise' : 'Les mots de passe ne correspondent pas') : null"
+    ></immopro-input>
 
-      <div class="form-group">
-        <label for="password_confirmation">Confirmer le mot de passe</label>
-        <input
-          id="password_confirmation"
-          type="password"
-          formControlName="password_confirmation"
-          placeholder="Confirmer votre mot de passe"
-          [class.is-invalid]="submitted && passwordConfirmation?.invalid"
-        />
-        @if (submitted && passwordConfirmation?.invalid) {
-          <div class="invalid-feedback">
-            @if (passwordConfirmation?.hasError('required')) {
-              <span>La confirmation est requise</span>
-            }
-            @if (passwordConfirmation?.hasError('passwordMismatch')) {
-              <span>Les mots de passe ne correspondent pas</span>
-            }
-          </div>
-        }
-      </div>
+    <immopro-button
+      type="submit"
+      [loading]="loading"
+      [disabled]="loading"
+    >
+      Créer mon compte
+    </immopro-button>
+  </form>
 
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="loading"
-      >
-        @if (!loading) {
-          <span>Créer mon compte</span>
-        }
-        @if (loading) {
-          <span>Création en cours...</span>
-        }
-      </button>
-    </form>
-
-    <p class="login-link">
-      Déjà inscrit? <a routerLink="/login">Se connecter</a>
-    </p>
+  <div footer>
+    Déjà inscrit? <a routerLink="/login">Se connecter</a>
   </div>
-</div>
+</immopro-auth-card>

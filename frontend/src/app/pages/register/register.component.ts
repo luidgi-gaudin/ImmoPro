@@ -16,10 +16,12 @@ export function passwordMatchValidator(form: FormGroup) {
   return null;
 }
 
+import { ImmoproAuthCardComponent, ImmoproInputComponent, ImmoproButtonComponent } from 'ui-lib';
+
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ImmoproAuthCardComponent, ImmoproInputComponent, ImmoproButtonComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
