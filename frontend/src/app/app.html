@@ -1,1 +1,8 @@
-<router-outlet />
+<div class="app-shell">
+  @if (shouldShowNavbar()) {
+    <app-navbar></app-navbar>
+  }
+  <main class="main-content">
+    <router-outlet />
+  </main>
+</div>

@@ -1,62 +1,75 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DashboardService } from '../../services/dashboard.service';
+import { ImmoproStatCardComponent } from 'ui-lib';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
+  imports: [CommonModule, ImmoproStatCardComponent],
   template: `
-    <main class="dashboard-shell">
-      <section class="dashboard-card">
-        <p class="eyebrow">ImmoPro</p>
-        <h1>Dashboard</h1>
-        <p>Cette page sera complétée plus tard.</p>
-      </section>
-    </main>
+    <div class="dashboard-container">
+      <header class="dashboard-header">
+        <div class="header-content">
+          <h1>Dashboard</h1>
+          <p class="subtitle text-secondary">Vue d'ensemble de votre patrimoine</p>
+        </div>
+      </header>
+
+      <main class="dashboard-content">
+        <div class="stats-grid">
+          <immopro-stat-card
+            label="Portfolios"
+            [value]="data?.portfoliosCount ?? '0'"
+            trend="Actif"
+            trendType="success"
+          ></immopro-stat-card>
+          
+          <immopro-stat-card
+            label="Propriétés"
+            [value]="data?.propertiesCount ?? '0'"
+          ></immopro-stat-card>
+
+          <immopro-stat-card
+            label="Locataires"
+            [value]="data?.tenantsCount ?? '0'"
+          ></immopro-stat-card>
+
+          <immopro-stat-card
+            label="Baux en cours"
+            [value]="data?.leasesCount ?? '0'"
+          ></immopro-stat-card>
+        </div>
+
+        <div class="content-grid">
+          <div class="main-card">
+            <div class="card-header">
+              <h3>Activité récente</h3>
+            </div>
+            <div class="empty-state">
+              <p class="text-muted">Aucune activité récente à afficher.</p>
+            </div>
+          </div>
+          <div class="side-card">
+            <div class="card-header">
+              <h3>Alertes</h3>
+            </div>
+            <div class="empty-state">
+              <p class="text-muted">Tout est à jour.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   `,
-  styles: [
-    `
-      :host {
-        display: block;
-        min-height: 100vh;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        color: #e2e8f0;
-      }
-
-      .dashboard-shell {
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 24px;
-      }
-
-      .dashboard-card {
-        width: min(560px, 100%);
-        padding: 32px;
-        border-radius: 24px;
-        background: rgba(15, 23, 42, 0.72);
-        border: 1px solid rgba(148, 163, 184, 0.22);
-        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
-        backdrop-filter: blur(14px);
-      }
-
-      .eyebrow {
-        margin: 0 0 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        font-size: 0.75rem;
-        color: #93c5fd;
-      }
-
-      h1 {
-        margin: 0 0 12px;
-        font-size: clamp(2rem, 4vw, 3rem);
-      }
-
-      p {
-        margin: 0;
-        color: #cbd5e1;
-        line-height: 1.6;
-      }
-    `,
-  ],
+  styleUrl: './dashboard.component.scss',
 })
-export class DashboardComponent {}
+export class DashboardComponent implements OnInit {
+  data: import('../../services/dashboard.service').DashboardData | null = null;
+
+  constructor(private svc: DashboardService) {}
+
+  ngOnInit(): void {
+    this.svc.getDashboard().subscribe({ next: (d) => (this.data = d) });
+  }
+}

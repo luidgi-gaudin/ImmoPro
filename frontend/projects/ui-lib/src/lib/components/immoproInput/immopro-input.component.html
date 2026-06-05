@@ -1,0 +1,16 @@
+<div class="input-wrapper">
+  <label *ngIf="label()" [for]="id()">{{ label() }}</label>
+  <div class="input-container">
+    <input
+      [id]="id()"
+      [type]="type()"
+      [placeholder]="placeholder()"
+      [value]="value"
+      [disabled]="disabled"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      [class.error]="error()"
+    />
+  </div>
+  <span class="error-message" *ngIf="error()">{{ error() }}</span>
+</div>

@@ -1,9 +1,9 @@
 <button
-  mat-raised-button
-  [color]="color()"
-  [disabled]="disabled()"
-  class="immopro-btn"
-  (click)="onClick.emit($event)"
+  [type]="type()"
+  [disabled]="disabled() || loading()"
+  [class]="'btn-' + variant() + ' color-' + color()"
+  (click)="handleOnClick($event)"
 >
-  {{ label() }}
+  <span *ngIf="loading()" class="loader"></span>
+  <ng-content></ng-content>
 </button>

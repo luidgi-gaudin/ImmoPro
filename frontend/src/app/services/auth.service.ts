@@ -32,7 +32,7 @@ export interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/auth';
+  private apiUrl = 'http://127.0.0.1:8000/api/auth';
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -42,6 +42,15 @@ export class AuthService {
 
   constructor() {
     this.loadStoredUser();
+  }
+
+  getUserProfile(): Observable<AuthResponse> {
+    return this.http.get<AuthResponse>(`${this.apiUrl}/user`).pipe(
+      tap((response) => {
+        this.currentUserSubject.next(response.data);
+        this.isAuthenticatedSubject.next(true);
+      }),
+    );
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
@@ -67,11 +76,15 @@ export class AuthService {
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
       tap(() => {
-        this.clearToken();
-        this.currentUserSubject.next(null);
-        this.isAuthenticatedSubject.next(false);
+        this.clearSession();
       }),
     );
+  }
+
+  clearSession(): void {
+    this.clearToken();
+    this.currentUserSubject.next(null);
+    this.isAuthenticatedSubject.next(false);
   }
 
   getCurrentUser(): User | null {
@@ -97,7 +110,9 @@ export class AuthService {
   private loadStoredUser(): void {
     const token = this.getToken();
     if (token) {
-      this.isAuthenticatedSubject.next(true);
+      this.getUserProfile().subscribe({
+        error: () => this.clearSession(),
+      });
     }
   }
 
