@@ -1,0 +1,32 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface Tenant {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class TenantService {
+  private http = inject(HttpClient);
+  private apiUrl = 'http://127.0.0.1:8000/api/tenants';
+
+  getTenants(page: number = 1): Observable<PaginatedResponse<Tenant>> {
+    const params = new HttpParams().set('page', page.toString());
+    return this.http.get<PaginatedResponse<Tenant>>(this.apiUrl, { params });
+  }
+}

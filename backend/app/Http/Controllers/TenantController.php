@@ -9,7 +9,7 @@ class TenantController extends Controller
 {
     public function index()
     {
-        return auth()->user()->tenants;
+        return auth()->user()->tenants()->paginate(10);
     }
 
     public function store(TenantRequest $request)

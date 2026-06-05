@@ -9,7 +9,12 @@ class PortfolioController extends Controller
 {
     public function index()
     {
-        return auth()->user()->portfolios()->get();
+        return auth()->user()->portfolios()
+            ->with(['properties' => function ($query) {
+                $query->take(3);
+            }])
+            ->withCount('properties')
+            ->get();
     }
 
     public function store(Request $request)

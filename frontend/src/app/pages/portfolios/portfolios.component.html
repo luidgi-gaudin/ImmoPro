@@ -1,0 +1,41 @@
+<div class="page-header">
+  <div>
+    <h1>Mes Portfolios</h1>
+    <p class="text-secondary">Gérez vos ensembles immobiliers et leurs propriétés.</p>
+  </div>
+  <immopro-button (onClick)="addPortfolio()">
+    <span>+ Nouveau Portfolio</span>
+  </immopro-button>
+</div>
+
+<div class="portfolios-grid">
+  @for (portfolio of portfolios(); track portfolio.id) {
+    <immopro-card [hoverable]="true" [glow]="true">
+      <h3 card-title>{{ portfolio.name }}</h3>
+      <p card-subtitle>{{ portfolio.description || 'Pas de description' }}</p>
+      
+      <div class="properties-preview">
+        <div class="preview-header">
+          <span class="count">{{ portfolio.properties_count }} propriétés</span>
+        </div>
+        <ul class="property-list">
+          @for (property of portfolio.properties; track property.id) {
+            <li>
+              <span class="prop-name">{{ property.name }}</span>
+              <span class="prop-city">{{ property.city }}</span>
+            </li>
+          }
+          @if (portfolio.properties_count > 3) {
+            <li class="more-props">
+              + {{ portfolio.properties_count - 3 }} autres...
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div card-footer class="card-actions">
+        <immopro-button variant="ghost" (onClick)="viewPortfolio(portfolio)">Voir détails</immopro-button>
+      </div>
+    </immopro-card>
+  }
+</div>
