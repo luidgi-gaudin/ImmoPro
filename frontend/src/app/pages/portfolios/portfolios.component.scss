@@ -1,0 +1,68 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding: 0 4px;
+}
+
+.portfolios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.properties-preview {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--bg-color);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.preview-header {
+  margin-bottom: 8px;
+  .count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.property-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    padding: 4px 0;
+    color: var(--text-secondary);
+    
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .prop-name {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+  }
+
+  .more-props {
+    font-style: italic;
+    color: var(--text-muted);
+    justify-content: center;
+    padding-top: 8px;
+  }
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}

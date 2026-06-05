@@ -1,0 +1,122 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.table-container {
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  
+  th {
+    padding: 16px 24px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  td {
+    padding: 16px 24px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--primary-glow);
+    color: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .actions {
+    text-align: right;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-muted);
+  }
+}
+
+.btn-action {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+
+  &:hover {
+    color: var(--primary);
+    background: var(--primary-glow);
+  }
+}
+
+.pagination {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+
+  .page-btn {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+
+    &:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .page-info {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+}
