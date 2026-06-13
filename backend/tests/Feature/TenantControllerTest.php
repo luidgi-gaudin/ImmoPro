@@ -15,9 +15,9 @@ class TenantControllerTest extends TestCase
     {
         return array_merge([
             'first_name' => 'Jean',
-            'last_name'  => 'Dupont',
-            'email'      => 'jean@example.com',
-            'phone'      => '0601020304',
+            'last_name' => 'Dupont',
+            'email' => 'jean@example.com',
+            'phone' => '0601020304',
         ], $overrides);
     }
 
@@ -31,7 +31,8 @@ class TenantControllerTest extends TestCase
 
         $response = $this->actingAs($user)->getJson('/api/tenants');
 
-        $response->assertStatus(200)->assertJsonCount(3);
+        // L'index est paginé : les tenants sont sous la clé « data ».
+        $response->assertStatus(200)->assertJsonCount(3, 'data');
     }
 
     public function test_index_returns_401_for_unauthenticated(): void
@@ -53,7 +54,7 @@ class TenantControllerTest extends TestCase
 
         $this->assertDatabaseHas('tenants', [
             'first_name' => 'Jean',
-            'user_id'    => $user->id,
+            'user_id' => $user->id,
         ]);
     }
 
