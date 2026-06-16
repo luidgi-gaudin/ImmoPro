@@ -28,13 +28,14 @@ class LeaseControllerTest extends TestCase
     private function validPayload(Property $property, Tenant $tenant, array $overrides = []): array
     {
         return array_merge([
-            'property_id'  => $property->id,
-            'tenant_id'    => $tenant->id,
-            'start_date'   => '2026-01-01',
-            'end_date'     => '2027-01-01',
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+            'type' => 'meuble', // durée min 1 an, dépôt max 2 mois (loi n° 89-462)
+            'start_date' => '2026-01-01',
+            'end_date' => '2027-01-01',
             'monthly_rent' => 850.00,
-            'deposit'      => 1700.00,
-            'statut'       => LeaseStatus::Actif->value,
+            'deposit' => 1700.00,
+            'statut' => LeaseStatus::Actif->value,
         ], $overrides);
     }
 
@@ -45,7 +46,7 @@ class LeaseControllerTest extends TestCase
         [$user, $property, $tenant] = $this->createOwnerWithProperty();
         Lease::factory()->count(3)->create([
             'property_id' => $property->id,
-            'tenant_id'   => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
 
         // Leases d'un autre proprio
@@ -75,7 +76,7 @@ class LeaseControllerTest extends TestCase
 
         $this->assertDatabaseHas('leases', [
             'property_id' => $property->id,
-            'tenant_id'   => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
     }
 
@@ -136,7 +137,7 @@ class LeaseControllerTest extends TestCase
         [$user, $property, $tenant] = $this->createOwnerWithProperty();
         $lease = Lease::factory()->create([
             'property_id' => $property->id,
-            'tenant_id'   => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
 
         $response = $this->actingAs($user)->getJson("/api/leases/{$lease->id}");
@@ -150,7 +151,7 @@ class LeaseControllerTest extends TestCase
         $other = User::factory()->create();
         $lease = Lease::factory()->create([
             'property_id' => $property->id,
-            'tenant_id'   => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
 
         $response = $this->actingAs($other)->getJson("/api/leases/{$lease->id}");
@@ -172,7 +173,7 @@ class LeaseControllerTest extends TestCase
         [$user, $property, $tenant] = $this->createOwnerWithProperty();
         $lease = Lease::factory()->create([
             'property_id' => $property->id,
-            'tenant_id'   => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
 
         $response = $this->actingAs($user)->putJson("/api/leases/{$lease->id}", $this->validPayload($property, $tenant, [
@@ -197,7 +198,7 @@ class LeaseControllerTest extends TestCase
 
         $lease = Lease::factory()->create([
             'property_id' => $property->id,
-            'tenant_id'   => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
 
         $response = $this->actingAs($other)->putJson("/api/leases/{$lease->id}", $this->validPayload($otherProperty, $otherTenant));
@@ -219,7 +220,7 @@ class LeaseControllerTest extends TestCase
         [$user, $property, $tenant] = $this->createOwnerWithProperty();
         $lease = Lease::factory()->create([
             'property_id' => $property->id,
-            'tenant_id'   => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
 
         $response = $this->actingAs($user)->deleteJson("/api/leases/{$lease->id}");
@@ -235,7 +236,7 @@ class LeaseControllerTest extends TestCase
         $other = User::factory()->create();
         $lease = Lease::factory()->create([
             'property_id' => $property->id,
-            'tenant_id'   => $tenant->id,
+            'tenant_id' => $tenant->id,
         ]);
 
         $response = $this->actingAs($other)->deleteJson("/api/leases/{$lease->id}");
