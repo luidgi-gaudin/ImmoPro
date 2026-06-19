@@ -23,5 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('portfolios', PortfolioController::class);
     Route::apiResource('portfolios.properties', PropertyController::class)->scoped();
     Route::apiResource('tenants', TenantController::class);
+
+    Route::post('/leases/{lease}/terminate', [LeaseController::class, 'terminate'])->name('leases.terminate');
+    Route::post('/leases/{lease}/revise-rent', [LeaseController::class, 'reviseRent'])->name('leases.revise-rent');
     Route::apiResource('leases', LeaseController::class);
 });

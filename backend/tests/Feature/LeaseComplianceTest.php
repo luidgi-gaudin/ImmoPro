@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\LeaseStatus;
+use App\Models\Lease;
 use App\Models\Portfolio;
 use App\Models\Property;
 use App\Models\Tenant;
@@ -12,7 +13,8 @@ use Tests\TestCase;
 
 /**
  * Règles issues de la loi n° 89-462 du 6 juillet 1989 :
- * plafonds de dépôt de garantie et durées des baux.
+ * plafonds de dépôt de garantie, durées des baux, quittances,
+ * révision annuelle du loyer (IRL) et résiliation.
  */
 class LeaseComplianceTest extends TestCase
 {
@@ -188,5 +190,124 @@ class LeaseComplianceTest extends TestCase
             ->assertStatus(201);
 
         $this->assertTrue($property->fresh()->is_rented);
+    }
+
+    // ── Résiliation ───────────────────────────────────────────────────────────
+
+    public function test_terminate_sets_status_and_frees_the_property(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+        $lease = Lease::factory()->active()->create([
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+        ]);
+
+        $this->assertTrue($property->fresh()->is_rented);
+
+        $response = $this->actingAs($user)->postJson("/api/leases/{$lease->id}/terminate", [
+            'end_date' => now()->toDateString(),
+        ]);
+
+        $response->assertStatus(200)->assertJsonPath('statut', 'termine');
+
+        $this->assertFalse($property->fresh()->is_rented);
+    }
+
+    public function test_terminate_an_already_terminated_lease_returns_409(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+        $lease = Lease::factory()->create([
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+            'statut' => LeaseStatus::Termine->value,
+        ]);
+
+        $this->actingAs($user)->postJson("/api/leases/{$lease->id}/terminate", [
+            'end_date' => now()->toDateString(),
+        ])->assertStatus(409);
+    }
+
+    public function test_terminate_returns_403_for_non_owner(): void
+    {
+        [, $property, $tenant] = $this->createOwnerWithProperty();
+        $other = User::factory()->create();
+        $lease = Lease::factory()->active()->create([
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+        ]);
+
+        $this->actingAs($other)->postJson("/api/leases/{$lease->id}/terminate", [
+            'end_date' => now()->toDateString(),
+        ])->assertStatus(403);
+    }
+
+    // ── Révision annuelle du loyer (IRL, art. 17-1) ───────────────────────────
+
+    public function test_revise_rent_applies_the_irl_variation(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+        $lease = Lease::factory()->active()->create([
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+            'monthly_rent' => 1000.00,
+        ]);
+
+        $response = $this->actingAs($user)->postJson("/api/leases/{$lease->id}/revise-rent", [
+            'irl_old' => 140.59,
+            'irl_new' => 145.47,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('old_rent', 1000)
+            ->assertJsonPath('new_rent', 1034.71); // 1000 × 145,47 / 140,59
+
+        $this->assertEquals(1034.71, (float) $lease->fresh()->monthly_rent);
+    }
+
+    public function test_revise_rent_twice_within_a_year_returns_409(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+        $lease = Lease::factory()->active()->create([
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+        ]);
+
+        $payload = ['irl_old' => 140.59, 'irl_new' => 145.47];
+
+        $this->actingAs($user)->postJson("/api/leases/{$lease->id}/revise-rent", $payload)
+            ->assertStatus(200);
+
+        $this->postJson("/api/leases/{$lease->id}/revise-rent", $payload)
+            ->assertStatus(409);
+    }
+
+    public function test_revise_rent_on_a_non_active_lease_returns_409(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+        $lease = Lease::factory()->create([
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+            'statut' => LeaseStatus::Termine->value,
+        ]);
+
+        $this->actingAs($user)->postJson("/api/leases/{$lease->id}/revise-rent", [
+            'irl_old' => 140.59,
+            'irl_new' => 145.47,
+        ])->assertStatus(409);
+    }
+
+    public function test_revise_rent_returns_403_for_non_owner(): void
+    {
+        [, $property, $tenant] = $this->createOwnerWithProperty();
+        $other = User::factory()->create();
+        $lease = Lease::factory()->active()->create([
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+        ]);
+
+        $this->actingAs($other)->postJson("/api/leases/{$lease->id}/revise-rent", [
+            'irl_old' => 140.59,
+            'irl_new' => 145.47,
+        ])->assertStatus(403);
     }
 }

@@ -77,4 +77,14 @@ class Lease extends Model
     {
         return round($this->type->depositCapInMonths() * (float) $this->monthly_rent, 2);
     }
+
+    /**
+     * La révision annuelle du loyer est possible si aucune révision
+     * n'a eu lieu depuis 12 mois (art. 17-1, loi n° 89-462).
+     */
+    public function canReviseRent(): bool
+    {
+        return $this->last_rent_revision_at === null
+            || $this->last_rent_revision_at->lte(now()->subYear());
+    }
 }
