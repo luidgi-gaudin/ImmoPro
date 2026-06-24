@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/sqlite/database.sqlite
+    volumes:
+      - db-data:/var/www/html/sqlite     # stockage persistant des sessions/cookies
+    networks:
+      - immopro-net
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    networks:
+      - immopro-net
+
+volumes:
+  db-data:
+
+networks:
+  immopro-net:
