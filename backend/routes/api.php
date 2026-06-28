@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\PropertyController;
@@ -14,9 +15,15 @@ Route::prefix('auth')->name('auth.')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
     });
 
+    Route::middleware('throttle:5,1')->group(function () {
+        Route::post('/forgot-password', [PasswordResetController::class, 'forgot'])->name('password.forgot');
+        Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.reset');
+    });
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/user', [AuthController::class, 'user'])->name('user');
+        Route::put('/password', [PasswordResetController::class, 'update'])->name('password.update');
     });
 });
 

@@ -54,6 +54,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // URL du front (SPA) utilisée pour les liens envoyés par e-mail (reset de mot de passe).
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:4200'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
