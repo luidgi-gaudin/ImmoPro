@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\PropertyController;
@@ -13,6 +14,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::middleware('throttle:10,1')->group(function () {
         Route::post('/register', [AuthController::class, 'register'])->name('register');
         Route::post('/login', [AuthController::class, 'login'])->name('login');
+        Route::post('/2fa/challenge', [TwoFactorController::class, 'challenge'])->name('2fa.challenge');
     });
 
     Route::middleware('throttle:5,1')->group(function () {
@@ -24,6 +26,11 @@ Route::prefix('auth')->name('auth.')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/user', [AuthController::class, 'user'])->name('user');
         Route::put('/password', [PasswordResetController::class, 'update'])->name('password.update');
+
+        Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
+        Route::post('/2fa/confirm', [TwoFactorController::class, 'confirm'])->name('2fa.confirm');
+        Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
+        Route::post('/2fa/recovery-codes', [TwoFactorController::class, 'regenerateRecoveryCodes'])->name('2fa.recovery-codes');
     });
 });
 

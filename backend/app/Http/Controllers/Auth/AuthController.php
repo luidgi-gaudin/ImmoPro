@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\TwoFactorAuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,12 +31,20 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request, TwoFactorAuthService $twoFactor): JsonResponse
     {
         $user = User::where('email', $request->validated('email'))->first();
 
         if (! $user || ! Hash::check($request->validated('password'), $user->password)) {
             return response()->json(['message' => 'Identifiants invalides.'], 401);
+        }
+
+        if ($user->hasTwoFactorEnabled()) {
+            return response()->json([
+                'two_factor_required' => true,
+                'challenge_token' => $twoFactor->createChallenge($user),
+                'message' => 'Veuillez fournir votre code de double authentification.',
+            ]);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;

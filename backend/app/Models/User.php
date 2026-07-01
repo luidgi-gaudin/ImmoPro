@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-//use Illuminate\Contracts\Auth\MustVerifyEmail;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -35,6 +35,8 @@ class User extends Authenticatable  // implements MustVerifyEmail  Décommenter 
         'bic',
         'siret',
         'siren',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     protected function casts(): array
@@ -46,7 +48,15 @@ class User extends Authenticatable  // implements MustVerifyEmail  Décommenter 
             'bic' => 'encrypted',
             'siret' => 'encrypted',
             'siren' => 'encrypted',
+            'two_factor_secret' => 'encrypted',
+            'two_factor_recovery_codes' => 'encrypted:array',
+            'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return $this->two_factor_confirmed_at !== null;
     }
 
     public function portfolios(): HasMany
@@ -75,7 +85,13 @@ class User extends Authenticatable  // implements MustVerifyEmail  Décommenter 
             'siren' => null,
         ]);
 
+        $this->forceFill([
+            'two_factor_secret' => null,
+            'two_factor_recovery_codes' => null,
+            'two_factor_confirmed_at' => null,
+        ])->save();
+
         $this->tokens()->delete(); // Révoque les tokens Sanctum
-        $this->delete(); //soft delete
+        $this->delete(); // soft delete
     }
 }
