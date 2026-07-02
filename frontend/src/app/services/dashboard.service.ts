@@ -1,12 +1,49 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin, map, Observable, switchMap } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
+
+export interface PortfolioSummary {
+  id: number;
+  name: string;
+  description: string | null;
+  properties_count?: number;
+}
+
+export interface TenantSummary {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string | null;
+  phone: string | null;
+}
+
+export interface LeaseSummary {
+  id: number;
+  property_id: number;
+  tenant_id: number;
+  start_date: string;
+  end_date: string | null;
+  monthly_rent: number;
+  deposit: number | null;
+  statut: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
 
 export interface DashboardData {
   portfoliosCount: number;
   propertiesCount: number;
   tenantsCount: number;
   leasesCount: number;
+  recentPortfolios: PortfolioSummary[];
+  recentTenants: TenantSummary[];
+  recentLeases: LeaseSummary[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -14,47 +51,39 @@ export class DashboardService {
   private http = inject(HttpClient);
   private apiBase = 'http://127.0.0.1:8000/api';
 
-  getPortfolios() {
-    return this.http.get<any[]>(`${this.apiBase}/portfolios`);
+  getPortfolios(): Observable<PortfolioSummary[]> {
+    return this.http.get<PortfolioSummary[]>(`${this.apiBase}/portfolios`);
   }
 
-  getProperties(portfolioId: number) {
-    return this.http.get<any[]>(`${this.apiBase}/portfolios/${portfolioId}/properties`);
+  getTenants(): Observable<PaginatedResponse<TenantSummary>> {
+    return this.http.get<PaginatedResponse<TenantSummary>>(`${this.apiBase}/tenants`);
   }
 
-  getTenants() {
-    return this.http.get<any[]>(`${this.apiBase}/tenants`);
-  }
-
-  getLeases() {
-    return this.http.get<any[]>(`${this.apiBase}/leases`);
+  getLeases(): Observable<LeaseSummary[]> {
+    return this.http.get<LeaseSummary[]>(`${this.apiBase}/leases`);
   }
 
   getDashboard(): Observable<DashboardData> {
-    return this.getPortfolios().pipe(
-      switchMap((portfolios) => {
-        const portfolioCount = portfolios.length;
-
-        const propertiesCalls = portfolios.map((p) => this.getProperties(p.id));
-
-        return forkJoin({
-          propertiesAll: propertiesCalls.length ? forkJoin(propertiesCalls) : new Observable<any>((sub) => { sub.next([]); sub.complete(); }),
-          tenants: this.getTenants(),
-          leases: this.getLeases(),
-          portfolioCount: new Observable<number>((sub) => { sub.next(portfolioCount); sub.complete(); }),
-        });
-      }),
-      map((res: any) => {
-        const propertiesCount = Array.isArray(res.propertiesAll)
-          ? res.propertiesAll.flat().length
-          : 0;
+    return forkJoin({
+      portfolios: this.getPortfolios(),
+      tenants: this.getTenants(),
+      leases: this.getLeases(),
+    }).pipe(
+      map(({ portfolios, tenants, leases }) => {
+        const propertiesCount = portfolios.reduce(
+          (total, portfolio) => total + (portfolio.properties_count ?? 0),
+          0
+        );
 
         return {
-          portfoliosCount: res.portfolioCount ?? 0,
+          portfoliosCount: portfolios.length,
           propertiesCount,
-          tenantsCount: Array.isArray(res.tenants) ? res.tenants.length : 0,
-          leasesCount: Array.isArray(res.leases) ? res.leases.length : 0,
-        } as DashboardData;
+          tenantsCount: tenants.total ?? tenants.data.length,
+          leasesCount: leases.length,
+          recentPortfolios: portfolios.slice(0, 3),
+          recentTenants: tenants.data.slice(0, 3),
+          recentLeases: leases.slice(0, 3),
+        };
       })
     );
   }

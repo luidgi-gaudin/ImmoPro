@@ -3,6 +3,72 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 32px;
+  padding: 0 4px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.state-card {
+  padding: 24px;
+  border: 1px solid var(--border);
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+}
+
+.state-error {
+  color: #fca5a5;
+}
+
+.summary-grid {
+  margin-bottom: 24px;
+}
+
+.summary-stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+
+  div {
+    display: grid;
+    gap: 4px;
+  }
+
+  span {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  strong {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+  }
+}
+
+.properties-section {
+  display: grid;
+  gap: 16px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 4px;
+
+  h2 {
+    margin: 0;
+  }
+
+  span {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
 }
 
 .table-container {
@@ -17,7 +83,7 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  
+
   th {
     padding: 16px 24px;
     font-size: 0.75rem;
@@ -95,6 +161,22 @@
   cursor: not-allowed;
 }
 
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #86efac;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.rented {
+    background: rgba(59, 130, 246, 0.12);
+    color: #93c5fd;
+  }
+}
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -108,7 +190,7 @@
 }
 
 .modal-panel {
-  width: min(100%, 760px);
+  width: min(100%, 920px);
   background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -144,13 +226,54 @@
 
 .modal-form {
   display: grid;
-  gap: 20px;
+  gap: 16px;
 }
 
 .modal-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+}
+
+.field-group {
+  display: grid;
+  gap: 6px;
+
+  label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  select {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg-color);
+    color: var(--text-primary);
+    outline: none;
+  }
+}
+
+.field-error {
+  font-size: 0.8125rem;
+  color: #fca5a5;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
 }
 
 .modal-actions {
@@ -160,12 +283,34 @@
   margin-top: 8px;
 }
 
+@media (max-width: 1000px) {
+  .checkbox-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 720px) {
+  .page-header,
+  .section-header,
+  .modal-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
   .modal-panel {
     padding: 20px;
   }
 
   .modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .checkbox-grid {
     grid-template-columns: 1fr;
   }
 
@@ -175,39 +320,5 @@
 
   .modal-actions immopro-button {
     width: 100%;
-  }
-}
-
-.pagination {
-  margin-top: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-
-  .page-btn {
-    background: var(--surface-card);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    padding: 8px 16px;
-    border-radius: var(--radius-md);
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: var(--transition-fast);
-
-    &:hover:not(:disabled) {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-
-  .page-info {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
   }
 }

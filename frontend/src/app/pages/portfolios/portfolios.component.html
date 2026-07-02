@@ -21,21 +21,67 @@
         <ul class="property-list">
           @for (property of portfolio.properties; track property.id) {
             <li>
-              <span class="prop-name">{{ property.name }}</span>
+              <span class="prop-name">{{ property.title }}</span>
               <span class="prop-city">{{ property.city }}</span>
             </li>
           }
-          @if (portfolio.properties_count > 3) {
+          @if ((portfolio.properties_count ?? 0) > 3) {
             <li class="more-props">
-              + {{ portfolio.properties_count - 3 }} autres...
+              + {{ (portfolio.properties_count ?? 0) - 3 }} autres...
             </li>
           }
         </ul>
       </div>
 
       <div card-footer class="card-actions">
-        <immopro-button variant="ghost" (onClick)="viewPortfolio(portfolio)">Voir détails</immopro-button>
+        <immopro-button variant="ghost" (onClick)="viewPortfolio(portfolio)">Détails</immopro-button>
       </div>
     </immopro-card>
   }
 </div>
+
+@if (createModalOpen) {
+  <div class="modal-backdrop" (click)="closeCreateModal()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2>Nouveau portfolio</h2>
+          <p>Créez un nouvel ensemble pour regrouper vos biens.</p>
+        </div>
+        <button type="button" class="modal-close" (click)="closeCreateModal()">×</button>
+      </div>
+
+      @if (error) {
+        <div class="alert alert-error">
+          {{ error }}
+        </div>
+      }
+
+      <form [formGroup]="createForm" (ngSubmit)="submitPortfolio()" class="modal-form">
+        <immopro-input
+          id="portfolio-name"
+          label="Nom"
+          formControlName="name"
+          placeholder="Ex: Résidences Centre Ville"
+          [error]="submitted && name?.invalid ? (name?.hasError('required') ? 'Le nom est requis' : 'Minimum 2 caractères') : null"
+        ></immopro-input>
+
+        <immopro-input
+          id="portfolio-description"
+          label="Description"
+          formControlName="description"
+          placeholder="Description facultative"
+        ></immopro-input>
+
+        <div class="modal-actions">
+          <immopro-button variant="ghost" type="button" (onClick)="closeCreateModal()">
+            Annuler
+          </immopro-button>
+          <immopro-button type="submit" [loading]="loading" [disabled]="loading">
+            Créer le portfolio
+          </immopro-button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
