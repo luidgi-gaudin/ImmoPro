@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ImmoproAuthCardComponent, ImmoproInputComponent, ImmoproButtonComponent } from 'ui-lib';
 
 export function passwordMatchValidator(form: FormGroup) {
   const password = form.get('password');
@@ -16,14 +16,19 @@ export function passwordMatchValidator(form: FormGroup) {
   return null;
 }
 
-import { ImmoproAuthCardComponent, ImmoproInputComponent, ImmoproButtonComponent } from 'ui-lib';
-
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ImmoproAuthCardComponent, ImmoproInputComponent, ImmoproButtonComponent],
+  imports: [
+    ReactiveFormsModule, 
+    RouterLink, 
+    ImmoproAuthCardComponent, 
+    ImmoproInputComponent, 
+    ImmoproButtonComponent
+  ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
@@ -31,9 +36,9 @@ export class RegisterComponent {
   private router = inject(Router);
 
   form: FormGroup;
-  loading = false;
-  error: string | null = null;
-  submitted = false;
+  loading = signal(false);
+  error = signal<string | null>(null);
+  submitted = signal(false);
 
   constructor() {
     this.form = this.fb.group(
@@ -48,25 +53,25 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-    this.submitted = true;
-    this.error = null;
+    this.submitted.set(true);
+    this.error.set(null);
 
     if (this.form.invalid) {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
 
     this.authService.register(this.form.value).subscribe({
       next: () => {
         this.router.navigate(['/dashboard']);
       },
       error: (error) => {
-        this.loading = false;
+        this.loading.set(false);
         if (error.error?.errors) {
-          this.error = Object.values(error.error.errors).flat().join(', ');
+          this.error.set(Object.values(error.error.errors).flat().join(', '));
         } else {
-          this.error = error.error?.message || 'Erreur lors de l\'inscription';
+          this.error.set(error.error?.message || 'Erreur lors de l\'inscription');
         }
       },
     });

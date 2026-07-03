@@ -2,9 +2,9 @@
   title="Créer un compte"
   subtitle="Commencez à gérer votre patrimoine aujourd'hui"
 >
-  @if (error) {
+  @if (error()) {
     <div class="alert alert-error">
-      {{ error }}
+      {{ error() }}
     </div>
   }
 
@@ -14,7 +14,7 @@
       label="Nom complet"
       formControlName="name"
       placeholder="Jean Dupont"
-      [error]="submitted && name?.invalid ? (name?.hasError('required') ? 'Le nom est requis' : 'Minimum 3 caractères') : null"
+      [error]="(submitted() || name?.touched || name?.dirty) && name?.invalid ? (name?.hasError('required') ? 'Le nom est requis' : 'Minimum 3 caractères') : null"
     ></immopro-input>
 
     <immopro-input
@@ -23,7 +23,7 @@
       type="email"
       formControlName="email"
       placeholder="jean@exemple.com"
-      [error]="submitted && email?.invalid ? (email?.hasError('required') ? 'L\'email est requis' : 'Email invalide') : null"
+      [error]="(submitted() || email?.touched || email?.dirty) && email?.invalid ? (email?.hasError('required') ? 'L\'email est requis' : 'Email invalide') : null"
     ></immopro-input>
 
     <immopro-input
@@ -32,7 +32,7 @@
       type="password"
       formControlName="password"
       placeholder="Minimum 8 caractères"
-      [error]="submitted && password?.invalid ? (password?.hasError('required') ? 'Le mot de passe est requis' : 'Minimum 8 caractères') : null"
+      [error]="(submitted() || password?.touched || password?.dirty) && password?.invalid ? (password?.hasError('required') ? 'Le mot de passe est requis' : 'Minimum 8 caractères') : null"
     ></immopro-input>
 
     <immopro-input
@@ -41,13 +41,13 @@
       type="password"
       formControlName="password_confirmation"
       placeholder="Confirmer votre mot de passe"
-      [error]="submitted && passwordConfirmation?.invalid ? (passwordConfirmation?.hasError('required') ? 'La confirmation est requise' : 'Les mots de passe ne correspondent pas') : null"
+      [error]="(submitted() || passwordConfirmation?.touched || passwordConfirmation?.dirty) && passwordConfirmation?.invalid ? (passwordConfirmation?.hasError('required') ? 'La confirmation est requise' : 'Les mots de passe ne correspondent pas') : null"
     ></immopro-input>
 
     <immopro-button
       type="submit"
-      [loading]="loading"
-      [disabled]="loading"
+      [loading]="loading()"
+      [disabled]="loading()"
     >
       Créer mon compte
     </immopro-button>
