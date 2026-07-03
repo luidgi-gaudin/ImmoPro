@@ -1,59 +1,159 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ImmoPro — API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST de gestion locative pour propriétaires bailleurs : portefeuilles de biens, locataires, baux conformes à la **loi n° 89-462 du 6 juillet 1989**, échéances de loyer et quittances.
 
-## About Laravel
+## Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **PHP ≥ 8.3** / **Laravel 13**
+- **Laravel Sanctum** (authentification par token Bearer)
+- **pragmarx/google2fa** (double authentification TOTP)
+- **SQLite** par défaut (configurable via `.env`)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Installation
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+composer run setup   # composer install, .env, clé d'app, migrations, npm install + build
+composer run dev     # serveur, queue, logs et vite en parallèle
+composer test        # suite de tests (unit + feature)
+```
 
-## Learning Laravel
+Variables d'environnement notables :
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+| Variable | Rôle | Défaut |
+|---|---|---|
+| `FRONTEND_URL` | Base des liens envoyés par e-mail (reset de mot de passe) | `http://localhost:4200` |
+| `MAIL_MAILER` | Transport mail (mettre `smtp` en production) | `log` |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Toutes les routes sont préfixées par `/api`. Les réponses sont en JSON. Les routes protégées attendent un header `Authorization: Bearer {token}`.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Authentification
 
-### Premium Partners
+### Inscription / connexion
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Méthode | Route | Description |
+|---|---|---|
+| `POST` | `/auth/register` | Inscription — retourne l'utilisateur + token |
+| `POST` | `/auth/login` | Connexion — retourne un token **ou** un défi 2FA |
+| `POST` | `/auth/logout` | 🔒 Révoque le token courant |
+| `GET` | `/auth/user` | 🔒 Utilisateur connecté |
 
-## Contributing
+`POST /auth/register` : `name`, `email`, `password`, `password_confirmation` (min. 8 caractères, lettres + chiffres).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+`POST /auth/login` : `email`, `password`.
 
-## Code of Conduct
+- Sans 2FA : `200` → `{ data, token, token_type }`
+- Avec 2FA active : `200` → `{ two_factor_required: true, challenge_token }` — enchaîner sur `/auth/2fa/challenge`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Double authentification (TOTP)
 
-## Security Vulnerabilities
+| Méthode | Route | Description |
+|---|---|---|
+| `POST` | `/auth/2fa/enable` | 🔒 Génère le secret + URL `otpauth://` (QR code) |
+| `POST` | `/auth/2fa/confirm` | 🔒 Confirme avec un code à 6 chiffres → retourne **8 codes de récupération** |
+| `POST` | `/auth/2fa/challenge` | Échange `challenge_token` + `code` (ou `recovery_code`) contre un token |
+| `POST` | `/auth/2fa/disable` | 🔒 Désactive (mot de passe requis) |
+| `POST` | `/auth/2fa/recovery-codes` | 🔒 Regénère les codes de récupération (mot de passe requis) |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Flux d'activation : `enable` → scanner le QR code (`otpauth_url`) dans Google Authenticator/Aegis → `confirm` avec le code affiché → stocker les codes de récupération (affichés une seule fois).
 
-## License
+Flux de connexion : `login` → si `two_factor_required`, `challenge` avec le `challenge_token` (valable 5 minutes) et le code TOTP. En cas de perte de l'appareil, un `recovery_code` (usage unique) remplace le code.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Le secret et les codes de récupération sont **chiffrés en base** et jamais exposés par l'API.
+
+### Mot de passe
+
+| Méthode | Route | Description |
+|---|---|---|
+| `POST` | `/auth/forgot-password` | Envoie l'e-mail de réinitialisation (réponse générique anti-énumération) |
+| `POST` | `/auth/reset-password` | Réinitialise avec `token`, `email`, `password`, `password_confirmation` |
+| `PUT` | `/auth/password` | 🔒 Changement : `current_password`, `password`, `password_confirmation` |
+
+Le lien envoyé pointe vers `{FRONTEND_URL}/reset-password?token=…&email=…`. Un reset révoque **tous** les tokens d'API ; un changement de mot de passe révoque tous les tokens **sauf** celui de la session courante.
+
+---
+
+## Ressources métier
+
+Toutes les routes ci-dessous sont protégées (🔒 Sanctum) et limitées aux données de l'utilisateur connecté (policies).
+
+### Portefeuilles & biens
+
+| Méthode | Route |
+|---|---|
+| `GET/POST` | `/portfolios` |
+| `GET/PUT/DELETE` | `/portfolios/{id}` |
+| `GET/POST` | `/portfolios/{id}/properties` |
+| `GET/PUT/DELETE` | `/portfolios/{id}/properties/{id}` |
+
+Un bien porte : type (`appartement`, `maison`, `terrain`), adresse, DPE (`A`–`G`), surface, pièces, équipements, loyer indicatif. Le champ `is_rented` est **synchronisé automatiquement** avec l'existence d'un bail actif.
+
+### Locataires
+
+| Méthode | Route |
+|---|---|
+| `GET/POST` | `/tenants` (index paginé) |
+| `GET/PUT/DELETE` | `/tenants/{id}` |
+
+RGPD : IBAN/BIC des locataires chiffrés au repos ; suppression douce (soft delete).
+
+### Baux
+
+| Méthode | Route | Description |
+|---|---|---|
+| `GET/POST` | `/leases` | Liste / création |
+| `GET/PUT/DELETE` | `/leases/{id}` | Détail / modification / suppression douce |
+| `POST` | `/leases/{id}/terminate` | Résiliation (`end_date`) — libère le bien |
+| `POST` | `/leases/{id}/revise-rent` | Révision annuelle du loyer (`irl_old`, `irl_new`) |
+
+Champs : `property_id`, `tenant_id`, `type`, `start_date`, `end_date`, `monthly_rent` (hors charges), `charges` (provision mensuelle), `deposit`, `payment_day` (1–28), `statut` (`actif`, `termine`, `en_attente`).
+
+**Règles légales appliquées à la validation (loi n° 89-462) :**
+
+| Type de bail (`type`) | Durée | Dépôt de garantie max |
+|---|---|---|
+| `nu` — location vide | ≥ 3 ans (art. 10) | 1 mois de loyer HC (art. 22) |
+| `meuble` — location meublée | ≥ 1 an (art. 25-7) | 2 mois de loyer HC (art. 25-6) |
+| `etudiant` — meublé étudiant | 9 mois (art. 25-7) | 2 mois de loyer HC |
+| `mobilite` — bail mobilité | 1 à 10 mois, `end_date` obligatoire (art. 25-12) | **interdit** (art. 25-13) |
+
+`end_date` est facultative pour `nu` et `meuble` (tacite reconduction). Un bail résilié (`termine`) échappe au contrôle de durée minimale.
+
+**Révision IRL (art. 17-1)** : `nouveau loyer = loyer × irl_new / irl_old` (indices INSEE trimestriels), au plus **une fois par an**, uniquement sur un bail actif. Réponse : `{ old_rent, new_rent, data }`.
+
+### Échéances de loyer & quittances
+
+| Méthode | Route | Description |
+|---|---|---|
+| `GET/POST` | `/leases/{id}/payments` | Échéances du bail |
+| `GET/PUT/DELETE` | `/leases/{id}/payments/{id}` | Détail / paiement / suppression |
+| `GET` | `/leases/{id}/payments/{id}/quittance` | **Quittance de loyer** (art. 21) |
+
+- `period` est normalisée au 1er du mois — une seule échéance par mois et par bail.
+- À la création, `amount_rent` et `amount_charges` reprennent par défaut le loyer et les charges du bail.
+- `status` est calculé : `paye` (si `paid_at`), `en_retard` (échéance dépassée), `en_attente`.
+- Pour marquer un paiement : `PUT` avec `paid_at` (+ `payment_method` facultatif).
+
+La **quittance** n'est délivrée que si l'échéance est payée (`422` sinon), avec le détail obligatoire loyer / charges, la période, le bailleur, le locataire, le bien et la mention de gratuité (art. 21).
+
+---
+
+## Limitation de débit & erreurs
+
+| Contexte | Limite |
+|---|---|
+| `/auth/register`, `/auth/login`, `/auth/2fa/challenge` | 10 req/min |
+| `/auth/forgot-password`, `/auth/reset-password` | 5 req/min |
+| Nouvelle demande de reset pour un même compte | 1/min (throttle broker) |
+
+Codes de réponse : `200/201` succès, `401` non authentifié ou défi 2FA invalide, `403` ressource d'un autre utilisateur, `404` inexistant ou hors périmètre, `409` conflit d'état métier (bail déjà résilié, révision < 1 an, 2FA déjà active…), `422` erreur de validation, `429` trop de requêtes.
+
+## Tests
+
+```bash
+composer test
+```
+
+- **Unit** : plafonds/durées légales par type de bail, statut des échéances, service TOTP (codes, défis, codes de récupération).
+- **Feature** : auth (register/login/logout), 2FA de bout en bout, reset et changement de mot de passe, CRUD portfolios/properties/tenants/leases/payments, conformité loi 89-462 (dépôts, durées, mobilité), résiliation, révision IRL, quittances, isolation entre utilisateurs (403/404).
