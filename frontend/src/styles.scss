@@ -1,34 +1,60 @@
-/* Design System - Linear Dark/Tech Aesthetic */
+/* Design System - Luxury Gold/Champagne Aesthetic */
 
 :root {
-  /* Colors - Zinc Palette */
-  --bg-color: #09090b;
-  --surface-color: #09090b;
-  --surface-card: #18181b;
-  --surface-sidebar: #09090b;
+  /* Colors - Dark Luxury (Default) - ImmoPro Champagne Gold */
+  --bg-color: #0a0a0a;
+  --surface-color: #0a0a0a;
+  --surface-card: #121212;
+  --surface-sidebar: #0d0d0d;
   
-  --primary: #6366f1;
-  --primary-glow: rgba(99, 102, 241, 0.15);
+  --primary: #c5a880; /* Elegant Champagne Gold */
+  --primary-glow: rgba(197, 168, 128, 0.08);
+  --primary-hover: #d5bd9c;
   
-  --border: rgba(39, 39, 42, 0.5);
-  --border-hover: rgba(63, 63, 70, 0.8);
+  --border: rgba(197, 168, 128, 0.08);
+  --border-hover: rgba(197, 168, 128, 0.18);
   
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --text-primary: #fafafa; /* Silk Off-White */
+  --text-secondary: #8e8d88; /* Warm Stone Gray */
+  --text-muted: #5e5d59; /* Soft Gray */
   
-  --error: #ef4444;
-  --success: #10b981;
+  --error: #cf6679;
+  --success: #81c784;
+  --info: #64b5f6;
   
   /* Layout */
   --sidebar-width: 240px;
   --header-height: 64px;
   --radius-lg: 12px;
   --radius-md: 8px;
-  --radius-sm: 6px;
+  --radius-sm: 4px;
   
   /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Light Luxury Theme Override */
+html.light-theme, body.light-theme {
+  --bg-color: #faf9f6; /* Silk Cream */
+  --surface-color: #faf9f6;
+  --surface-card: #ffffff;
+  --surface-sidebar: #f3f2eb;
+  
+  --primary: #b59e74; /* Bronze Champagne Gold */
+  --primary-glow: rgba(181, 158, 116, 0.08);
+  --primary-hover: #a58e65;
+  
+  --border: rgba(181, 158, 116, 0.12);
+  --border-hover: rgba(181, 158, 116, 0.22);
+  
+  --text-primary: #1c1a17; /* Warm Charcoal */
+  --text-secondary: #6b6a64; /* Muted Bronze Slate */
+  --text-muted: #9b9a94; /* Pebble Gray */
+  
+  --error: #b71c1c;
+  --success: #2e7d32;
+  --info: #1565c0;
 }
 
 /* Base Styles */
@@ -43,102 +69,227 @@ html, body {
   margin: 0;
   background-color: var(--bg-color);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: -0.01em;
+  line-height: 1.6;
+  transition: background-color var(--transition-smooth), color var(--transition-smooth);
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5, h6, .luxury-title {
   color: var(--text-primary);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   margin-top: 0;
+  line-height: 1.2;
 }
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
 
 a {
   color: var(--primary);
   text-decoration: none;
   transition: var(--transition-fast);
+  border-bottom: 1px solid transparent;
   
   &:hover {
-    filter: brightness(1.2);
+    color: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
+}
+
+/* Luxury Card & Glassmorphism styles */
+.luxury-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
+  transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+  
+  &.hoverable:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-hover);
+    box-shadow: 0 20px 40px -20px rgba(212, 175, 55, 0.15);
   }
 }
 
 /* Utilities */
 .text-secondary { color: var(--text-secondary); }
 .text-muted { color: var(--text-muted); }
+.text-gold { color: var(--primary); }
 
-/* Global Forms (fallback if not using ui-lib components) */
-input {
-  background: var(--surface-card);
+/* Global Forms styling */
+input, select, textarea {
+  background-color: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border);
   color: var(--text-primary);
   border-radius: var(--radius-md);
-  padding: 10px 14px;
+  padding: 12px 16px;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   transition: var(--transition-fast);
   width: 100%;
+  
+  body.light-theme & {
+    background-color: rgba(0, 0, 0, 0.01);
+  }
 
   &:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 2px var(--primary-glow);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+    background-color: rgba(255, 255, 255, 0.04);
+    
+    body.light-theme & {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
   }
 
   &::placeholder {
     color: var(--text-muted);
   }
   
-  &.is-invalid {
-    border-color: var(--error);
-    &:focus {
-      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
-    }
-  }
-}
-
-.invalid-feedback {
-  color: var(--error);
-  font-size: 0.75rem;
-  margin-top: 4px;
-}
-
-button {
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: 500;
-  transition: var(--transition-fast);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 16px;
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  border: 1px solid transparent;
-}
-
-.btn-primary {
-  background-color: var(--primary);
-  color: white;
-  &:hover:not(:disabled) {
-    background-color: #4f46e5;
-  }
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
+  
+  &.is-invalid {
+    border-color: var(--error);
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(224, 94, 94, 0.15);
+    }
+  }
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+  
+  body.light-theme & {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23aa8439' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  }
+
+  option {
+    background-color: var(--surface-card);
+    color: var(--text-primary);
+  }
+}
+
+/* Luxury Alert Boxes */
+.alert {
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-error {
+  background: rgba(224, 94, 94, 0.08);
+  border-color: rgba(224, 94, 94, 0.2);
+  color: var(--error);
+}
+
+.alert-success {
+  background: rgba(107, 179, 147, 0.08);
+  border-color: rgba(107, 179, 147, 0.2);
+  color: var(--success);
+}
+
+.alert-info {
+  background: rgba(140, 163, 212, 0.08);
+  border-color: rgba(140, 163, 212, 0.2);
+  color: var(--info);
+}
+
+/* Modals */
+.luxury-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeInOverlay 300ms ease;
+}
+
+.luxury-modal {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  animation: slideInModal 350ms cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  h3 {
+    margin: 0;
+    font-size: 1.6rem;
+  }
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  padding: 0;
+  line-height: 1;
+  
+  &:hover {
+    color: var(--primary);
+  }
+}
+
+.modal-body {
+  padding: 32px;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 20px 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -147,9 +298,259 @@ button {
 
 ::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 4px;
+  border-radius: 10px;
   
   &:hover {
     background: var(--border-hover);
+  }
+}
+
+/* Animations */
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInModal {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes structureRise {
+  from {
+    transform: translateY(25px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.luxury-card, .lease-item-card, .table-wrapper, .feature-card, .main-card, .side-card, .tenants-container, .portfolios-container, .leases-container {
+  animation: structureRise 550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Luxury Navbar Styles */
+.navbar-container {
+  height: var(--header-height);
+  background: rgba(12, 12, 14, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background var(--transition-smooth), border var(--transition-smooth);
+  
+  body.light-theme & {
+    background: rgba(253, 252, 247, 0.88);
+    border-bottom: 1.5px solid rgba(170, 132, 57, 0.18);
+    box-shadow: 0 4px 20px rgba(170, 132, 57, 0.04);
+  }
+}
+
+.navbar-content {
+  max-width: 1200px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  
+  .logo-icon {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: #1c1a17;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px -3px var(--primary-glow);
+  }
+  
+  .logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    
+    body.light-theme & {
+      color: #1c1b18;
+    }
+  }
+}
+
+.main-nav {
+  display: flex;
+  gap: 16px;
+  
+  a {
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+    cursor: pointer;
+    
+    body.light-theme & {
+      color: #5c5952;
+    }
+    
+    &:hover {
+      color: var(--text-primary);
+      background: var(--primary-glow);
+      
+      body.light-theme & {
+        color: var(--primary);
+        background: rgba(170, 132, 57, 0.05);
+      }
+    }
+    
+    &.active {
+      color: var(--primary);
+      background: var(--primary-glow);
+      font-weight: 700;
+      border: 1px solid var(--border);
+      
+      body.light-theme & {
+        color: var(--primary);
+        background: rgba(170, 132, 57, 0.08);
+        border: 1px solid rgba(170, 132, 57, 0.25);
+      }
+    }
+  }
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar-ring {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.02);
+  transition: all var(--transition-fast);
+  
+  body.light-theme & {
+    border-color: rgba(170, 132, 57, 0.25);
+    background: rgba(0, 0, 0, 0.02);
+  }
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  &:hover {
+    .avatar-ring {
+      border-color: var(--primary);
+      box-shadow: 0 0 8px var(--primary-glow);
+    }
+    .user-name {
+      color: var(--text-primary);
+      
+      body.light-theme & {
+        color: #1c1b18;
+      }
+    }
+  }
+  
+  .user-initial {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--primary);
+    text-transform: uppercase;
+  }
+
+  .user-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+    
+    body.light-theme & {
+      color: #5c5952;
+    }
+  }
+}
+
+.btn-theme, .btn-logout {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  body.light-theme & {
+    border-color: rgba(170, 132, 57, 0.25);
+    color: #5c5952;
+  }
+  
+  &:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    background: var(--primary-glow);
+    
+    body.light-theme & {
+      color: var(--primary);
+      border-color: var(--primary);
+      background: rgba(170, 132, 57, 0.05);
+    }
+  }
+}
+
+.btn-logout:hover {
+  color: var(--error);
+  border-color: rgba(224, 94, 94, 0.3);
+  background: rgba(224, 94, 94, 0.05);
+  
+  body.light-theme & {
+    color: #c54242;
+    border-color: rgba(197, 66, 66, 0.3);
+    background: rgba(197, 66, 66, 0.05);
+  }
+}
+
+/* Print Styles for Rent Receipts */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
   }
 }
