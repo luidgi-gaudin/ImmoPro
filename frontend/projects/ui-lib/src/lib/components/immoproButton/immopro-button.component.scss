@@ -3,56 +3,88 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
   font-weight: 500;
-  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--transition-fast);
   border: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
   font-family: inherit;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
   }
 }
 
 .btn-solid {
   &.color-primary {
-    background: #6366f1;
-    color: white;
-    &:hover:not(:disabled) { background: #4f46e5; }
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: #1c1a17; /* Dark text for gold background */
+    font-weight: 600;
+    box-shadow: 0 4px 15px -4px var(--primary-glow);
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px -3px var(--primary-glow);
+      filter: brightness(1.05);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
   }
   &.color-secondary {
-    background: #27272a;
-    color: white;
-    &:hover:not(:disabled) { background: #3f3f46; }
+    background: var(--surface-card);
+    border-color: var(--border);
+    color: var(--text-primary);
+    
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-hover);
+      
+      body.light-theme & {
+        background: rgba(0, 0, 0, 0.02);
+      }
+    }
   }
   &.color-error {
-    background: #ef4444;
+    background: var(--error);
     color: white;
-    &:hover:not(:disabled) { background: #dc2626; }
+    
+    &:hover:not(:disabled) {
+      filter: brightness(1.1);
+    }
   }
 }
 
 .btn-outline {
   background: transparent;
-  border-color: rgba(39, 39, 42, 0.5);
-  color: #ffffff;
+  border-color: var(--border);
+  color: var(--text-primary);
+  
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(63, 63, 70, 0.8);
+    background: var(--primary-glow);
+    border-color: var(--primary);
+    color: var(--primary);
   }
 }
 
 .btn-ghost {
   background: transparent;
-  color: #a1a1aa;
+  color: var(--text-secondary);
+  
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+    
+    body.light-theme & {
+      background: rgba(0, 0, 0, 0.02);
+    }
   }
 }
 

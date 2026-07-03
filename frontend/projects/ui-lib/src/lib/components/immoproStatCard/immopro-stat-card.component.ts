@@ -1,10 +1,9 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'immopro-stat-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './immopro-stat-card.component.html',
   styleUrls: ['./immopro-stat-card.component.scss']
 })

@@ -4,20 +4,27 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
-              radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.05) 0%, transparent 40%);
+  background: radial-gradient(circle at top left, var(--primary-glow) 0%, transparent 45%),
+              radial-gradient(circle at bottom right, var(--primary-glow) 0%, transparent 45%),
+              var(--bg-color);
+  transition: background var(--transition-smooth);
 }
 
 .auth-card {
   width: 100%;
-  max-width: 440px;
-  padding: 40px;
-  background: #18181b;
-  border: 1px solid rgba(39, 39, 42, 0.5);
-  border-radius: 12px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  max-width: 460px;
+  padding: 50px 40px;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
   position: relative;
   overflow: hidden;
+  transition: all var(--transition-smooth);
+
+  body.light-theme & {
+    box-shadow: 0 20px 45px -15px rgba(170, 132, 57, 0.08);
+  }
 
   &::before {
     content: '';
@@ -25,31 +32,49 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #6366f1, transparent);
-    opacity: 0.5;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0.4;
   }
 }
 
 .auth-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 
   h1 {
-    font-size: 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 500;
     margin-bottom: 8px;
-    color: white;
+    color: var(--text-primary);
   }
 
   .subtitle {
-    color: #a1a1aa;
-    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
   }
 }
 
 .auth-footer {
-  margin-top: 24px;
+  margin-top: 28px;
   text-align: center;
   font-size: 0.875rem;
-  color: #a1a1aa;
+  color: var(--text-secondary);
+  
+  a {
+    font-weight: 500;
+    color: var(--primary);
+    
+    &:hover {
+      color: var(--primary-hover);
+    }
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
