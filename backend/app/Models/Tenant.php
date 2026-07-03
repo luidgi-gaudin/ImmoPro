@@ -31,4 +31,13 @@ class Tenant extends Model
     {
         return $this->hasMany(Lease::class);
     }
+
+    protected function casts()
+    {
+        return [
+            // RGPD : coordonnées bancaires chiffrées au repos
+            'iban' => 'encrypted',
+            'bic' => 'encrypted',
+        ];
+    }
 }
