@@ -1,0 +1,156 @@
+<div class="landing-container">
+  <!-- Split Hero Section -->
+  <section class="hero-section">
+    <div class="hero-text-content">
+      <h1 class="hero-title">ImmoPro</h1>
+      <p class="hero-subtitle">L'art de la gestion immobilière de prestige</p>
+      
+      <p class="hero-description lead-text">
+        Pilotez vos ensembles immobiliers d'exception, suivez vos échéances de loyers, révisez vos baux réglementaires et quittancez vos locataires en toute sérénité.
+      </p>
+
+      <div class="hero-actions">
+        @if (auth.isAuthenticated()) {
+          @if (auth.currentUser(); as user) {
+            <div class="auth-welcome-box">
+              <p class="user-greeting">Ravi de vous revoir, <strong>{{ user.name }}</strong></p>
+              <div class="button-group">
+                <a routerLink="/dashboard">
+                  <immopro-button>Accéder au Dashboard</immopro-button>
+                </a>
+                <immopro-button color="secondary" (click)="logout()">Se déconnecter</immopro-button>
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="button-group">
+            <a routerLink="/login">
+              <immopro-button>Se connecter</immopro-button>
+            </a>
+            <a routerLink="/register">
+              <immopro-button color="secondary">Créer un compte</immopro-button>
+            </a>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Innovative Architectural Blueprint Visual -->
+    <div class="hero-visual-content">
+      <div class="blueprint-frame">
+        <svg viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="blueprint-svg">
+          <!-- Grid Background pattern -->
+          <defs>
+            <pattern id="blueprint-grid" width="25" height="25" patternUnits="userSpaceOnUse">
+              <path d="M 25 0 L 0 0 0 25" fill="none" stroke="var(--border)" stroke-width="0.5" opacity="0.3"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#blueprint-grid)" rx="8" />
+
+          <!-- Blueprint Outer border -->
+          <rect x="15" y="15" width="470" height="370" stroke="var(--border)" stroke-width="1" rx="4" />
+          <rect x="20" y="20" width="460" height="360" stroke="var(--border)" stroke-width="0.5" rx="2" />
+
+          <!-- Floor Plan Layout Walls -->
+          <!-- Living Room (Salon) -->
+          <rect x="50" y="50" width="220" height="180" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round" opacity="0.75" />
+          <!-- Bedroom (Chambre) -->
+          <rect x="270" y="50" width="180" height="180" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round" opacity="0.75" />
+          <!-- Kitchen (Cuisine) -->
+          <rect x="50" y="230" width="140" height="120" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round" opacity="0.75" />
+          <!-- Bathroom (SdB) -->
+          <rect x="190" y="230" width="120" height="120" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round" opacity="0.75" />
+          <!-- Balcony (Balcon) -->
+          <rect x="310" y="230" width="140" height="80" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4,4" stroke-linejoin="round" opacity="0.6" />
+
+          <!-- Dimensions & Architectural Marks -->
+          <!-- Dimension lines -->
+          <line x1="50" y1="35" x2="450" y2="35" stroke="var(--primary)" stroke-width="1" opacity="0.5" />
+          <line x1="50" y1="30" x2="50" y2="40" stroke="var(--primary)" stroke-width="1" opacity="0.5" />
+          <line x1="270" y1="30" x2="270" y2="40" stroke="var(--primary)" stroke-width="1" opacity="0.5" />
+          <line x1="450" y1="30" x2="450" y2="40" stroke="var(--primary)" stroke-width="1" opacity="0.5" />
+          <text x="160" y="30" fill="var(--primary)" font-size="9" font-family="monospace" text-anchor="middle" opacity="0.7">12.80 m</text>
+          <text x="360" y="30" fill="var(--primary)" font-size="9" font-family="monospace" text-anchor="middle" opacity="0.7">9.20 m</text>
+
+          <!-- Label text annotations -->
+          <text x="160" y="140" fill="var(--text-primary)" font-size="14" font-family="'Cormorant Garamond', serif" font-weight="600" text-anchor="middle">SALON</text>
+          <text x="160" y="155" fill="var(--text-secondary)" font-size="9" font-family="monospace" text-anchor="middle">39.6 m²</text>
+
+          <text x="360" y="140" fill="var(--text-primary)" font-size="14" font-family="'Cormorant Garamond', serif" font-weight="600" text-anchor="middle">SUITE PARENTALE</text>
+          <text x="360" y="155" fill="var(--text-secondary)" font-size="9" font-family="monospace" text-anchor="middle">24.5 m²</text>
+
+          <text x="120" y="290" fill="var(--text-primary)" font-size="12" font-family="'Cormorant Garamond', serif" font-weight="600" text-anchor="middle">CUISINE</text>
+          <text x="120" y="302" fill="var(--text-secondary)" font-size="9" font-family="monospace" text-anchor="middle">16.8 m²</text>
+
+          <text x="250" y="290" fill="var(--text-primary)" font-size="12" font-family="'Cormorant Garamond', serif" font-weight="600" text-anchor="middle">SdB</text>
+          <text x="250" y="302" fill="var(--text-secondary)" font-size="9" font-family="monospace" text-anchor="middle">11.4 m²</text>
+
+          <text x="380" y="270" fill="var(--primary)" font-size="11" font-family="'Cormorant Garamond', serif" font-weight="600" text-anchor="middle">BALCON</text>
+          <text x="380" y="282" fill="var(--text-secondary)" font-size="9" font-family="monospace" text-anchor="middle">11.2 m²</text>
+
+          <!-- North Arrow / Compass Compass Seal -->
+          <circle cx="430" cy="340" r="18" stroke="var(--primary)" stroke-width="1" opacity="0.6" />
+          <line x1="430" y1="318" x2="430" y2="362" stroke="var(--primary)" stroke-width="1" opacity="0.6" />
+          <line x1="408" y1="340" x2="452" y2="340" stroke="var(--primary)" stroke-width="1" opacity="0.6" />
+          <polygon points="430,320 434,338 426,338" fill="var(--primary)" opacity="0.8" />
+          <text x="430" y="315" fill="var(--primary)" font-size="8" font-family="sans-serif" font-weight="bold" text-anchor="middle">N</text>
+
+          <!-- Stamp / Logo block in lower right -->
+          <rect x="25" y="315" width="60" height="45" stroke="var(--border)" stroke-width="0.5" fill="var(--surface-color)" opacity="0.8" />
+          <text x="55" y="332" fill="var(--primary)" font-size="10" font-family="'Cormorant Garamond', serif" font-weight="bold" text-anchor="middle">IP-RES V</text>
+          <text x="55" y="345" fill="var(--text-muted)" font-size="6" font-family="monospace" text-anchor="middle">ECH: 1/50</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid Section -->
+  <section class="features-section">
+    <div class="section-divider">
+      <span class="line"></span>
+      <span class="diamond"></span>
+      <span class="line"></span>
+    </div>
+    
+    <h2 class="section-title">Prestations de gestion</h2>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h3>Patrimoine d'exception</h3>
+        <p class="text-secondary">Regroupez vos biens dans des portfolios personnalisés. Suivez les caractéristiques de chaque actif (DPE, surface, pièces) dans un inventaire clair.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <h3>Baux réglementaires</h3>
+        <p class="text-secondary">Créez des baux conformes aux lois en vigueur (nu, meublé, étudiant, mobilité) avec encadrement des garanties et vérifications des durées légales.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <h3>Échéanciers & Quittances</h3>
+        <p class="text-secondary">Gérez le paiement des loyers mensuels. Générez des quittances de loyer au format réglementaire, prêtes à être imprimées en un clic pour vos locataires.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3>Sécurité renforcée</h3>
+        <p class="text-secondary">Protégez vos données sensibles et bancaires grâce à la double authentification TOTP (2FA), des codes de récupération d'urgence et une session chiffrée.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <p class="text-muted">&copy; 2026 ImmoPro. Tous droits réservés. L'excellence dans la gestion immobilière.</p>
+  </footer>
+</div>
