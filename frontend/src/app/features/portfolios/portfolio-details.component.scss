@@ -1,0 +1,355 @@
+.portfolio-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  
+  h1 {
+    font-size: 2.2rem;
+    margin-bottom: 6px;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.summary-stats {
+  display: flex;
+  margin-top: 15px;
+  
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    
+    .label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    
+    .value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 500;
+      line-height: 1.1;
+    }
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  h2 {
+    margin: 0;
+  }
+  
+  .badge-count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 99px;
+    background: var(--primary-glow);
+    color: var(--primary);
+  }
+}
+
+/* Luxury Data Table */
+.table-wrapper {
+  position: relative;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 10px 35px -15px rgba(0, 0, 0, 0.3);
+}
+
+.table-loading-overlay {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.luxury-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+  
+  th {
+    padding: 18px 24px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.005);
+    
+    body.light-theme & {
+      background: rgba(0, 0, 0, 0.005);
+    }
+  }
+  
+  td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: middle;
+    transition: background-color var(--transition-fast);
+  }
+  
+  tr:hover td {
+    background-color: rgba(212, 175, 55, 0.015);
+    color: var(--text-primary);
+    
+    body.light-theme & {
+      background-color: rgba(170, 132, 57, 0.015);
+    }
+  }
+  
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  
+  .avatar-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-glow);
+    border: 1px solid var(--border);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+  
+  .title-text {
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.address-text {
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.rent-text {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* DPE Energy Badge Styles */
+.dpe-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #1a1a1a;
+  
+  &[data-dpe="A"] { background: #31b057; color: #fff; }
+  &[data-dpe="B"] { background: #3dbc5f; color: #fff; }
+  &[data-dpe="C"] { background: #96c83c; color: #000; }
+  &[data-dpe="D"] { background: #e6c800; color: #000; }
+  &[data-dpe="E"] { background: #eb9600; color: #000; }
+  &[data-dpe="F"] { background: #e65a00; color: #fff; }
+  &[data-dpe="G"] { background: #e61e00; color: #fff; }
+}
+
+/* Status badge pills */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: rgba(107, 179, 147, 0.08);
+  border: 1px solid rgba(107, 179, 147, 0.2);
+  color: var(--success);
+  
+  &.rented {
+    background: rgba(140, 163, 212, 0.08);
+    border: 1px solid rgba(140, 163, 212, 0.2);
+    color: var(--info);
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px !important;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Action buttons */
+.actions {
+  text-align: right;
+  width: 100px;
+}
+
+.btn-action {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-left: 6px;
+  
+  &:hover:not(:disabled) {
+    color: var(--primary);
+    border-color: var(--primary);
+    background: var(--primary-glow);
+  }
+  
+  &.delete:hover:not(:disabled) {
+    color: var(--error);
+    border-color: rgba(224, 94, 94, 0.3);
+    background: rgba(224, 94, 94, 0.05);
+  }
+  
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+/* Modal Form Layouts */
+.modal-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.luxury-select-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  
+  label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+  }
+  
+  .field-error {
+    font-size: 0.75rem;
+    color: var(--error);
+    margin-top: 2px;
+  }
+}
+
+/* Luxury Checkboxes */
+.checkbox-row {
+  margin-top: 25px;
+  
+  .checkbox-title {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+}
+
+.checkbox-grid-luxury {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 15px;
+}
+
+.luxury-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  
+  input {
+    display: none;
+  }
+  
+  .checkmark {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    position: relative;
+    transition: all var(--transition-fast);
+    background: rgba(255, 255, 255, 0.01);
+  }
+  
+  &:hover {
+    color: var(--text-primary);
+    .checkmark {
+      border-color: var(--primary);
+    }
+  }
+  
+  input:checked ~ .checkmark {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    
+    &::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 5px;
+      height: 9px;
+      border: solid #1c1a17;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+}

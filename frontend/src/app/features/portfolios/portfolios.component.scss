@@ -1,0 +1,102 @@
+.portfolios-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  
+  h1 {
+    font-size: 2.2rem;
+    margin-bottom: 6px;
+  }
+}
+
+.portfolios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 30px;
+  
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.properties-preview {
+  margin-top: 15px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  
+  body.light-theme & {
+    background: rgba(0, 0, 0, 0.005);
+  }
+}
+
+.preview-header {
+  margin-bottom: 12px;
+  
+  .count {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+}
+
+.property-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    
+    .prop-name {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    
+    .prop-city {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+    }
+  }
+
+  .more-props {
+    font-style: italic;
+    font-size: 0.8rem;
+    justify-content: center;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+  }
+  
+  .empty-preview {
+    font-style: italic;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 10px 0;
+  }
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
