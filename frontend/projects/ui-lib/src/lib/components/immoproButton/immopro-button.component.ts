@@ -1,10 +1,9 @@
-import { Component, input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'immopro-button',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './immopro-button.component.html',
   styleUrls: ['./immopro-button.component.scss']
 })
@@ -15,7 +14,7 @@ export class ImmoproButtonComponent {
   loading = input<boolean>(false);
   type = input<'button' | 'submit'>('button');
 
-  @Output() onClick = new EventEmitter<MouseEvent>();
+  onClick = output<MouseEvent>();
 
   handleOnClick(event: MouseEvent) {
     if (!this.disabled() && !this.loading()) {

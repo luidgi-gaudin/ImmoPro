@@ -1,10 +1,9 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'immopro-auth-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './immopro-auth-card.component.html',
   styleUrls: ['./immopro-auth-card.component.scss']
 })

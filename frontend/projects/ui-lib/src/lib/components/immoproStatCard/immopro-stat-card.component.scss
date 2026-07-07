@@ -1,45 +1,57 @@
 .stat-card {
-  padding: 24px;
-  background: #18181b;
-  border: 1px solid rgba(39, 39, 42, 0.5);
-  border-radius: 12px;
-  transition: all 150ms ease;
+  padding: 28px;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-smooth);
   position: relative;
+  box-shadow: 0 10px 25px -15px rgba(0, 0, 0, 0.3);
   
   &:hover {
-    border-color: rgba(63, 63, 70, 0.8);
-    transform: translateY(-2px);
+    border-color: var(--border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px -15px rgba(212, 175, 55, 0.12);
   }
 
   .stat-label {
-    font-size: 0.875rem;
-    color: #a1a1aa;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
     margin-bottom: 8px;
   }
 
   .stat-value {
-    font-size: 1.875rem;
-    font-weight: 700;
-    color: white;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.25rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.1;
   }
 
   .stat-trend {
     position: absolute;
-    top: 24px;
-    right: 24px;
-    font-size: 0.75rem;
+    top: 28px;
+    right: 28px;
+    font-size: 0.7rem;
     font-weight: 600;
-    padding: 2px 8px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
     border-radius: 99px;
+    border: 1px solid transparent;
     
     &.success {
-      background: rgba(16, 185, 129, 0.1);
-      color: #10b981;
+      background: rgba(107, 179, 147, 0.08);
+      border-color: rgba(107, 179, 147, 0.2);
+      color: var(--success);
     }
 
     &.info {
-      background: rgba(99, 102, 241, 0.1);
-      color: #6366f1;
+      background: rgba(140, 163, 212, 0.08);
+      border-color: rgba(140, 163, 212, 0.2);
+      color: var(--info);
     }
   }
 }

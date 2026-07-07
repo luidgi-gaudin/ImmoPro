@@ -4,6 +4,8 @@
   [class]="'btn-' + variant() + ' color-' + color()"
   (click)="handleOnClick($event)"
 >
-  <span *ngIf="loading()" class="loader"></span>
+  @if (loading()) {
+    <span class="loader"></span>
+  }
   <ng-content></ng-content>
 </button>

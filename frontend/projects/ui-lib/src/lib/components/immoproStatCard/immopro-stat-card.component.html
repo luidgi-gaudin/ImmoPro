@@ -1,7 +1,9 @@
 <div class="stat-card">
   <div class="stat-label">{{ label() }}</div>
   <div class="stat-value">{{ value() }}</div>
-  <div class="stat-trend" *ngIf="trend()" [class]="trendType()">
-    {{ trend() }}
-  </div>
+  @if (trend()) {
+    <div class="stat-trend" [class]="trendType()">
+      {{ trend() }}
+    </div>
+  }
 </div>

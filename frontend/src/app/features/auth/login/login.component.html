@@ -1,0 +1,92 @@
+<immopro-auth-card
+  [title]="twoFactorRequired() ? 'Double Authentification' : 'Bon retour'"
+  [subtitle]="twoFactorRequired() ? 'Veuillez saisir votre code de sécurité pour continuer' : 'Connectez-vous à votre espace ImmoPro'"
+>
+  @if (error()) {
+    <div class="alert alert-error">
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Standard Login Form -->
+  @if (!twoFactorRequired()) {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <immopro-input
+        id="email"
+        label="Email"
+        type="email"
+        formControlName="email"
+        placeholder="nom@exemple.com"
+        [error]="(submitted() || email?.touched || email?.dirty) && email?.invalid ? (email?.hasError('required') ? 'L\'email est requis' : 'Email invalide') : null"
+      ></immopro-input>
+
+      <immopro-input
+        id="password"
+        label="Mot de passe"
+        type="password"
+        formControlName="password"
+        placeholder="••••••••"
+        [error]="(submitted() || password?.touched || password?.dirty) && password?.invalid ? 'Le mot de passe est requis' : null"
+      ></immopro-input>
+
+      <div style="text-align: right; margin-top: -10px; margin-bottom: 10px;">
+        <a routerLink="/forgot-password" style="font-size: 0.8rem; color: var(--text-secondary);">Mot de passe oublié ?</a>
+      </div>
+
+      <immopro-button
+        type="submit"
+        [loading]="loading()"
+        [disabled]="loading()"
+      >
+        Se connecter
+      </immopro-button>
+    </form>
+  } @else {
+    <!-- Two-Factor Authentication Form -->
+    <form [formGroup]="twoFactorForm" (ngSubmit)="onTwoFactorSubmit()">
+      
+      @if (!useRecoveryCode()) {
+        <!-- Code TOTP Input -->
+        <immopro-input
+          id="code"
+          label="Code de sécurité à 6 chiffres"
+          type="text"
+          formControlName="code"
+          placeholder="000000"
+          [error]="(submitted() || code?.touched || code?.dirty) && code?.invalid ? 'Le code de sécurité doit comporter 6 chiffres' : null"
+        ></immopro-input>
+      } @else {
+        <!-- Recovery Code Input -->
+        <immopro-input
+          id="recovery_code"
+          label="Code de récupération d'urgence"
+          type="text"
+          formControlName="recovery_code"
+          placeholder="xxxx-xxxx-xxxx"
+          [error]="(submitted() || recoveryCode?.touched || recoveryCode?.dirty) && recoveryCode?.invalid ? 'Code de récupération requis' : null"
+        ></immopro-input>
+      }
+
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 4px;">
+        <a href="javascript:void(0)" (click)="toggleRecoveryMode()" style="font-size: 0.8rem; color: var(--text-secondary);">
+          {{ useRecoveryCode() ? 'Utiliser l\'application TOTP' : 'Utiliser un code de récupération' }}
+        </a>
+        <a href="javascript:void(0)" (click)="resetLoginFlow()" style="font-size: 0.8rem; color: var(--text-secondary);">
+          Retour
+        </a>
+      </div>
+
+      <immopro-button
+        type="submit"
+        [loading]="loading()"
+        [disabled]="loading()"
+      >
+        Vérifier le code
+      </immopro-button>
+    </form>
+  }
+
+  <div footer>
+    Pas encore membre? <a routerLink="/register">Créer un compte</a>
+  </div>
+</immopro-auth-card>

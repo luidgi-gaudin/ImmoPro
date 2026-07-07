@@ -1,0 +1,100 @@
+<div class="portfolios-container">
+  <header class="page-header">
+    <div>
+      <h1>Mes Portfolios</h1>
+      <p class="subtitle text-secondary">Gérez vos ensembles immobiliers de prestige et suivez leurs performances.</p>
+    </div>
+    <immopro-button (onClick)="addPortfolio()">
+      <span>+ Nouveau Portfolio</span>
+    </immopro-button>
+  </header>
+
+  <div class="portfolios-grid">
+    @for (portfolio of portfolios(); track portfolio.id) {
+      <immopro-card [hoverable]="true" style="cursor: pointer;" (click)="viewPortfolio(portfolio)">
+        <div card-header>
+          <h3 class="luxury-title" style="margin: 0; font-size: 1.5rem;">{{ portfolio.name }}</h3>
+          <p class="text-secondary" style="font-size: 0.85rem; margin: 5px 0 0;">
+            {{ portfolio.description || 'Aucune description disponible' }}
+          </p>
+        </div>
+        
+        <div class="properties-preview">
+          <div class="preview-header">
+            <span class="count">{{ portfolio.properties_count || 0 }} actifs immobiliers</span>
+          </div>
+          <ul class="property-list">
+            @for (property of portfolio.properties?.slice(0, 3); track property.id) {
+              <li>
+                <span class="prop-name">{{ property.title }}</span>
+                <span class="prop-city">{{ property.city }}</span>
+              </li>
+            }
+            @if ((portfolio.properties_count ?? 0) > 3) {
+              <li class="more-props text-gold">
+                + {{ (portfolio.properties_count ?? 0) - 3 }} autres propriétés de prestige...
+              </li>
+            }
+            @if (!portfolio.properties || portfolio.properties.length === 0) {
+              <li class="empty-preview text-muted">Aucune propriété enregistrée.</li>
+            }
+          </ul>
+        </div>
+
+        <div card-footer class="card-actions" (click)="$event.stopPropagation()">
+          <immopro-button variant="ghost" (onClick)="viewPortfolio(portfolio)">
+            Gérer les biens &rarr;
+          </immopro-button>
+        </div>
+      </immopro-card>
+    }
+  </div>
+</div>
+
+<!-- Luxury Create Modal -->
+@if (createModalOpen()) {
+  <div class="luxury-modal-overlay" (click)="closeCreateModal()">
+    <div class="luxury-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="luxury-title">Nouveau Portfolio</h3>
+        <button type="button" class="modal-close" (click)="closeCreateModal()">×</button>
+      </div>
+
+      <form [formGroup]="createForm" (ngSubmit)="submitPortfolio()">
+        <div class="modal-body">
+          @if (error()) {
+            <div class="alert alert-error">
+              {{ error() }}
+            </div>
+          }
+
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <immopro-input
+              id="portfolio-name"
+              label="Nom du portfolio"
+              formControlName="name"
+              placeholder="Ex: Résidences Centre Ville"
+              [error]="submitted() && name?.invalid ? (name?.hasError('required') ? 'Le nom est requis' : 'Minimum 2 caractères') : null"
+            ></immopro-input>
+
+            <immopro-input
+              id="portfolio-description"
+              label="Description détaillée"
+              formControlName="description"
+              placeholder="Description facultative de ce patrimoine"
+            ></immopro-input>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <immopro-button variant="ghost" type="button" (onClick)="closeCreateModal()">
+            Annuler
+          </immopro-button>
+          <immopro-button type="submit" [loading]="loading()" [disabled]="loading()">
+            Créer le portfolio
+          </immopro-button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

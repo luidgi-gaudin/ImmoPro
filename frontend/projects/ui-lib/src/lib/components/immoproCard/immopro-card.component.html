@@ -1,13 +1,19 @@
 <div class="card" [class.hoverable]="hoverable()">
-  <div class="card-glow" *ngIf="glow()"></div>
-  <div class="card-header" *ngIf="hasHeader">
-    <ng-content select="[card-title]"></ng-content>
-    <ng-content select="[card-subtitle]"></ng-content>
-  </div>
+  @if (glow()) {
+    <div class="card-glow"></div>
+  }
+  @if (hasHeader) {
+    <div class="card-header">
+      <ng-content select="[card-title]"></ng-content>
+      <ng-content select="[card-subtitle]"></ng-content>
+    </div>
+  }
   <div class="card-content">
     <ng-content></ng-content>
   </div>
-  <div class="card-footer" *ngIf="hasFooter">
-    <ng-content select="[card-footer]"></ng-content>
-  </div>
+  @if (hasFooter) {
+    <div class="card-footer">
+      <ng-content select="[card-footer]"></ng-content>
+    </div>
+  }
 </div>

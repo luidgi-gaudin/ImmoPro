@@ -1,11 +1,10 @@
-import { Component, input, forwardRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor, ReactiveFormsModule } from '@angular/forms';
+import { Component, input, forwardRef, signal } from '@angular/core';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'immopro-input',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [],
   templateUrl: './immopro-input.component.html',
   styleUrls: ['./immopro-input.component.scss'],
   providers: [
@@ -25,6 +24,7 @@ export class ImmoproInputComponent implements ControlValueAccessor {
 
   value: any = '';
   disabled = false;
+  isPasswordVisible = signal(false);
 
   onChange: any = () => {};
   onTouched: any = () => {};
@@ -52,5 +52,16 @@ export class ImmoproInputComponent implements ControlValueAccessor {
 
   onBlur(): void {
     this.onTouched();
+  }
+
+  togglePasswordVisibility(): void {
+    this.isPasswordVisible.update(visible => !visible);
+  }
+
+  getInputType(): string {
+    if (this.type() === 'password') {
+      return this.isPasswordVisible() ? 'text' : 'password';
+    }
+    return this.type();
   }
 }

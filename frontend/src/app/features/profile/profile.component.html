@@ -1,0 +1,242 @@
+<div class="profile-container">
+  <header class="profile-header">
+    <h1>Profil & Sécurité</h1>
+    <p class="subtitle text-secondary">Gérez vos informations de compte et la sécurité de vos données</p>
+  </header>
+
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      {{ error() }}
+    </div>
+  }
+
+  <div class="profile-grid">
+    <!-- Left Column: User details & Password Update -->
+    <div class="profile-column">
+      <!-- User Details Card -->
+      <immopro-card>
+        <div card-header>
+          <h2 class="luxury-title" style="margin: 0; font-size: 1.5rem;">Informations personnelles</h2>
+        </div>
+        <div class="user-details-body">
+          <div class="user-avatar-large">
+            <span>{{ user()?.name?.charAt(0) || 'U' }}</span>
+          </div>
+          <div class="user-meta">
+            <h3>{{ user()?.name }}</h3>
+            <p class="text-secondary">{{ user()?.email }}</p>
+            <span class="badge-role">Administrateur</span>
+            <p class="account-date text-muted" style="margin-top: 15px; font-size: 0.8rem;">
+              Membre depuis le {{ user()?.created_at | date:'dd MMMM yyyy' }}
+            </p>
+          </div>
+        </div>
+      </immopro-card>
+
+      <!-- Password Update Card -->
+      <immopro-card style="margin-top: 30px;">
+        <div card-header>
+          <h2 class="luxury-title" style="margin: 0; font-size: 1.5rem;">Modifier le mot de passe</h2>
+        </div>
+        
+        <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+          <immopro-input
+            id="current_password"
+            label="Mot de passe actuel"
+            type="password"
+            formControlName="current_password"
+            placeholder="••••••••"
+            [error]="submitted() && currentPassword?.invalid ? 'Le mot de passe actuel est requis' : null"
+          ></immopro-input>
+
+          <immopro-input
+            id="password"
+            label="Nouveau mot de passe"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            [error]="submitted() && newPassword?.invalid ? 'Le mot de passe doit contenir au moins 8 caractères' : null"
+          ></immopro-input>
+
+          <immopro-input
+            id="password_confirmation"
+            label="Confirmer le mot de passe"
+            type="password"
+            formControlName="password_confirmation"
+            placeholder="••••••••"
+            [error]="submitted() && (newPasswordConfirmation?.invalid || passwordForm.hasError('mismatch')) ? (newPasswordConfirmation?.hasError('required') ? 'La confirmation est requise' : 'Les mots de passe ne correspondent pas') : null"
+          ></immopro-input>
+
+          <immopro-button
+            type="submit"
+            [loading]="loading()"
+            [disabled]="loading()"
+            style="margin-top: 10px;"
+          >
+            Mettre à jour le mot de passe
+          </immopro-button>
+        </form>
+      </immopro-card>
+    </div>
+
+    <!-- Right Column: Two-Factor Authentication -->
+    <div class="profile-column">
+      <immopro-card>
+        <div card-header>
+          <h2 class="luxury-title" style="margin: 0; font-size: 1.5rem;">Double Authentification (2FA)</h2>
+        </div>
+
+        <div class="2fa-status-container">
+          <!-- Active Badge -->
+          @if (user()?.two_factor_enabled) {
+            <div class="status-badge active-2fa">
+              <span class="dot"></span>
+              Sécurisé avec double authentification
+            </div>
+          }
+          <!-- Inactive Badge -->
+          @if (!user()?.two_factor_enabled && !twoFactorSetup()) {
+            <div class="status-badge inactive-2fa">
+              <span class="dot"></span>
+              La double authentification n'est pas activée
+            </div>
+          }
+
+          <p class="description text-secondary" style="font-size: 0.85rem; margin-top: 15px; margin-bottom: 25px;">
+            La double authentification (2FA) ajoute une couche de sécurité supplémentaire à votre compte en exigeant un code à usage unique lors de chaque connexion.
+          </p>
+
+          <!-- 2FA Disabled: Button to enable -->
+          @if (!user()?.two_factor_enabled && !twoFactorSetup()) {
+            <div>
+              <immopro-button (click)="start2FASetup()" [loading]="loading()" [disabled]="loading()">
+                Activer la double authentification
+              </immopro-button>
+            </div>
+          }
+
+          <!-- 2FA Enable Setup Block -->
+          @if (twoFactorSetup(); as setup) {
+            <div class="two-factor-setup-flow">
+              <h4 class="luxury-title" style="font-size: 1.1rem; margin-bottom: 15px;">Configuration de la 2FA</h4>
+              <p class="text-secondary" style="font-size: 0.85rem; margin-bottom: 20px;">
+                Scannez ce QR Code avec votre application de sécurité (ex. Google Authenticator ou Bitwarden) ou saisissez manuellement la clé de sécurité.
+              </p>
+
+              <div class="qr-code-wrapper">
+                <img [src]="setup.qr_code_url" alt="QR Code 2FA" />
+              </div>
+
+              <div class="secret-key-display">
+                <span class="label text-muted">Clé manuelle :</span>
+                <code class="secret-text">{{ setup.secret }}</code>
+              </div>
+
+              <form [formGroup]="confirm2FAForm" (ngSubmit)="confirm2FASetup()" style="margin-top: 25px;">
+                <immopro-input
+                  id="totp_code"
+                  label="Entrez le code à 6 chiffres généré"
+                  type="text"
+                  formControlName="code"
+                  placeholder="000000"
+                  [error]="totpCode?.touched && totpCode?.invalid ? 'Le code de confirmation doit faire 6 chiffres' : null"
+                ></immopro-input>
+
+                <div style="display: flex; gap: 12px; margin-top: 15px;">
+                  <immopro-button type="submit" [loading]="loading()" [disabled]="loading() || confirm2FAForm.invalid">
+                    Confirmer l'activation
+                  </immopro-button>
+                  <immopro-button type="button" color="secondary" (click)="cancel2FASetup()">
+                    Annuler
+                  </immopro-button>
+                </div>
+              </form>
+            </div>
+          }
+
+          <!-- 2FA Enabled: Recovery codes & Disable -->
+          @if (user()?.two_factor_enabled && !twoFactorSetup()) {
+            <div class="two-factor-actions">
+              <div style="display: flex; flex-direction: column; gap: 15px;">
+                <immopro-button (click)="openPasswordModal('regenerate')" color="secondary">
+                  Regénérer les codes de récupération
+                </immopro-button>
+                
+                <immopro-button (click)="openPasswordModal('disable')" color="error">
+                  Désactiver la double authentification
+                </immopro-button>
+              </div>
+            </div>
+          }
+
+          <!-- Recovery codes list (displayed after activation or regeneration) -->
+          @if (recoveryCodes().length > 0) {
+            <div class="recovery-codes-panel" style="margin-top: 30px;">
+              <h4 class="luxury-title" style="font-size: 1.1rem; color: var(--error);">Codes de récupération d'urgence</h4>
+              <p class="text-secondary" style="font-size: 0.8rem; margin-bottom: 15px;">
+                Conservez ces codes en lieu sûr. Ils vous permettront d'accéder à votre compte si vous perdez votre appareil d'authentification. Chaque code ne peut être utilisé qu'une seule fois.
+              </p>
+              <div class="codes-grid">
+                @for (code of recoveryCodes(); track code) {
+                  <code>{{ code }}</code>
+                }
+              </div>
+            </div>
+          }
+
+        </div>
+      </immopro-card>
+    </div>
+  </div>
+</div>
+
+<!-- Password Check Modal (for critical 2FA actions) -->
+@if (isPasswordModalOpen()) {
+  <div class="luxury-modal-overlay" (click)="closePasswordModal()">
+    <div class="luxury-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="luxury-title">Confirmation requise</h3>
+        <button class="modal-close" (click)="closePasswordModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-secondary" style="font-size: 0.9rem; margin-bottom: 20px;">
+          Veuillez saisir votre mot de passe actuel pour valider cette opération de sécurité critique.
+        </p>
+
+        @if (modalError()) {
+          <div class="alert alert-error">
+            {{ modalError() }}
+          </div>
+        }
+
+        <form [formGroup]="passwordConfirmForm" (ngSubmit)="submitPasswordConfirmation()">
+          <immopro-input
+            id="confirm_password"
+            label="Mot de passe actuel"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            [error]="modalSubmitted() && confirmPassword?.invalid ? 'Le mot de passe actuel est requis' : null"
+          ></immopro-input>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 25px;">
+            <immopro-button type="button" color="secondary" (click)="closePasswordModal()">
+              Annuler
+            </immopro-button>
+            <immopro-button type="submit" [loading]="loading()" [disabled]="loading() || passwordConfirmForm.invalid">
+              Valider
+            </immopro-button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}
