@@ -520,6 +520,194 @@ select {
   }
 }
 
+/* ============================================================
+   UI KIT — socle de composants partagés (boutons, badges, pages)
+   Ajouts non destructifs : les vues à styles scopés gardent leurs
+   règles ; les nouvelles surfaces s'appuient sur ce socle commun.
+   ============================================================ */
+
+:root {
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 8px 24px -12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 24px 48px -22px rgba(0, 0, 0, 0.45);
+}
+
+/* Barres de défilement discrètes */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: padding-box;
+}
+
+/* Conteneur de page & en-tête */
+.page {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: clamp(20px, 3vw, 36px);
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+.page-head h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+}
+.page-subtitle {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  max-width: 62ch;
+}
+.page-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Surface / carte générique */
+.surface {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+/* Boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+
+  &:disabled,
+  &[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+  svg {
+    flex-shrink: 0;
+  }
+}
+.btn--primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary);
+
+  &:hover:not(:disabled) {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
+}
+.btn--outline {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+
+  &:hover:not(:disabled) {
+    color: var(--primary);
+    border-color: var(--primary);
+    background: var(--primary-glow);
+  }
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+
+  &:hover:not(:disabled) {
+    color: var(--primary);
+    background: var(--primary-glow);
+  }
+}
+.btn--danger {
+  background: transparent;
+  color: var(--error);
+  border-color: rgba(224, 94, 94, 0.3);
+
+  &:hover:not(:disabled) {
+    background: rgba(224, 94, 94, 0.08);
+  }
+}
+.btn--sm {
+  padding: 7px 12px;
+  font-size: 0.85rem;
+}
+.btn--block {
+  width: 100%;
+}
+
+/* Badges / pastilles de statut */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.badge--success {
+  color: var(--success);
+  background: rgba(111, 199, 154, 0.1);
+  border-color: rgba(111, 199, 154, 0.22);
+}
+.badge--warning {
+  color: var(--primary);
+  background: var(--primary-glow);
+  border-color: var(--border-hover);
+}
+.badge--danger {
+  color: var(--error);
+  background: rgba(224, 94, 94, 0.09);
+  border-color: rgba(224, 94, 94, 0.22);
+}
+.badge--info {
+  color: var(--info);
+  background: rgba(140, 163, 212, 0.1);
+  border-color: rgba(140, 163, 212, 0.22);
+}
+.badge--neutral {
+  color: var(--text-secondary);
+  background: var(--primary-glow);
+  border-color: var(--border);
+}
+
 /* Print Styles for Rent Receipts */
 @media print {
   body {

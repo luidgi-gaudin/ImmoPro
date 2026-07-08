@@ -1,8 +1,13 @@
-<div class="app-shell">
-  @if (shouldShowNavbar()) {
-    <app-navbar></app-navbar>
-  }
-  <main class="main-content">
+<div class="app-shell" [class.has-chrome]="showChrome()">
+  @if (showChrome()) {
+    <app-sidebar />
+    <div class="app-body">
+      <app-topbar />
+      <main class="app-content">
+        <router-outlet />
+      </main>
+    </div>
+  } @else {
     <router-outlet />
-  </main>
+  }
 </div>

@@ -1,0 +1,131 @@
+:host {
+  display: contents;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-sidebar);
+  border-right: 1px solid var(--border);
+  padding: 18px 14px;
+  z-index: 60;
+  transition: transform var(--transition-smooth);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 10px 20px;
+  border: none;
+
+  &:hover {
+    border: none;
+  }
+
+  .brand-name {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.sidebar-nav a,
+.sidebar-footer a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.94rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+
+  svg {
+    flex-shrink: 0;
+    opacity: 0.85;
+  }
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--primary-glow);
+    border-color: transparent;
+  }
+
+  &.active {
+    color: var(--primary);
+    background: var(--primary-glow);
+    font-weight: 600;
+    border-color: var(--border);
+
+    svg {
+      opacity: 1;
+    }
+  }
+}
+
+.nav-badge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--error);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding-top: 14px;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+/* Voile sombre derrière le drawer mobile */
+.sidebar-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 55;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+/* ── Mobile : le menu devient un tiroir coulissant ── */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
+
+    &.open {
+      transform: translateX(0);
+    }
+  }
+
+  .sidebar-scrim.show {
+    display: block;
+    opacity: 1;
+  }
+}
