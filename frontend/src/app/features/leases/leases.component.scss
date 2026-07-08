@@ -47,7 +47,7 @@
   &:hover {
     border-color: var(--border-hover);
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px -10px rgba(212, 175, 55, 0.1);
+    box-shadow: 0 10px 20px -10px rgba(70, 160, 125, 0.1);
   }
   
   &.selected {
@@ -283,7 +283,7 @@
   }
   
   tr:hover td {
-    background-color: rgba(212, 175, 55, 0.015);
+    background-color: rgba(70, 160, 125, 0.015);
     color: var(--text-primary);
   }
 }
@@ -317,8 +317,8 @@
   }
   
   &[data-status="en_attente"] {
-    background: rgba(212, 175, 55, 0.08);
-    border-color: rgba(212, 175, 55, 0.2);
+    background: rgba(70, 160, 125, 0.08);
+    border-color: rgba(70, 160, 125, 0.2);
     color: var(--primary);
   }
 }
@@ -402,7 +402,7 @@
 .receipt-box {
   background: #ffffff;
   color: #1a1a1a;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   
   h2, h3, h4 {
     color: #1a1a1a;
@@ -418,11 +418,11 @@
   margin-bottom: 25px;
   
   h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 1.7rem;
     font-weight: 600;
     margin: 0 0 4px;
-    letter-spacing: 0.05em;
+    letter-spacing: -0.01em;
   }
   
   .receipt-number {
@@ -432,9 +432,10 @@
   }
   
   .logo-txt-quittance {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.6rem;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 1.5rem;
     font-weight: 600;
+    letter-spacing: -0.02em;
     color: var(--primary);
   }
 }

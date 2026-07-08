@@ -23,7 +23,7 @@
   transition: all var(--transition-smooth);
 
   body.light-theme & {
-    box-shadow: 0 20px 45px -15px rgba(170, 132, 57, 0.08);
+    box-shadow: 0 20px 45px -15px rgba(31, 122, 90, 0.10);
   }
 
   &::before {
@@ -42,10 +42,38 @@
   text-align: center;
   margin-bottom: 36px;
 
+  .auth-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .auth-logo-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(150deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: var(--on-primary);
+    box-shadow: 0 6px 18px -6px var(--primary-glow), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+
+  .auth-brand-name {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
   h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.2rem;
-    font-weight: 500;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     margin-bottom: 8px;
     color: var(--text-primary);
   }

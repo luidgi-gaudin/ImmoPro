@@ -2,17 +2,18 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { LogoComponent } from '../logo/logo.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, LogoComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="navbar-container">
       <div class="navbar-content">
         <div class="brand" (click)="navigateTo('/')">
-          <span class="logo-text">ImmoPro</span>
+          <app-logo [size]="40" />
         </div>
 
         @if (auth.isAuthenticated()) {

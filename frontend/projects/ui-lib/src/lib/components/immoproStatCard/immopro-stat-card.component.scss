@@ -10,7 +10,7 @@
   &:hover {
     border-color: var(--border-hover);
     transform: translateY(-3px);
-    box-shadow: 0 15px 35px -15px rgba(212, 175, 55, 0.12);
+    box-shadow: 0 15px 35px -15px rgba(70, 160, 125, 0.14);
   }
 
   .stat-label {
@@ -23,9 +23,10 @@
   }
 
   .stat-value {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.25rem;
-    font-weight: 500;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 2.1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     color: var(--text-primary);
     line-height: 1.1;
   }

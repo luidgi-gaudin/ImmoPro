@@ -44,14 +44,14 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--surface-card) 0%, rgba(212, 175, 55, 0.15) 100%);
+  background: linear-gradient(135deg, var(--surface-card) 0%, rgba(70, 160, 125, 0.15) 100%);
   border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.5rem;
-  font-weight: 500;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 2.2rem;
+  font-weight: 600;
   color: var(--primary);
   box-shadow: 0 8px 24px -10px var(--primary-glow);
 }
