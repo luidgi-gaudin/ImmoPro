@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AlertController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\TwoFactorController;
@@ -47,4 +48,11 @@ Route::middleware('auth:sanctum')->group(function () {
         ->scopeBindings()
         ->name('leases.payments.quittance');
     Route::apiResource('leases.payments', RentPaymentController::class)->scoped();
+
+    // Alertes proactives (impayés, révision IRL, fin de bail, expiration DPE).
+    Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');
+    Route::post('/alerts/read-all', [AlertController::class, 'markAllAsRead'])->name('alerts.read-all');
+    Route::post('/alerts/{alert}/read', [AlertController::class, 'markAsRead'])->name('alerts.read');
+    Route::post('/alerts/{alert}/resolve', [AlertController::class, 'resolve'])->name('alerts.resolve');
+    Route::post('/alerts/{alert}/remind', [AlertController::class, 'remind'])->name('alerts.remind');
 });

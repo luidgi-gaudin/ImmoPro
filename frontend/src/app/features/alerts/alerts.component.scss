@@ -1,0 +1,263 @@
+.alerts-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+.alerts-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+
+  .subtitle {
+    margin: 6px 0 0;
+    max-width: 60ch;
+    font-size: 0.95rem;
+  }
+}
+
+/* ── Boutons (tokens de la charte, mode clair/sombre gérés par les variables) ── */
+.btn-solid,
+.btn-ghost {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.btn-solid {
+  background: var(--primary);
+  color: var(--on-primary);
+  border: 1px solid var(--primary);
+
+  &:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+
+  &:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    background: var(--primary-glow);
+  }
+}
+
+/* ── Liste ── */
+.alerts-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.alert-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 18px;
+  padding: 20px 22px 20px 26px;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+
+  &:hover {
+    border-color: var(--border-hover);
+  }
+
+  &.is-unread {
+    border-color: var(--border-hover);
+  }
+}
+
+/* Barre latérale de sévérité */
+.severity-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.severity-critical .severity-bar {
+  background: var(--error);
+}
+.severity-warning .severity-bar {
+  background: var(--primary);
+}
+.severity-info .severity-bar {
+  background: var(--info);
+}
+
+.alert-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.severity-critical .alert-icon {
+  color: var(--error);
+  border-color: rgba(224, 94, 94, 0.3);
+}
+.severity-warning .alert-icon {
+  color: var(--primary);
+  border-color: var(--border-hover);
+}
+.severity-info .alert-icon {
+  color: var(--info);
+}
+
+.alert-body {
+  min-width: 0;
+}
+
+.alert-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.type-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.severity-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.severity-critical .severity-tag {
+  color: var(--error);
+  background: rgba(224, 94, 94, 0.08);
+  border-color: rgba(224, 94, 94, 0.2);
+}
+.severity-warning .severity-tag {
+  color: var(--primary);
+  background: var(--primary-glow);
+  border-color: var(--border-hover);
+}
+.severity-info .severity-tag {
+  color: var(--info);
+  background: rgba(140, 163, 212, 0.08);
+  border-color: rgba(140, 163, 212, 0.2);
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-left: auto;
+}
+
+.alert-title {
+  font-size: 1.1rem;
+  margin: 0 0 4px;
+}
+
+.alert-message {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.alert-meta {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+}
+
+.alert-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+
+/* ── États vides & squelette ── */
+.empty-state {
+  text-align: center;
+  padding: 72px 24px;
+  color: var(--text-secondary);
+
+  svg {
+    color: var(--success);
+    margin-bottom: 12px;
+  }
+
+  h3 {
+    margin: 0 0 6px;
+  }
+}
+
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skeleton-card {
+  height: 108px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, var(--surface-card) 25%, var(--border) 50%, var(--surface-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Responsive (mobile-first : pile les actions sous le contenu) ── */
+@media (max-width: 640px) {
+  .alert-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .alert-actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .alerts-header {
+    flex-direction: column;
+  }
+}

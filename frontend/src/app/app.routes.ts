@@ -5,6 +5,7 @@ import { PortfolioDetailsComponent } from './features/portfolios/portfolio-detai
 import { TenantsComponent } from './features/tenants/tenants.component';
 import { LeasesComponent } from './features/leases/leases.component';
 import { ProfileComponent } from './features/profile/profile.component';
+import { AlertsComponent } from './features/alerts/alerts.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { ForgotPasswordComponent } from './features/auth/login/forgot-password.component';
@@ -23,6 +24,7 @@ export const routes: Routes = [
       { path: 'portfolios/:id', component: PortfolioDetailsComponent },
       { path: 'tenants', component: TenantsComponent },
       { path: 'leases', component: LeasesComponent },
+      { path: 'alerts', component: AlertsComponent },
       { path: 'profile', component: ProfileComponent },
     ],
   },

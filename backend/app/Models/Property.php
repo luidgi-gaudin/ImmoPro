@@ -21,6 +21,7 @@ class Property extends Model
         'latitude',
         'longitude',
         'dpe',
+        'dpe_date',
         'rooms',
         'area_sqm',
         'has_balcony',
@@ -47,6 +48,7 @@ class Property extends Model
         return [
             'property_type' => PropertyType::class,
             'dpe'           => Dpe::class,
+            'dpe_date'      => 'date',
             'has_balcony' => 'boolean',
             'has_garden' => 'boolean',
             'has_parking' => 'boolean',

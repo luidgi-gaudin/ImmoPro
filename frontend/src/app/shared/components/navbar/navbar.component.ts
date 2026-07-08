@@ -2,6 +2,7 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { AlertService } from '../../../core/services/alert.service';
 import { LogoComponent } from '../logo/logo.component';
 
 @Component({
@@ -26,6 +27,22 @@ import { LogoComponent } from '../logo/logo.component';
         }
 
         <div class="user-actions">
+          @if (auth.isAuthenticated()) {
+            <!-- Cloche de notifications : renvoie vers la page des alertes -->
+            <a
+              class="btn-theme btn-bell"
+              routerLink="/alerts"
+              routerLinkActive="active"
+              [title]="alerts.unreadCount() > 0 ? alerts.unreadCount() + ' alerte(s) non lue(s)' : 'Voir mes alertes'"
+              aria-label="Voir mes alertes"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+              @if (alerts.unreadCount() > 0) {
+                <span class="bell-badge" aria-hidden="true">{{ alerts.unreadCount() > 9 ? '9+' : alerts.unreadCount() }}</span>
+              }
+            </a>
+          }
+
           <!-- Theme Switcher Button -->
           <button class="btn-theme" (click)="theme.toggleTheme()" [title]="theme.isLightTheme() ? 'Passer en mode sombre' : 'Passer en mode clair'">
             @if (theme.isLightTheme()) {
@@ -55,12 +72,46 @@ import { LogoComponent } from '../logo/logo.component';
       </div>
     </header>
   `,
-  styles: [],
+  styles: [
+    `
+      .btn-bell {
+        position: relative;
+      }
+      .btn-bell.active {
+        color: var(--primary);
+        border-color: var(--primary);
+        background: var(--primary-glow);
+      }
+      .bell-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 9px;
+        background: var(--error);
+        color: #fff;
+        font-size: 0.68rem;
+        font-weight: 700;
+        line-height: 18px;
+        text-align: center;
+        box-shadow: 0 0 0 2px var(--surface-card);
+      }
+    `,
+  ],
 })
 export class NavbarComponent {
   protected auth = inject(AuthService);
   protected theme = inject(ThemeService);
+  protected alerts = inject(AlertService);
   private router = inject(Router);
+
+  constructor() {
+    // La navbar n'est montée que lorsque l'utilisateur est authentifié :
+    // on charge alors ses alertes pour alimenter la pastille de notification.
+    this.alerts.load();
+  }
 
   logout() {
     this.auth.logout().subscribe(() => this.router.navigate(['/login']));
