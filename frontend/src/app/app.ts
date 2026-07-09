@@ -1,13 +1,14 @@
 import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { NavbarComponent } from './shared/components/navbar/navbar.component';
+import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
+import { TopbarComponent } from './shared/components/topbar/topbar.component';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent],
+  imports: [RouterOutlet, SidebarComponent, TopbarComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,17 +18,21 @@ export class App {
   private router = inject(Router);
 
   protected readonly title = signal('frontend');
-  
+
   // Track current URL as a Signal for Zoneless change detection compatibility
   private currentUrl = signal<string>('');
 
-  protected shouldShowNavbar = computed(() => {
+  // Le shell (sidebar + topbar) n'apparaît que sur l'espace applicatif :
+  // pas sur la landing publique ni sur les écrans d'authentification.
+  private readonly publicPrefixes = ['/login', '/register', '/forgot-password', '/reset-password'];
+
+  protected showChrome = computed(() => {
     const url = this.currentUrl();
-    return this.authService.isAuthenticated() && 
-           !url.startsWith('/login') && 
-           !url.startsWith('/register') &&
-           !url.startsWith('/forgot-password') &&
-           !url.startsWith('/reset-password');
+    return (
+      this.authService.isAuthenticated() &&
+      url !== '/' &&
+      !this.publicPrefixes.some((p) => url.startsWith(p))
+    );
   });
 
   constructor() {

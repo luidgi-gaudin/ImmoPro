@@ -41,6 +41,8 @@ export interface DashboardData {
   propertiesCount: number;
   tenantsCount: number;
   leasesCount: number;
+  activeLeasesCount: number;
+  monthlyRentExpected: number;
   recentPortfolios: PortfolioSummary[];
   recentTenants: TenantSummary[];
   recentLeases: LeaseSummary[];
@@ -75,11 +77,19 @@ export class DashboardService {
           0
         );
 
+        const activeLeases = leases.filter((lease) => lease.statut === 'actif');
+        const monthlyRentExpected = activeLeases.reduce(
+          (total, lease) => total + Number(lease.monthly_rent ?? 0),
+          0
+        );
+
         return {
           portfoliosCount: portfolios.length,
           propertiesCount,
           tenantsCount: tenants.total ?? tenants.data.length,
           leasesCount: leases.length,
+          activeLeasesCount: activeLeases.length,
+          monthlyRentExpected,
           recentPortfolios: portfolios.slice(0, 3),
           recentTenants: tenants.data.slice(0, 3),
           recentLeases: leases.slice(0, 3),

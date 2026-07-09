@@ -24,7 +24,7 @@ button {
 .btn-solid {
   &.color-primary {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-    color: #1c1a17; /* Dark text for gold background */
+    color: var(--on-primary);
     font-weight: 600;
     box-shadow: 0 4px 15px -4px var(--primary-glow);
     
