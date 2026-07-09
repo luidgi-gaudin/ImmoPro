@@ -4,13 +4,20 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   transition: all var(--transition-smooth);
-  position: relative;
   box-shadow: 0 10px 25px -15px rgba(0, 0, 0, 0.3);
-  
+
   &:hover {
     border-color: var(--border-hover);
     transform: translateY(-3px);
     box-shadow: 0 15px 35px -15px rgba(70, 160, 125, 0.14);
+  }
+
+  .stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
   }
 
   .stat-label {
@@ -19,7 +26,7 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-secondary);
-    margin-bottom: 8px;
+    min-width: 0;
   }
 
   .stat-value {
@@ -32,9 +39,8 @@
   }
 
   .stat-trend {
-    position: absolute;
-    top: 28px;
-    right: 28px;
+    flex: 0 0 auto;
+    white-space: nowrap;
     font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -42,7 +48,7 @@
     padding: 3px 10px;
     border-radius: 99px;
     border: 1px solid transparent;
-    
+
     &.success {
       background: rgba(107, 179, 147, 0.08);
       border-color: rgba(107, 179, 147, 0.2);

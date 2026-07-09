@@ -17,7 +17,6 @@ import { LayoutService } from '../../../core/services/layout.service';
     <aside class="sidebar" [class.open]="layout.sidebarOpen()">
       <a class="sidebar-brand" routerLink="/dashboard" (click)="layout.closeSidebar()">
         <app-logo [size]="32" />
-        <span class="brand-name">ImmoPro</span>
       </a>
 
       <nav class="sidebar-nav" aria-label="Navigation principale">

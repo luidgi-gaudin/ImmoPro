@@ -1,9 +1,13 @@
 <div class="stat-card">
+  <div class="stat-header">
   <div class="stat-label">{{ label() }}</div>
+  </div>
+    @if (trend()) {
+      <div class="stat-trend" [class]="trendType()">
+        {{ trend() }}
+      </div>
+    }
+
+
   <div class="stat-value">{{ value() }}</div>
-  @if (trend()) {
-    <div class="stat-trend" [class]="trendType()">
-      {{ trend() }}
-    </div>
-  }
 </div>

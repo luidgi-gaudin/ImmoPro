@@ -36,7 +36,6 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
           <immopro-stat-card
             label="Loyers attendus / mois"
             [value]="formatEur(d.monthlyRentExpected)"
-            trend="Sur les baux actifs"
             trendType="success"
           ></immopro-stat-card>
         </section>
