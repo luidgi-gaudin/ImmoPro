@@ -4,7 +4,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   transition: all var(--transition-smooth);
-  box-shadow: 0 10px 25px -15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 25px -15px rgba(var(--shadow-rgb), 0.3);
 
   &:hover {
     border-color: var(--border-hover);

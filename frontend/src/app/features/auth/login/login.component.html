@@ -10,7 +10,7 @@
 
   <!-- Standard Login Form -->
   @if (!twoFactorRequired()) {
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
       <immopro-input
         id="email"
         label="Email"
@@ -43,7 +43,7 @@
     </form>
   } @else {
     <!-- Two-Factor Authentication Form -->
-    <form [formGroup]="twoFactorForm" (ngSubmit)="onTwoFactorSubmit()">
+    <form [formGroup]="twoFactorForm" (ngSubmit)="onTwoFactorSubmit()" class="form-grid">
       
       @if (!useRecoveryCode()) {
         <!-- Code TOTP Input -->

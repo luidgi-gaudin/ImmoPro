@@ -1,0 +1,21 @@
+@if (lastPage() > 1) {
+  <div class="ip-pagination">
+    <button
+      type="button"
+      class="ip-page-nav-btn"
+      [disabled]="currentPage() === 1"
+      (click)="goTo(currentPage() - 1)"
+    >
+      &larr; Précédent
+    </button>
+    <span class="ip-page-numbers">Page {{ currentPage() }} sur {{ lastPage() }}</span>
+    <button
+      type="button"
+      class="ip-page-nav-btn"
+      [disabled]="currentPage() === lastPage()"
+      (click)="goTo(currentPage() + 1)"
+    >
+      Suivant &rarr;
+    </button>
+  </div>
+}

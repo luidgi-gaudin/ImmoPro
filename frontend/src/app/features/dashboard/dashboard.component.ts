@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ImmoproStatCardComponent } from 'ui-lib';
+import { ImmoproStatCardComponent, ImmoproPageHeaderComponent, ImmoproAvatarComponent, ImmoproBadgeComponent, ImmoproEmptyStateComponent } from 'ui-lib';
 import { DashboardService, DashboardData } from '../../core/services/dashboard.service';
 import { AuthService } from '../../core/services/auth.service';
 import { AlertService, AppAlert } from '../../core/services/alert.service';
@@ -8,16 +8,14 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, ImmoproStatCardComponent],
+  imports: [RouterLink, ImmoproStatCardComponent, ImmoproPageHeaderComponent, ImmoproAvatarComponent, ImmoproBadgeComponent, ImmoproEmptyStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="page dashboard">
-      <header class="page-head">
-        <div class="page-heading">
-          <h1>Bonjour{{ firstName() ? ', ' + firstName() : '' }}</h1>
-          <p class="page-subtitle">Voici l'essentiel de votre gestion locative aujourd'hui.</p>
-        </div>
-      </header>
+      <immopro-page-header
+        [title]="'Bonjour' + (firstName() ? ', ' + firstName() : '')"
+        subtitle="Voici l'essentiel de votre gestion locative aujourd'hui."
+      ></immopro-page-header>
 
       @if (loading()) {
         <div class="kpi-grid">
@@ -49,10 +47,9 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
             </div>
 
             @if (priorityAlerts().length === 0) {
-              <div class="panel-empty">
-                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-                <p>Tout est à jour. Aucune échéance ne requiert votre attention.</p>
-              </div>
+              <immopro-empty-state message="Tout est à jour. Aucune échéance ne requiert votre attention.">
+                <svg icon xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+              </immopro-empty-state>
             } @else {
               <ul class="priority-list">
                 @for (alert of priorityAlerts(); track alert.id) {
@@ -61,7 +58,7 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
                     <div class="priority-body">
                       <div class="priority-top">
                         <span class="priority-title">{{ alert.title }}</span>
-                        <span class="badge" [class]="badgeClass(alert.severity)">{{ severityLabel(alert.severity) }}</span>
+                        <immopro-badge [tone]="badgeTone(alert.severity)">{{ severityLabel(alert.severity) }}</immopro-badge>
                       </div>
                       <p class="priority-msg">{{ alert.message }}</p>
                     </div>
@@ -103,7 +100,7 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
               <ul class="mini-list">
                 @for (tenant of d.recentTenants; track tenant.id) {
                   <li>
-                    <span class="mini-avatar">{{ tenant.first_name.charAt(0) }}{{ tenant.last_name.charAt(0) }}</span>
+                    <immopro-avatar size="md" [initials]="tenant.first_name.charAt(0) + tenant.last_name.charAt(0)"></immopro-avatar>
                     <div>
                       <strong>{{ tenant.first_name }} {{ tenant.last_name }}</strong>
                       <span class="text-muted">{{ tenant.email || 'Aucun email' }}</span>
@@ -176,7 +173,7 @@ export class DashboardComponent implements OnInit {
     return { critical: 'Urgent', warning: 'À prévoir', info: 'Info' }[severity];
   }
 
-  badgeClass(severity: AppAlert['severity']): string {
-    return { critical: 'badge--danger', warning: 'badge--warning', info: 'badge--info' }[severity];
+  badgeTone(severity: AppAlert['severity']): 'danger' | 'warning' | 'info' {
+    return { critical: 'danger' as const, warning: 'warning' as const, info: 'info' as const }[severity];
   }
 }

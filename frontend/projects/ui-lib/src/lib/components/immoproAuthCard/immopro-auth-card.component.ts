@@ -1,9 +1,10 @@
 import { Component, input } from '@angular/core';
+import { ImmoproThemeToggleComponent } from '../immoproThemeToggle/immopro-theme-toggle.component';
 
 @Component({
   selector: 'immopro-auth-card',
   standalone: true,
-  imports: [],
+  imports: [ImmoproThemeToggleComponent],
   templateUrl: './immopro-auth-card.component.html',
   styleUrls: ['./immopro-auth-card.component.scss']
 })

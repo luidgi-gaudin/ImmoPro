@@ -7,12 +7,8 @@
   display: flex;
   flex-direction: column;
   transition: all var(--transition-smooth);
-  box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.15);
-  
-  body.light-theme & {
-    box-shadow: 0 10px 25px -15px rgba(31, 122, 90, 0.06);
-  }
-  
+  box-shadow: 0 10px 30px -15px rgba(var(--shadow-rgb), 0.2);
+
   &.hoverable:hover {
     border-color: var(--border-hover);
     transform: translateY(-4px);
@@ -43,9 +39,5 @@
 .card-footer {
   padding: 20px 28px;
   border-top: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.005);
-  
-  body.light-theme & {
-    background: rgba(0, 0, 0, 0.005);
-  }
+  background: var(--overlay-softer);
 }

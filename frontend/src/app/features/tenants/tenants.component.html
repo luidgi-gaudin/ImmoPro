@@ -1,13 +1,9 @@
 <div class="tenants-container">
-  <header class="page-header">
-    <div>
-      <h1>Locataires</h1>
-      <p class="subtitle text-secondary">Suivez les dossiers locataires, informations de contact et coordonnées bancaires.</p>
-    </div>
-    <immopro-button (onClick)="addTenant()">
+  <immopro-page-header title="Locataires" subtitle="Suivez les dossiers locataires, informations de contact et coordonnées bancaires.">
+    <immopro-button actions (onClick)="addTenant()">
       <span>+ Nouveau Locataire</span>
     </immopro-button>
-  </header>
+  </immopro-page-header>
 
   @if (error() && !createModalOpen()) {
     <div class="alert alert-error">
@@ -15,80 +11,59 @@
     </div>
   }
 
-  <div class="table-wrapper">
-    <table class="luxury-table">
-      <thead>
+  <immopro-table>
+    <thead>
+      <tr>
+        <th>Nom / Prénom</th>
+        <th>Adresse E-mail</th>
+        <th>Téléphone</th>
+        <th>IBAN</th>
+        <th>BIC</th>
+        <th>Adresse / Pays</th>
+        <th class="actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (tenant of tenants(); track tenant.id) {
         <tr>
-          <th>Nom / Prénom</th>
-          <th>Adresse E-mail</th>
-          <th>Téléphone</th>
-          <th>IBAN</th>
-          <th>BIC</th>
-          <th>Adresse / Pays</th>
-          <th class="actions">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (tenant of tenants(); track tenant.id) {
-          <tr>
-            <td class="name-cell">
-              <div class="avatar-circle">
-                <span>{{ tenant.first_name.charAt(0) }}{{ tenant.last_name.charAt(0) }}</span>
-              </div>
-              <span class="title-text">{{ tenant.first_name }} {{ tenant.last_name }}</span>
-            </td>
-            <td>{{ tenant.email || '-' }}</td>
-            <td>{{ tenant.phone || '-' }}</td>
-            <td><code class="bank-code">{{ tenant.iban || '-' }}</code></td>
-            <td><code class="bank-code">{{ tenant.bic || '-' }}</code></td>
-            <td>
-              <span>{{ tenant.address || '-' }}</span>
-              @if (tenant.country) {
-                <span class="text-muted" style="font-size: 0.75rem; display: block; text-transform: uppercase;">
-                  {{ tenant.country }}
-                </span>
-              }
-            </td>
-            <td class="actions">
-              <button class="btn-action edit" (click)="editTenant(tenant)" title="Modifier">
+          <td class="name-cell">
+            <immopro-avatar [initials]="tenant.first_name.charAt(0) + tenant.last_name.charAt(0)"></immopro-avatar>
+            <span class="title-text">{{ tenant.first_name }} {{ tenant.last_name }}</span>
+          </td>
+          <td>{{ tenant.email || '-' }}</td>
+          <td>{{ tenant.phone || '-' }}</td>
+          <td><code class="bank-code">{{ tenant.iban || '-' }}</code></td>
+          <td><code class="bank-code">{{ tenant.bic || '-' }}</code></td>
+          <td>
+            <span>{{ tenant.address || '-' }}</span>
+            @if (tenant.country) {
+              <span class="text-muted" style="font-size: 0.75rem; display: block; text-transform: uppercase;">
+                {{ tenant.country }}
+              </span>
+            }
+          </td>
+          <td class="actions">
+            <div class="ip-table-actions">
+              <immopro-icon-button size="sm" label="Modifier" (onClick)="editTenant(tenant)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-              </button>
-              <button class="btn-action delete" (click)="deleteTenant(tenant)" [disabled]="deletingId() === tenant.id" title="Supprimer">
+              </immopro-icon-button>
+              <immopro-icon-button size="sm" tone="danger" label="Supprimer" [disabled]="deletingId() === tenant.id" (onClick)="deleteTenant(tenant)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-              </button>
-            </td>
-          </tr>
-        }
-        @empty {
-          <tr>
-            <td colspan="7" class="empty-state">Aucun locataire enregistré pour le moment.</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+              </immopro-icon-button>
+            </div>
+          </td>
+        </tr>
+      }
+      @empty {
+        <tr>
+          <td colspan="7" class="ip-table-empty">Aucun locataire enregistré pour le moment.</td>
+        </tr>
+      }
+    </tbody>
+  </immopro-table>
 
-  <!-- Luxury Pagination controls -->
   @if (pagination(); as pag) {
-    @if (pag.last_page > 1) {
-      <div class="luxury-pagination">
-        <button 
-          [disabled]="pag.current_page === 1" 
-          (click)="changePage(pag.current_page - 1)"
-          class="page-nav-btn"
-        >
-          &larr; Précédent
-        </button>
-        <span class="page-numbers">Page {{ pag.current_page }} sur {{ pag.last_page }}</span>
-        <button 
-          [disabled]="pag.current_page === pag.last_page" 
-          (click)="changePage(pag.current_page + 1)"
-          class="page-nav-btn"
-        >
-          Suivant &rarr;
-        </button>
-      </div>
-    }
+    <immopro-pagination [currentPage]="pag.current_page" [lastPage]="pag.last_page" (pageChange)="changePage($event)"></immopro-pagination>
   }
 </div>
 

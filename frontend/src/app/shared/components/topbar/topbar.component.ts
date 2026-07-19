@@ -2,9 +2,9 @@ import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/cor
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
-import { ThemeService } from '../../../core/services/theme.service';
 import { AlertService } from '../../../core/services/alert.service';
 import { LayoutService } from '../../../core/services/layout.service';
+import { ImmoproAvatarComponent, ImmoproThemeToggleComponent } from 'ui-lib';
 
 /**
  * Barre supérieure du shell : ouverture du menu (mobile), titre de section,
@@ -13,7 +13,7 @@ import { LayoutService } from '../../../core/services/layout.service';
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, ImmoproAvatarComponent, ImmoproThemeToggleComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="topbar">
@@ -34,19 +34,12 @@ import { LayoutService } from '../../../core/services/layout.service';
           }
         </a>
 
-        <button class="icon-btn" (click)="theme.toggleTheme()"
-                [title]="theme.isLightTheme() ? 'Mode sombre' : 'Mode clair'" aria-label="Changer de thème">
-          @if (theme.isLightTheme()) {
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-          } @else {
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-          }
-        </button>
+        <immopro-theme-toggle></immopro-theme-toggle>
 
         @if (auth.currentUser(); as user) {
           <div class="user-menu">
             <button class="user-chip" (click)="toggleMenu()" [class.open]="menuOpen()" aria-haspopup="menu">
-              <span class="user-avatar">{{ user.name.charAt(0) || 'U' }}</span>
+              <immopro-avatar size="sm" [initials]="user.name.charAt(0) || 'U'"></immopro-avatar>
               <span class="user-name-label">{{ user.name }}</span>
               <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
@@ -77,7 +70,6 @@ import { LayoutService } from '../../../core/services/layout.service';
 })
 export class TopbarComponent {
   protected auth = inject(AuthService);
-  protected theme = inject(ThemeService);
   protected alerts = inject(AlertService);
   protected layout = inject(LayoutService);
   private router = inject(Router);

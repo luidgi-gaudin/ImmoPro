@@ -17,14 +17,10 @@
   background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 60px -15px rgba(var(--shadow-rgb), 0.3);
   position: relative;
   overflow: hidden;
   transition: all var(--transition-smooth);
-
-  body.light-theme & {
-    box-shadow: 0 20px 45px -15px rgba(31, 122, 90, 0.10);
-  }
 
   &::before {
     content: '';
@@ -36,6 +32,12 @@
     background: linear-gradient(90deg, transparent, var(--primary), transparent);
     opacity: 0.4;
   }
+}
+
+.auth-theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 .auth-header {

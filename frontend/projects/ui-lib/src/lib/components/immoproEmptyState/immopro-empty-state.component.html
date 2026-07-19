@@ -1,0 +1,12 @@
+<div class="ip-empty-state" [class.dashed]="variant() === 'dashed'">
+  <div class="ip-empty-icon">
+    <ng-content select="[icon]"></ng-content>
+  </div>
+  @if (title()) {
+    <h3>{{ title() }}</h3>
+  }
+  @if (message()) {
+    <p>{{ message() }}</p>
+  }
+  <ng-content></ng-content>
+</div>

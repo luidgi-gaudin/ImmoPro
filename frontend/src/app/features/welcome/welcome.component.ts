@@ -1,12 +1,12 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { ImmoproButtonComponent } from 'ui-lib';
+import { ImmoproButtonComponent, ImmoproThemeToggleComponent } from 'ui-lib';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [RouterLink, ImmoproButtonComponent],
+  imports: [RouterLink, ImmoproButtonComponent, ImmoproThemeToggleComponent],
   templateUrl: './welcome.component.html',
   styleUrl: './welcome.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

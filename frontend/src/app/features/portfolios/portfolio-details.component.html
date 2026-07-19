@@ -1,14 +1,10 @@
 <div class="portfolio-details-container">
-  <header class="page-header">
-    <div>
-      <h1>Détails du Portfolio</h1>
-      <p class="subtitle text-secondary">Vue d'ensemble complète et gestion des actifs de prestige associés.</p>
-    </div>
-    <div class="header-actions">
+  <immopro-page-header title="Détails du Portfolio" subtitle="Vue d'ensemble complète et gestion des actifs de prestige associés.">
+    <div actions class="header-actions">
       <immopro-button variant="ghost" (onClick)="goBack()">Retour</immopro-button>
       <immopro-button (onClick)="addProperty()">+ Nouvel Actif</immopro-button>
     </div>
-  </header>
+  </immopro-page-header>
 
   @if (loading()) {
     <div class="luxury-card" style="text-align: center; padding: 40px;">
@@ -42,68 +38,60 @@
         <span class="badge-count">{{ currentPortfolio.properties?.length || 0 }} actif(s)</span>
       </div>
 
-      <div class="table-wrapper">
-        @if (propertiesLoading()) {
-          <div class="table-loading-overlay">
-            <p>Chargement des actifs...</p>
-          </div>
-        }
-
-        <table class="luxury-table">
-          <thead>
+      <immopro-table [loading]="propertiesLoading()" loadingText="Chargement des actifs...">
+        <thead>
+          <tr>
+            <th>Titre de l'Actif</th>
+            <th>Type</th>
+            <th>Adresse</th>
+            <th>Ville / CP</th>
+            <th>DPE</th>
+            <th>Loyer Prévu</th>
+            <th>Statut</th>
+            <th class="actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (property of (currentPortfolio.properties ?? []); track property.id) {
             <tr>
-              <th>Titre de l'Actif</th>
-              <th>Type</th>
-              <th>Adresse</th>
-              <th>Ville / CP</th>
-              <th>DPE</th>
-              <th>Loyer Prévu</th>
-              <th>Statut</th>
-              <th class="actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (property of (currentPortfolio.properties ?? []); track property.id) {
-              <tr>
-                <td class="name-cell">
-                  <div class="avatar-circle">
-                    <span>{{ property.title.charAt(0) }}</span>
-                  </div>
-                  <span class="title-text">{{ property.title }}</span>
-                </td>
-                <td><span class="capitalize">{{ property.property_type }}</span></td>
-                <td><span class="address-text">{{ property.address }}</span></td>
-                <td>{{ property.city }} ({{ property.postal_code }})</td>
-                <td>
-                  <span class="dpe-badge" [attr.data-dpe]="property.dpe">{{ property.dpe }}</span>
-                </td>
-                <td>
-                  <strong class="rent-text">{{ property.monthly_rent ? (property.monthly_rent + ' €') : '-' }}</strong>
-                </td>
-                <td>
-                  <span class="status-badge" [class.rented]="property.is_rented">
-                    {{ property.is_rented ? 'Loué' : 'Disponible' }}
-                  </span>
-                </td>
-                <td class="actions">
-                  <button class="btn-action edit" (click)="editProperty(property)" title="Modifier">
+              <td class="name-cell">
+                <immopro-avatar [initials]="property.title.charAt(0)"></immopro-avatar>
+                <span class="title-text">{{ property.title }}</span>
+              </td>
+              <td><span class="capitalize">{{ property.property_type }}</span></td>
+              <td><span class="address-text">{{ property.address }}</span></td>
+              <td>{{ property.city }} ({{ property.postal_code }})</td>
+              <td>
+                <immopro-dpe-badge [value]="property.dpe"></immopro-dpe-badge>
+              </td>
+              <td>
+                <strong class="rent-text">{{ property.monthly_rent ? (property.monthly_rent + ' €') : '-' }}</strong>
+              </td>
+              <td>
+                <immopro-badge [tone]="property.is_rented ? 'info' : 'success'">
+                  {{ property.is_rented ? 'Loué' : 'Disponible' }}
+                </immopro-badge>
+              </td>
+              <td class="actions">
+                <div class="ip-table-actions">
+                  <immopro-icon-button size="sm" label="Modifier" (onClick)="editProperty(property)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                  </button>
-                  <button class="btn-action delete" (click)="deleteProperty(property)" [disabled]="deletingId() === property.id" title="Supprimer">
+                  </immopro-icon-button>
+                  <immopro-icon-button size="sm" tone="danger" label="Supprimer" [disabled]="deletingId() === property.id" (onClick)="deleteProperty(property)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-                  </button>
-                </td>
-              </tr>
-            }
+                  </immopro-icon-button>
+                </div>
+              </td>
+            </tr>
+          }
 
-            @empty {
-              <tr>
-                <td colspan="8" class="empty-state">Aucun actif rattaché à ce portfolio de prestige.</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+          @empty {
+            <tr>
+              <td colspan="8" class="ip-table-empty">Aucun actif rattaché à ce portfolio de prestige.</td>
+            </tr>
+          }
+        </tbody>
+      </immopro-table>
     </div>
   }
 </div>
@@ -134,18 +122,14 @@
               [error]="submitted() && title?.invalid ? (title?.hasError('required') ? 'Le nom est requis' : 'Minimum 2 caractères') : null"
             ></immopro-input>
 
-            <div class="luxury-select-group">
-              <label for="property-type">Type de Bien</label>
+            <immopro-select inputId="property-type" label="Type de Bien" [error]="submitted() && propertyType?.invalid ? 'Le type est requis' : null">
               <select id="property-type" formControlName="property_type">
                 <option value="">Choisir un type</option>
                 @for (type of propertyTypes; track type.value) {
                   <option [value]="type.value">{{ type.label }}</option>
                 }
               </select>
-              @if (submitted() && propertyType?.invalid) {
-                <span class="field-error">Le type est requis</span>
-              }
-            </div>
+            </immopro-select>
 
             <immopro-input
               id="property-address"
@@ -171,18 +155,14 @@
               [error]="submitted() && postalCode?.invalid ? 'Le code postal est requis' : null"
             ></immopro-input>
 
-            <div class="luxury-select-group">
-              <label for="property-dpe">DPE (Diagnostic de performance énergétique)</label>
+            <immopro-select inputId="property-dpe" label="DPE (Diagnostic de performance énergétique)" [error]="submitted() && dpe?.invalid ? 'Le DPE est requis' : null">
               <select id="property-dpe" formControlName="dpe">
                 <option value="">Choisir un DPE</option>
                 @for (value of dpeValues; track value) {
                   <option [value]="value">{{ value }}</option>
                 }
               </select>
-              @if (submitted() && dpe?.invalid) {
-                <span class="field-error">Le DPE est requis</span>
-              }
-            </div>
+            </immopro-select>
 
             <immopro-input id="property-rooms" label="Nombre de pièces" type="number" formControlName="rooms" placeholder="3"></immopro-input>
             <immopro-input id="property-area" label="Surface habitable (m²)" type="number" formControlName="area_sqm" placeholder="70"></immopro-input>

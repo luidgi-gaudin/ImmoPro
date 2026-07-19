@@ -1,0 +1,43 @@
+.ip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+
+  &.tone-success {
+    color: var(--success);
+    background: rgba(111, 199, 154, 0.1);
+    border-color: rgba(111, 199, 154, 0.22);
+  }
+
+  &.tone-warning {
+    color: var(--primary);
+    background: var(--primary-glow);
+    border-color: var(--border-hover);
+  }
+
+  &.tone-danger {
+    color: var(--error);
+    background: rgba(224, 94, 94, 0.09);
+    border-color: rgba(224, 94, 94, 0.22);
+  }
+
+  &.tone-info {
+    color: var(--info);
+    background: rgba(140, 163, 212, 0.1);
+    border-color: rgba(140, 163, 212, 0.22);
+  }
+
+  &.tone-neutral {
+    color: var(--text-secondary);
+    background: var(--overlay-soft);
+    border-color: var(--border);
+  }
+}

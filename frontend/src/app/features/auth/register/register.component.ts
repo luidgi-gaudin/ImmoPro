@@ -27,7 +27,6 @@ export function passwordMatchValidator(form: FormGroup) {
     ImmoproButtonComponent
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterComponent {
