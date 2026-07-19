@@ -1,6 +1,7 @@
-import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ImmoproCardComponent, ImmoproBadgeComponent, ImmoproDpeBadgeComponent, ImmoproEmptyStateComponent } from 'ui-lib';
+import { PortfolioService, Property } from '../../core/services/portfolio.service';
 import { PortfolioContextService } from './portfolio-context.service';
 
 @Component({
@@ -9,7 +10,7 @@ import { PortfolioContextService } from './portfolio-context.service';
   imports: [RouterLink, ImmoproCardComponent, ImmoproBadgeComponent, ImmoproDpeBadgeComponent, ImmoproEmptyStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (ctx.propertiesLoading()) {
+    @if (loading()) {
       <div class="surface" style="text-align: center; padding: 40px;">
         <p class="text-secondary">Chargement de l'actif...</p>
       </div>
@@ -140,15 +141,26 @@ import { PortfolioContextService } from './portfolio-context.service';
 })
 export class PortfolioPropertyDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private portfolioService = inject(PortfolioService);
   protected ctx = inject(PortfolioContextService);
 
-  private propertyId = signal<number | null>(null);
-  protected property = computed(() => {
-    const id = this.propertyId();
-    return id ? this.ctx.findProperty(id) : undefined;
-  });
+  protected loading = signal(false);
+  protected property = signal<Property | undefined>(undefined);
 
   ngOnInit(): void {
-    this.propertyId.set(Number(this.route.snapshot.paramMap.get('propertyId')));
+    const portfolioId = this.ctx.portfolioId() ?? Number(this.route.snapshot.parent?.paramMap.get('id'));
+    const propertyId = Number(this.route.snapshot.paramMap.get('propertyId'));
+
+    this.loading.set(true);
+    this.portfolioService.getProperty(portfolioId, propertyId).subscribe({
+      next: (property) => {
+        this.property.set(property);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.property.set(undefined);
+        this.loading.set(false);
+      },
+    });
   }
 }

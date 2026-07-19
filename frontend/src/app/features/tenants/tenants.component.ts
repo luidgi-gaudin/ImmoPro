@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TenantService, Tenant, PaginatedResponse } from '../../core/services/tenant.service';
 import { ImmoproButtonComponent, ImmoproInputComponent, ImmoproPageHeaderComponent, ImmoproTableComponent, ImmoproAvatarComponent, ImmoproIconButtonComponent, ImmoproPaginationComponent } from 'ui-lib';
 
 @Component({
   selector: 'app-tenants',
   standalone: true,
-  imports: [ReactiveFormsModule, ImmoproButtonComponent, ImmoproInputComponent, ImmoproPageHeaderComponent, ImmoproTableComponent, ImmoproAvatarComponent, ImmoproIconButtonComponent, ImmoproPaginationComponent],
+  imports: [ReactiveFormsModule, RouterLink, ImmoproButtonComponent, ImmoproInputComponent, ImmoproPageHeaderComponent, ImmoproTableComponent, ImmoproAvatarComponent, ImmoproIconButtonComponent, ImmoproPaginationComponent],
   templateUrl: './tenants.component.html',
   styleUrl: './tenants.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

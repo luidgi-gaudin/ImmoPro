@@ -5,9 +5,11 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\LeaseController;
+use App\Http\Controllers\LeasePhotoController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\RentPaymentController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +50,15 @@ Route::middleware('auth:sanctum')->group(function () {
         ->scopeBindings()
         ->name('leases.payments.quittance');
     Route::apiResource('leases.payments', RentPaymentController::class)->scoped();
+
+    // Photos de l'état des lieux d'entrée / sortie d'un bail.
+    Route::post('/leases/{lease}/photos', [LeasePhotoController::class, 'store'])->name('leases.photos.store');
+    Route::delete('/leases/{lease}/photos/{photo}', [LeasePhotoController::class, 'destroy'])
+        ->scopeBindings()
+        ->name('leases.photos.destroy');
+
+    // Rapports agrégés (bailleur, biens, locataires).
+    Route::get('/reports/overview', [ReportController::class, 'overview'])->name('reports.overview');
 
     // Alertes proactives (impayés, révision IRL, fin de bail, expiration DPE).
     Route::get('/alerts', [AlertController::class, 'index'])->name('alerts.index');

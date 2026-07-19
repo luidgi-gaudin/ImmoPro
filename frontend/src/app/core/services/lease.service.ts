@@ -2,6 +2,22 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface LeaseCoTenant {
+  id: number;
+  first_name: string;
+  last_name: string;
+  pivot: { rent_share: number | null };
+}
+
+export interface LeasePhoto {
+  id: number;
+  lease_id: number;
+  type: 'entree' | 'sortie';
+  original_name: string | null;
+  url: string;
+  created_at: string;
+}
+
 export interface Lease {
   id: number;
   property_id: number;
@@ -15,6 +31,13 @@ export interface Lease {
   payment_day: number | null;
   statut: 'actif' | 'en_attente' | 'termine';
   last_rent_revision_at?: string | null;
+  co_tenants?: LeaseCoTenant[];
+  photos?: LeasePhoto[];
+}
+
+export interface CoTenantPayload {
+  tenant_id: number;
+  rent_share?: number | null;
 }
 
 export interface CreateLeasePayload {
@@ -28,6 +51,7 @@ export interface CreateLeasePayload {
   deposit?: number | null;
   payment_day?: number | null;
   statut?: string;
+  co_tenants?: CoTenantPayload[];
 }
 
 export interface RentPayment {
@@ -100,6 +124,10 @@ export class LeaseService {
     return this.http.get<RentPayment[]>(`${this.apiUrl}/${leaseId}/payments`);
   }
 
+  getPayment(leaseId: number, paymentId: number): Observable<RentPayment> {
+    return this.http.get<RentPayment>(`${this.apiUrl}/${leaseId}/payments/${paymentId}`);
+  }
+
   createPayment(leaseId: number, payload: any): Observable<RentPayment> {
     return this.http.post<RentPayment>(`${this.apiUrl}/${leaseId}/payments`, payload);
   }
@@ -114,5 +142,17 @@ export class LeaseService {
 
   getQuittance(leaseId: number, paymentId: number): Observable<QuittanceData> {
     return this.http.get<QuittanceData>(`${this.apiUrl}/${leaseId}/payments/${paymentId}/quittance`);
+  }
+
+  // État des lieux (photos d'entrée / de sortie)
+  uploadLeasePhoto(leaseId: number, type: 'entree' | 'sortie', file: File): Observable<LeasePhoto> {
+    const formData = new FormData();
+    formData.append('type', type);
+    formData.append('photo', file);
+    return this.http.post<LeasePhoto>(`${this.apiUrl}/${leaseId}/photos`, formData);
+  }
+
+  deleteLeasePhoto(leaseId: number, photoId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${leaseId}/photos/${photoId}`);
   }
 }

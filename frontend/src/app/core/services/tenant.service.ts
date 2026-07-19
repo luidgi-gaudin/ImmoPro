@@ -45,6 +45,10 @@ export class TenantService {
     return this.http.get<PaginatedResponse<Tenant>>(this.apiUrl, { params });
   }
 
+  getTenant(id: number): Observable<Tenant> {
+    return this.http.get<Tenant>(`${this.apiUrl}/${id}`);
+  }
+
   createTenant(tenant: CreateTenantPayload): Observable<Tenant> {
     return this.http.post<Tenant>(this.apiUrl, tenant);
   }

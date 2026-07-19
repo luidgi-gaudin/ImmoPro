@@ -81,6 +81,12 @@
 
 .card-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
+}
+
+.card-actions-icons {
+  display: flex;
+  gap: 6px;
 }

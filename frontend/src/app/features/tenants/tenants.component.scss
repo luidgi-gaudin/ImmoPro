@@ -12,6 +12,10 @@
   .title-text {
     font-weight: 500;
     color: var(--text-primary);
+
+    &:hover {
+      color: var(--primary);
+    }
   }
 }
 
