@@ -1,60 +1,32 @@
-.portfolio-details-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px;
-}
-
-.header-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.summary-stats {
-  display: flex;
-  margin-top: 15px;
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-
-    .label {
-      font-size: 0.75rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .value {
-      font-family: 'Space Grotesk', system-ui, sans-serif;
-      font-size: 2.2rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      line-height: 1.1;
-    }
-  }
-}
-
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
 
   h2 {
     margin: 0;
   }
+}
 
-  .badge-count {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border: 1px solid var(--border);
-    padding: 4px 12px;
-    border-radius: 99px;
-    background: var(--primary-glow);
-    color: var(--primary);
-  }
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.badge-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: var(--primary-glow);
+  color: var(--primary);
 }
 
 .name-cell {
@@ -65,6 +37,10 @@
   .title-text {
     font-weight: 500;
     color: var(--text-primary);
+
+    &:hover {
+      color: var(--primary);
+    }
   }
 }
 

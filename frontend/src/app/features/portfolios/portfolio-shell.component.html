@@ -1,0 +1,21 @@
+<div class="page portfolio-shell">
+  <immopro-page-header [title]="ctx.portfolio()?.name || 'Portefeuille'" [subtitle]="ctx.portfolio()?.description ?? null">
+    <immopro-button actions variant="ghost" (onClick)="goBack()">← Retour</immopro-button>
+  </immopro-page-header>
+
+  @if (ctx.loading()) {
+    <div class="surface" style="text-align: center; padding: 40px;">
+      <p class="text-secondary">Chargement des données du portfolio...</p>
+    </div>
+  } @else if (ctx.error()) {
+    <div class="alert alert-error">{{ ctx.error() }}</div>
+  } @else {
+    <nav class="portfolio-tabs">
+      @for (link of tabLinks(); track link.path) {
+        <a [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
+      }
+    </nav>
+
+    <router-outlet></router-outlet>
+  }
+</div>

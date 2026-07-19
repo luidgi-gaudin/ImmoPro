@@ -1,0 +1,25 @@
+.portfolio-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+
+  a {
+    padding: 10px 4px;
+    margin-right: 22px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      color: var(--text-primary);
+    }
+
+    &.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+  }
+}
