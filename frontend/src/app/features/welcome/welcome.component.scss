@@ -4,6 +4,13 @@
   padding: 0 30px;
 }
 
+.landing-theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+}
+
 /* Split Hero Section */
 .hero-section {
   min-height: 85vh;

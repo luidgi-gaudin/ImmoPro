@@ -1,0 +1,8 @@
+<div class="ip-table-wrapper">
+  @if (loading()) {
+    <div class="ip-table-loading">{{ loadingText() }}</div>
+  }
+  <table class="ip-table">
+    <ng-content></ng-content>
+  </table>
+</div>

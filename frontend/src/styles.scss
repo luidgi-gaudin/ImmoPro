@@ -23,6 +23,12 @@
   --success: #6fc79a;
   --info: #6aa9e0;
 
+  /* Shared shadow / overlay tokens (theme-aware, avoids per-component light-theme overrides) */
+  --shadow-rgb: 0, 0, 0;
+  --overlay-soft: rgba(255, 255, 255, 0.03);
+  --overlay-softer: rgba(255, 255, 255, 0.015);
+  --overlay-strong: rgba(255, 255, 255, 0.05);
+
   /* Layout */
   --sidebar-width: 240px;
   --header-height: 68px;
@@ -35,28 +41,34 @@
   --transition-smooth: 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Light Theme Override - Ivory Paper & Deep Pine */
+/* Light Theme Override - Warm Ivory & Deep Pine, soft & inviting */
 html.light-theme, body.light-theme {
-  --bg-color: #f6f8f6; /* Cool Ivory */
-  --surface-color: #f6f8f6;
+  --bg-color: #faf6ee; /* Warm Ivory */
+  --surface-color: #faf6ee;
   --surface-card: #ffffff;
-  --surface-sidebar: #eaf0ec;
+  --surface-sidebar: #f3ead9; /* Warm Sand */
 
-  --primary: #1f7a5a; /* Deep Pine */
-  --primary-glow: rgba(31, 122, 90, 0.08);
-  --primary-hover: #186349;
+  --primary: #2f7d5a; /* Deep Pine */
+  --primary-glow: rgba(47, 125, 90, 0.09);
+  --primary-hover: #266449;
   --on-primary: #ffffff;
 
-  --border: rgba(31, 122, 90, 0.14);
-  --border-hover: rgba(31, 122, 90, 0.28);
+  --border: rgba(97, 76, 48, 0.14); /* Warm taupe border, more definition on white */
+  --border-hover: rgba(97, 76, 48, 0.28);
 
-  --text-primary: #13211b; /* Deep Slate Charcoal */
-  --text-secondary: #566e64; /* Muted Slate Green */
-  --text-muted: #8b988f; /* Pebble Gray */
+  --text-primary: #2a2318; /* Warm Espresso */
+  --text-secondary: #6f6252; /* Warm Taupe */
+  --text-muted: #a69a86; /* Warm Stone */
 
   --error: #b3261e;
   --success: #2e7d52;
   --info: #1c62b0;
+
+  /* Warm-toned shadows instead of muddy pure-black, subtle tinted overlays instead of white */
+  --shadow-rgb: 64, 46, 24;
+  --overlay-soft: rgba(97, 76, 48, 0.035);
+  --overlay-softer: rgba(97, 76, 48, 0.02);
+  --overlay-strong: rgba(97, 76, 48, 0.055);
 }
 
 /* Base Styles */
@@ -109,7 +121,7 @@ a {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 30px;
-  box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px -15px rgba(var(--shadow-rgb), 0.3);
   transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth);
   
   &.hoverable:hover {
@@ -126,7 +138,7 @@ a {
 
 /* Global Forms styling */
 input, select, textarea {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: var(--overlay-softer);
   border: 1px solid var(--border);
   color: var(--text-primary);
   border-radius: var(--radius-md);
@@ -135,20 +147,12 @@ input, select, textarea {
   font-size: 0.9rem;
   transition: var(--transition-fast);
   width: 100%;
-  
-  body.light-theme & {
-    background-color: rgba(0, 0, 0, 0.01);
-  }
 
   &:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-glow);
-    background-color: rgba(255, 255, 255, 0.04);
-    
-    body.light-theme & {
-      background-color: rgba(0, 0, 0, 0.02);
-    }
+    background-color: var(--overlay-soft);
   }
 
   &::placeholder {
@@ -241,7 +245,7 @@ select {
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 25px 50px -12px rgba(var(--shadow-rgb), 0.45);
   animation: slideInModal 350ms cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   flex-direction: column;
@@ -333,193 +337,6 @@ select {
   animation: structureRise 550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Luxury Navbar Styles */
-.navbar-container {
-  height: var(--header-height);
-  background: rgba(12, 12, 14, 0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  transition: background var(--transition-smooth), border var(--transition-smooth);
-  
-  body.light-theme & {
-    background: rgba(253, 252, 247, 0.88);
-    border-bottom: 1.5px solid rgba(31, 122, 90, 0.18);
-    box-shadow: 0 4px 20px rgba(31, 122, 90, 0.04);
-  }
-}
-
-.navbar-content {
-  max-width: 1200px;
-  height: 100%;
-  margin: 0 auto;
-  padding: 0 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-
-  &:hover .logo-mark {
-    transform: translateY(-1px);
-  }
-}
-
-.main-nav {
-  display: flex;
-  gap: 16px;
-  
-  a {
-    padding: 8px 18px;
-    border-radius: var(--radius-sm);
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    transition: all var(--transition-fast);
-    border: 1px solid transparent;
-    cursor: pointer;
-    
-    body.light-theme & {
-      color: var(--text-secondary);
-    }
-    
-    &:hover {
-      color: var(--text-primary);
-      background: var(--primary-glow);
-      
-      body.light-theme & {
-        color: var(--primary);
-        background: rgba(31, 122, 90, 0.05);
-      }
-    }
-    
-    &.active {
-      color: var(--primary);
-      background: var(--primary-glow);
-      font-weight: 700;
-      border: 1px solid var(--border);
-      
-      body.light-theme & {
-        color: var(--primary);
-        background: rgba(31, 122, 90, 0.08);
-        border: 1px solid rgba(31, 122, 90, 0.25);
-      }
-    }
-  }
-}
-
-.user-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.avatar-ring {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.02);
-  transition: all var(--transition-fast);
-  
-  body.light-theme & {
-    border-color: rgba(31, 122, 90, 0.25);
-    background: rgba(0, 0, 0, 0.02);
-  }
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  
-  &:hover {
-    .avatar-ring {
-      border-color: var(--primary);
-      box-shadow: 0 0 8px var(--primary-glow);
-    }
-    .user-name {
-      color: var(--text-primary);
-      
-      body.light-theme & {
-        color: var(--text-primary);
-      }
-    }
-  }
-  
-  .user-initial {
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--primary);
-    text-transform: uppercase;
-  }
-
-  .user-name {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    transition: color var(--transition-fast);
-    
-    body.light-theme & {
-      color: var(--text-secondary);
-    }
-  }
-}
-
-.btn-theme, .btn-logout {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  
-  body.light-theme & {
-    border-color: rgba(31, 122, 90, 0.25);
-    color: #5c5952;
-  }
-  
-  &:hover {
-    color: var(--primary);
-    border-color: var(--primary);
-    background: var(--primary-glow);
-    
-    body.light-theme & {
-      color: var(--primary);
-      border-color: var(--primary);
-      background: rgba(31, 122, 90, 0.05);
-    }
-  }
-}
-
-.btn-logout:hover {
-  color: var(--error);
-  border-color: rgba(224, 94, 94, 0.3);
-  background: rgba(224, 94, 94, 0.05);
-  
-  body.light-theme & {
-    color: #c54242;
-    border-color: rgba(197, 66, 66, 0.3);
-    background: rgba(197, 66, 66, 0.05);
-  }
-}
-
 /* ============================================================
    UI KIT — socle de composants partagés (boutons, badges, pages)
    Ajouts non destructifs : les vues à styles scopés gardent leurs
@@ -527,9 +344,9 @@ select {
    ============================================================ */
 
 :root {
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 8px 24px -12px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 24px 48px -22px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 1px 2px rgba(var(--shadow-rgb), 0.06), 0 1px 3px rgba(var(--shadow-rgb), 0.1);
+  --shadow-md: 0 8px 24px -12px rgba(var(--shadow-rgb), 0.3);
+  --shadow-lg: 0 24px 48px -22px rgba(var(--shadow-rgb), 0.45);
 }
 
 /* Barres de défilement discrètes */
@@ -588,6 +405,24 @@ select {
   background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+}
+
+/* Grille de formulaire pour les modales (2 colonnes, empilée sur mobile) */
+.modal-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Empilement de champs à espacement régulier (formulaires d'authentification, etc.) */
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* Boutons */

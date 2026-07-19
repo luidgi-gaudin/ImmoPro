@@ -1,0 +1,73 @@
+immopro-table {
+  display: block;
+}
+
+.ip-table-wrapper {
+  position: relative;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 10px 35px -15px rgba(var(--shadow-rgb), 0.3);
+}
+
+.ip-table-loading {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.ip-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+
+  th {
+    padding: 16px 22px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    background: var(--overlay-softer);
+  }
+
+  td {
+    padding: 15px 22px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: middle;
+    transition: background-color var(--transition-fast);
+  }
+
+  tr:hover td {
+    background-color: color-mix(in srgb, var(--primary) 5%, transparent);
+    color: var(--text-primary);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  th.actions,
+  td.actions {
+    text-align: right;
+    width: 100px;
+  }
+
+  .ip-table-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .ip-table-empty {
+    text-align: center;
+    padding: 40px !important;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+}

@@ -1,0 +1,11 @@
+<header class="ip-page-header">
+  <div class="ip-page-heading">
+    <h1>{{ title() }}</h1>
+    @if (subtitle()) {
+      <p class="ip-page-subtitle">{{ subtitle() }}</p>
+    }
+  </div>
+  <div class="ip-page-actions">
+    <ng-content select="[actions]"></ng-content>
+  </div>
+</header>

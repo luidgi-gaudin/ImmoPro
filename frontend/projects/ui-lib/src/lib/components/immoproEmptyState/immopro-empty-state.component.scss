@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+.ip-empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-secondary);
+  border-radius: var(--radius-lg);
+
+  &.dashed {
+    background: var(--surface-card);
+    border: 1px dashed var(--border);
+    padding: 60px 40px;
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 1.3rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    max-width: 460px;
+    margin-inline: auto;
+  }
+}
+
+.ip-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  margin-bottom: 14px;
+  opacity: 0.75;
+
+  &:empty {
+    display: none;
+  }
+}

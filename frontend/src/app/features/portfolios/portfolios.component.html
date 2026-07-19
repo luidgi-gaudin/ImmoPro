@@ -1,13 +1,9 @@
 <div class="portfolios-container">
-  <header class="page-header">
-    <div>
-      <h1>Mes Portfolios</h1>
-      <p class="subtitle text-secondary">Gérez vos ensembles immobiliers de prestige et suivez leurs performances.</p>
-    </div>
-    <immopro-button (onClick)="addPortfolio()">
+  <immopro-page-header title="Mes Portfolios" subtitle="Gérez vos ensembles immobiliers de prestige et suivez leurs performances.">
+    <immopro-button actions (onClick)="addPortfolio()">
       <span>+ Nouveau Portfolio</span>
     </immopro-button>
-  </header>
+  </immopro-page-header>
 
   <div class="portfolios-grid">
     @for (portfolio of portfolios(); track portfolio.id) {

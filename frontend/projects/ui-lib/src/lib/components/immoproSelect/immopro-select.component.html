@@ -1,0 +1,9 @@
+<div class="ip-select-wrapper">
+  @if (label()) {
+    <label [attr.for]="inputId() || null">{{ label() }}</label>
+  }
+  <ng-content></ng-content>
+  @if (error()) {
+    <span class="ip-field-error">{{ error() }}</span>
+  }
+</div>

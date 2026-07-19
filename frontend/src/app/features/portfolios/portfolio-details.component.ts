@@ -1,13 +1,36 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ImmoproButtonComponent, ImmoproCardComponent, ImmoproInputComponent } from 'ui-lib';
+import {
+  ImmoproButtonComponent,
+  ImmoproCardComponent,
+  ImmoproInputComponent,
+  ImmoproPageHeaderComponent,
+  ImmoproTableComponent,
+  ImmoproAvatarComponent,
+  ImmoproIconButtonComponent,
+  ImmoproBadgeComponent,
+  ImmoproDpeBadgeComponent,
+  ImmoproSelectComponent,
+} from 'ui-lib';
 import { CreatePropertyPayload, Portfolio, PortfolioService, Property } from '../../core/services/portfolio.service';
 
 @Component({
   selector: 'app-portfolio-details',
   standalone: true,
-  imports: [ReactiveFormsModule, ImmoproButtonComponent, ImmoproCardComponent, ImmoproInputComponent],
+  imports: [
+    ReactiveFormsModule,
+    ImmoproButtonComponent,
+    ImmoproCardComponent,
+    ImmoproInputComponent,
+    ImmoproPageHeaderComponent,
+    ImmoproTableComponent,
+    ImmoproAvatarComponent,
+    ImmoproIconButtonComponent,
+    ImmoproBadgeComponent,
+    ImmoproDpeBadgeComponent,
+    ImmoproSelectComponent,
+  ],
   templateUrl: './portfolio-details.component.html',
   styleUrl: './portfolio-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

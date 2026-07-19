@@ -1,0 +1,13 @@
+<button
+  [type]="type()"
+  class="ip-icon-btn"
+  [class.tone-danger]="tone() === 'danger'"
+  [class.size-sm]="size() === 'sm'"
+  [class.active]="active()"
+  [disabled]="disabled()"
+  [attr.title]="label() || null"
+  [attr.aria-label]="label() || null"
+  (click)="handleClick($event)"
+>
+  <ng-content></ng-content>
+</button>

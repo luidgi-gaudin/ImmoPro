@@ -44,12 +44,8 @@ button {
     color: var(--text-primary);
     
     &:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--overlay-strong);
       border-color: var(--border-hover);
-      
-      body.light-theme & {
-        background: rgba(0, 0, 0, 0.02);
-      }
     }
   }
   &.color-error {
@@ -77,14 +73,10 @@ button {
 .btn-ghost {
   background: transparent;
   color: var(--text-secondary);
-  
+
   &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--overlay-soft);
     color: var(--text-primary);
-    
-    body.light-theme & {
-      background: rgba(0, 0, 0, 0.02);
-    }
   }
 }
 

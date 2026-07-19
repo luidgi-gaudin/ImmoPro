@@ -2,16 +2,19 @@ import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@ang
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { AuthService, User } from '../../core/services/auth.service';
-import { ImmoproButtonComponent, ImmoproInputComponent, ImmoproCardComponent } from 'ui-lib';
+import { ImmoproButtonComponent, ImmoproInputComponent, ImmoproCardComponent, ImmoproPageHeaderComponent, ImmoproAvatarComponent, ImmoproBadgeComponent } from 'ui-lib';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
-    ReactiveFormsModule, 
-    ImmoproButtonComponent, 
-    ImmoproInputComponent, 
+    ReactiveFormsModule,
+    ImmoproButtonComponent,
+    ImmoproInputComponent,
     ImmoproCardComponent,
+    ImmoproPageHeaderComponent,
+    ImmoproAvatarComponent,
+    ImmoproBadgeComponent,
     DatePipe
   ],
   templateUrl: './profile.component.html',

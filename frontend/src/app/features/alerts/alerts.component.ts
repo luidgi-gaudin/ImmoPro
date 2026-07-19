@@ -1,26 +1,23 @@
 import { Component, OnInit, inject, computed, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { ImmoproPageHeaderComponent, ImmoproButtonComponent, ImmoproEmptyStateComponent, ImmoproBadgeComponent } from 'ui-lib';
 import { AlertService, AppAlert, AlertSeverity } from '../../core/services/alert.service';
 
 @Component({
   selector: 'app-alerts',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, ImmoproPageHeaderComponent, ImmoproButtonComponent, ImmoproEmptyStateComponent, ImmoproBadgeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="alerts-page">
-      <header class="alerts-header">
-        <div>
-          <h1>Alertes</h1>
-          <p class="subtitle text-secondary">
-            Les échéances à surveiller sur vos biens et vos baux : impayés, révision de loyer,
-            fin de bail et diagnostics.
-          </p>
-        </div>
+      <immopro-page-header
+        title="Alertes"
+        subtitle="Les échéances à surveiller sur vos biens et vos baux : impayés, révision de loyer, fin de bail et diagnostics."
+      >
         @if (svc.unreadCount() > 0) {
-          <button class="btn-ghost" (click)="markAllRead()">Tout marquer comme lu</button>
+          <immopro-button actions variant="ghost" (onClick)="markAllRead()">Tout marquer comme lu</immopro-button>
         }
-      </header>
+      </immopro-page-header>
 
       @if (svc.loading()) {
         <div class="skeleton-list">
@@ -29,11 +26,9 @@ import { AlertService, AppAlert, AlertSeverity } from '../../core/services/alert
           <div class="skeleton-card"></div>
         </div>
       } @else if (svc.alerts().length === 0) {
-        <div class="empty-state">
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-          <h3>Tout est à jour</h3>
-          <p class="text-secondary">Aucune alerte en attente. Nous vous préviendrons dès qu'une échéance approche.</p>
-        </div>
+        <immopro-empty-state title="Tout est à jour" message="Aucune alerte en attente. Nous vous préviendrons dès qu'une échéance approche.">
+          <svg icon xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        </immopro-empty-state>
       } @else {
         <ul class="alerts-list">
           @for (alert of svc.alerts(); track alert.id) {
@@ -60,7 +55,7 @@ import { AlertService, AppAlert, AlertSeverity } from '../../core/services/alert
               <div class="alert-body">
                 <div class="alert-top">
                   <span class="type-tag">{{ typeLabel(alert.type) }}</span>
-                  <span class="severity-tag">{{ severityLabel(alert.severity) }}</span>
+                  <immopro-badge [tone]="severityTone(alert.severity)">{{ severityLabel(alert.severity) }}</immopro-badge>
                   @if (!alert.is_read) {
                     <span class="unread-dot" title="Non lue" aria-label="Non lue"></span>
                   }
@@ -79,14 +74,14 @@ import { AlertService, AppAlert, AlertSeverity } from '../../core/services/alert
 
               <div class="alert-actions">
                 @if (alert.type === 'loyer_impaye') {
-                  <button class="btn-solid" (click)="remind(alert)">
+                  <button class="btn btn--primary btn--block" (click)="remind(alert)">
                     {{ alert.reminded_at ? 'Relancer à nouveau' : 'Relancer le locataire' }}
                   </button>
                 }
                 @if (!alert.is_read) {
-                  <button class="btn-ghost" (click)="markRead(alert)">Marquer comme lu</button>
+                  <button class="btn btn--outline btn--block" (click)="markRead(alert)">Marquer comme lu</button>
                 }
-                <button class="btn-ghost" (click)="resolve(alert)">Résoudre</button>
+                <button class="btn btn--outline btn--block" (click)="resolve(alert)">Résoudre</button>
               </div>
             </li>
           }
@@ -132,5 +127,9 @@ export class AlertsComponent implements OnInit {
 
   severityLabel(severity: AlertSeverity): string {
     return { critical: 'Urgent', warning: 'À prévoir', info: 'Information' }[severity];
+  }
+
+  severityTone(severity: AlertSeverity): 'danger' | 'warning' | 'info' {
+    return { critical: 'danger' as const, warning: 'warning' as const, info: 'info' as const }[severity];
   }
 }

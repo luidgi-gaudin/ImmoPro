@@ -1,8 +1,5 @@
 <div class="profile-container">
-  <header class="profile-header">
-    <h1>Profil & Sécurité</h1>
-    <p class="subtitle text-secondary">Gérez vos informations de compte et la sécurité de vos données</p>
-  </header>
+  <immopro-page-header title="Profil & Sécurité" subtitle="Gérez vos informations de compte et la sécurité de vos données"></immopro-page-header>
 
   @if (successMessage()) {
     <div class="alert alert-success">
@@ -27,13 +24,11 @@
           <h2 class="luxury-title" style="margin: 0; font-size: 1.5rem;">Informations personnelles</h2>
         </div>
         <div class="user-details-body">
-          <div class="user-avatar-large">
-            <span>{{ user()?.name?.charAt(0) || 'U' }}</span>
-          </div>
+          <immopro-avatar tone="gradient" size="xl" [initials]="user()?.name?.charAt(0) || 'U'"></immopro-avatar>
           <div class="user-meta">
             <h3>{{ user()?.name }}</h3>
             <p class="text-secondary">{{ user()?.email }}</p>
-            <span class="badge-role">Administrateur</span>
+            <immopro-badge tone="warning">Administrateur</immopro-badge>
             <p class="account-date text-muted" style="margin-top: 15px; font-size: 0.8rem;">
               Membre depuis le {{ user()?.created_at | date:'dd MMMM yyyy' }}
             </p>

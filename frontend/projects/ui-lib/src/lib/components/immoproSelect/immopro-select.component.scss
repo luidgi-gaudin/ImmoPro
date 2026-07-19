@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.ip-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+  }
+}
+
+.ip-field-error {
+  font-size: 0.75rem;
+  color: var(--error);
+  margin-top: 2px;
+}

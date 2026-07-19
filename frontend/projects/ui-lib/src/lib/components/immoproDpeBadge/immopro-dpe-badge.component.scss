@@ -1,0 +1,19 @@
+.ip-dpe-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #1a1a1a;
+
+  &[data-dpe="A"] { background: #31b057; color: #fff; }
+  &[data-dpe="B"] { background: #3dbc5f; color: #fff; }
+  &[data-dpe="C"] { background: #96c83c; color: #000; }
+  &[data-dpe="D"] { background: #e6c800; color: #000; }
+  &[data-dpe="E"] { background: #eb9600; color: #000; }
+  &[data-dpe="F"] { background: #e65a00; color: #fff; }
+  &[data-dpe="G"] { background: #e61e00; color: #fff; }
+}

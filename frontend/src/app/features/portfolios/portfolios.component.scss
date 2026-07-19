@@ -4,18 +4,6 @@
   padding: 40px;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 40px;
-  
-  h1 {
-    font-size: 2.2rem;
-    margin-bottom: 6px;
-  }
-}
-
 .portfolios-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -29,13 +17,9 @@
 .properties-preview {
   margin-top: 15px;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.01);
+  background: var(--overlay-softer);
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
-  
-  body.light-theme & {
-    background: rgba(0, 0, 0, 0.005);
-  }
 }
 
 .preview-header {

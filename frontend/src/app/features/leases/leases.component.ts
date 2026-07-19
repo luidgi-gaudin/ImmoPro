@@ -2,7 +2,17 @@ import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
-import { ImmoproButtonComponent, ImmoproInputComponent, ImmoproCardComponent } from 'ui-lib';
+import {
+  ImmoproButtonComponent,
+  ImmoproInputComponent,
+  ImmoproCardComponent,
+  ImmoproPageHeaderComponent,
+  ImmoproTableComponent,
+  ImmoproIconButtonComponent,
+  ImmoproBadgeComponent,
+  ImmoproEmptyStateComponent,
+  ImmoproSelectComponent,
+} from 'ui-lib';
 import { CreateLeasePayload, Lease, LeaseService, RentPayment, QuittanceData } from '../../core/services/lease.service';
 import { PortfolioService } from '../../core/services/portfolio.service';
 import { TenantService } from '../../core/services/tenant.service';
@@ -16,10 +26,16 @@ interface Option {
   selector: 'app-leases',
   standalone: true,
   imports: [
-    ReactiveFormsModule, 
-    ImmoproButtonComponent, 
+    ReactiveFormsModule,
+    ImmoproButtonComponent,
     ImmoproInputComponent,
     ImmoproCardComponent,
+    ImmoproPageHeaderComponent,
+    ImmoproTableComponent,
+    ImmoproIconButtonComponent,
+    ImmoproBadgeComponent,
+    ImmoproEmptyStateComponent,
+    ImmoproSelectComponent,
     DatePipe
   ],
   templateUrl: './leases.component.html',
@@ -702,6 +718,18 @@ export class LeasesComponent implements OnInit {
 
   resolveLeaseTypeLabel(type: string): string {
     return this.leaseTypes.find(t => t.value === type)?.label || type;
+  }
+
+  leaseStatusTone(statut: string): 'success' | 'danger' | 'info' {
+    return { actif: 'success' as const, termine: 'danger' as const, en_attente: 'info' as const }[statut] ?? 'info';
+  }
+
+  paymentStatusLabel(status: string): string {
+    return status === 'paye' ? 'Payé' : (status === 'en_retard' ? 'En retard' : 'En attente');
+  }
+
+  paymentStatusTone(status: string): 'success' | 'danger' | 'warning' {
+    return { paye: 'success' as const, en_retard: 'danger' as const, en_attente: 'warning' as const }[status] ?? 'warning';
   }
 
   // Getters for form validations
