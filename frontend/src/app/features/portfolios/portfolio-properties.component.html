@@ -1,100 +1,65 @@
-<div class="portfolio-details-container">
-  <immopro-page-header title="Détails du Portfolio" subtitle="Vue d'ensemble complète et gestion des actifs de prestige associés.">
-    <div actions class="header-actions">
-      <immopro-button variant="ghost" (onClick)="goBack()">Retour</immopro-button>
-      <immopro-button (onClick)="addProperty()">+ Nouvel Actif</immopro-button>
-    </div>
-  </immopro-page-header>
-
-  @if (loading()) {
-    <div class="luxury-card" style="text-align: center; padding: 40px;">
-      <p class="text-secondary">Chargement des données du portfolio...</p>
-    </div>
-  } @else if (error() && !createModalOpen()) {
-    <div class="alert alert-error">
-      {{ error() }}
-    </div>
-  } @else if (portfolio(); as currentPortfolio) {
-    <div class="summary-section">
-      <immopro-card>
-        <div card-header>
-          <h2 class="luxury-title" style="margin: 0; font-size: 1.8rem;">{{ currentPortfolio.name }}</h2>
-          <p class="text-secondary" style="font-size: 0.9rem; margin-top: 5px;">
-            {{ currentPortfolio.description || 'Aucune description disponible pour cet ensemble.' }}
-          </p>
-        </div>
-        <div class="summary-stats">
-          <div class="stat-item">
-            <span class="label text-muted">Total Propriétés</span>
-            <strong class="value text-gold">{{ currentPortfolio.properties_count || 0 }}</strong>
-          </div>
-        </div>
-      </immopro-card>
-    </div>
-
-    <div class="properties-section" style="margin-top: 40px;">
-      <div class="section-header">
-        <h2 class="luxury-title" style="font-size: 1.6rem;">Biens Immobiliers Associés</h2>
-        <span class="badge-count">{{ currentPortfolio.properties?.length || 0 }} actif(s)</span>
-      </div>
-
-      <immopro-table [loading]="propertiesLoading()" loadingText="Chargement des actifs...">
-        <thead>
-          <tr>
-            <th>Titre de l'Actif</th>
-            <th>Type</th>
-            <th>Adresse</th>
-            <th>Ville / CP</th>
-            <th>DPE</th>
-            <th>Loyer Prévu</th>
-            <th>Statut</th>
-            <th class="actions">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (property of (currentPortfolio.properties ?? []); track property.id) {
-            <tr>
-              <td class="name-cell">
-                <immopro-avatar [initials]="property.title.charAt(0)"></immopro-avatar>
-                <span class="title-text">{{ property.title }}</span>
-              </td>
-              <td><span class="capitalize">{{ property.property_type }}</span></td>
-              <td><span class="address-text">{{ property.address }}</span></td>
-              <td>{{ property.city }} ({{ property.postal_code }})</td>
-              <td>
-                <immopro-dpe-badge [value]="property.dpe"></immopro-dpe-badge>
-              </td>
-              <td>
-                <strong class="rent-text">{{ property.monthly_rent ? (property.monthly_rent + ' €') : '-' }}</strong>
-              </td>
-              <td>
-                <immopro-badge [tone]="property.is_rented ? 'info' : 'success'">
-                  {{ property.is_rented ? 'Loué' : 'Disponible' }}
-                </immopro-badge>
-              </td>
-              <td class="actions">
-                <div class="ip-table-actions">
-                  <immopro-icon-button size="sm" label="Modifier" (onClick)="editProperty(property)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                  </immopro-icon-button>
-                  <immopro-icon-button size="sm" tone="danger" label="Supprimer" [disabled]="deletingId() === property.id" (onClick)="deleteProperty(property)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-                  </immopro-icon-button>
-                </div>
-              </td>
-            </tr>
-          }
-
-          @empty {
-            <tr>
-              <td colspan="8" class="ip-table-empty">Aucun actif rattaché à ce portfolio de prestige.</td>
-            </tr>
-          }
-        </tbody>
-      </immopro-table>
-    </div>
-  }
+<div class="section-header">
+  <h2 class="luxury-title">Biens Immobiliers Associés</h2>
+  <div class="section-actions">
+    <span class="badge-count">{{ ctx.properties().length }} actif(s)</span>
+    <immopro-button (onClick)="addProperty()">+ Nouvel Actif</immopro-button>
+  </div>
 </div>
+
+<immopro-table [loading]="ctx.propertiesLoading()" loadingText="Chargement des actifs...">
+  <thead>
+    <tr>
+      <th>Titre de l'Actif</th>
+      <th>Type</th>
+      <th>Adresse</th>
+      <th>Ville / CP</th>
+      <th>DPE</th>
+      <th>Loyer Prévu</th>
+      <th>Statut</th>
+      <th class="actions">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (property of ctx.properties(); track property.id) {
+      <tr>
+        <td class="name-cell">
+          <immopro-avatar [initials]="property.title.charAt(0)"></immopro-avatar>
+          <a class="title-text" [routerLink]="['/portfolios', ctx.portfolioId(), 'properties', property.id]">{{ property.title }}</a>
+        </td>
+        <td><span class="capitalize">{{ property.property_type }}</span></td>
+        <td><span class="address-text">{{ property.address }}</span></td>
+        <td>{{ property.city }} ({{ property.postal_code }})</td>
+        <td>
+          <immopro-dpe-badge [value]="property.dpe"></immopro-dpe-badge>
+        </td>
+        <td>
+          <strong class="rent-text">{{ property.monthly_rent ? (property.monthly_rent + ' €') : '-' }}</strong>
+        </td>
+        <td>
+          <immopro-badge [tone]="property.is_rented ? 'info' : 'success'">
+            {{ property.is_rented ? 'Loué' : 'Disponible' }}
+          </immopro-badge>
+        </td>
+        <td class="actions">
+          <div class="ip-table-actions">
+            <immopro-icon-button size="sm" label="Modifier" (onClick)="editProperty(property)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </immopro-icon-button>
+            <immopro-icon-button size="sm" tone="danger" label="Supprimer" [disabled]="ctx.deletingId() === property.id" (onClick)="deleteProperty(property)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+            </immopro-icon-button>
+          </div>
+        </td>
+      </tr>
+    }
+
+    @empty {
+      <tr>
+        <td colspan="8" class="ip-table-empty">Aucun actif rattaché à ce portfolio.</td>
+      </tr>
+    }
+  </tbody>
+</immopro-table>
 
 <!-- Luxury Create/Edit Modal -->
 @if (createModalOpen()) {
@@ -107,9 +72,9 @@
 
       <form [formGroup]="propertyForm" (ngSubmit)="submitProperty()">
         <div class="modal-body">
-          @if (error()) {
+          @if (ctx.error()) {
             <div class="alert alert-error">
-              {{ error() }}
+              {{ ctx.error() }}
             </div>
           }
 

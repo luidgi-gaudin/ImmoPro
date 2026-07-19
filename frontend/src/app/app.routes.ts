@@ -1,7 +1,10 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { PortfoliosComponent } from './features/portfolios/portfolios.component';
-import { PortfolioDetailsComponent } from './features/portfolios/portfolio-details.component';
+import { PortfolioShellComponent } from './features/portfolios/portfolio-shell.component';
+import { PortfolioOverviewComponent } from './features/portfolios/portfolio-overview.component';
+import { PortfolioPropertiesComponent } from './features/portfolios/portfolio-properties.component';
+import { PortfolioPropertyDetailComponent } from './features/portfolios/portfolio-property-detail.component';
 import { TenantsComponent } from './features/tenants/tenants.component';
 import { LeasesComponent } from './features/leases/leases.component';
 import { ProfileComponent } from './features/profile/profile.component';
@@ -21,7 +24,16 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'portfolios', component: PortfoliosComponent },
-      { path: 'portfolios/:id', component: PortfolioDetailsComponent },
+      {
+        path: 'portfolios/:id',
+        component: PortfolioShellComponent,
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'overview' },
+          { path: 'overview', component: PortfolioOverviewComponent },
+          { path: 'properties', component: PortfolioPropertiesComponent },
+          { path: 'properties/:propertyId', component: PortfolioPropertyDetailComponent },
+        ],
+      },
       { path: 'tenants', component: TenantsComponent },
       { path: 'leases', component: LeasesComponent },
       { path: 'alerts', component: AlertsComponent },

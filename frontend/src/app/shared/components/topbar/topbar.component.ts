@@ -99,6 +99,9 @@ export class TopbarComponent {
   /** Libellé de la section courante affiché dans la barre. */
   private labelFor(url: string): string {
     const path = url.split('?')[0];
+    if (/^\/portfolios\/\d+\/properties\/\d+$/.test(path)) return "Détail de l'actif";
+    if (path.match(/^\/portfolios\/\d+\/properties$/)) return 'Actifs';
+    if (path.match(/^\/portfolios\/\d+\/overview$/)) return "Vue d'ensemble";
     if (path.startsWith('/portfolios/')) return 'Détail du portefeuille';
     const map: Record<string, string> = {
       '/dashboard': 'Tableau de bord',

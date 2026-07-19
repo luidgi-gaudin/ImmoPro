@@ -44,6 +44,117 @@
   flex: 1;
 }
 
+/* ── Section contextuelle (ex: sous-navigation d'un portefeuille) ── */
+.sidebar-context {
+  margin: 0 2px 14px;
+  padding: 12px 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--overlay-softer);
+}
+
+.context-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0 10px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: none;
+
+  &:hover {
+    color: var(--primary);
+    border: none;
+  }
+}
+
+.context-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.context-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  a {
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--primary-glow);
+    }
+
+    &.active {
+      color: var(--primary);
+      background: var(--primary-glow);
+      font-weight: 600;
+    }
+  }
+}
+
+/* ── Aperçu des fonctionnalités à venir ── */
+.sidebar-roadmap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.roadmap-label {
+  padding: 0 12px 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.roadmap-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: default;
+
+  svg {
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+}
+
+.soon-badge {
+  margin-left: auto;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 .sidebar-nav a,
 .sidebar-footer a {
   position: relative;
