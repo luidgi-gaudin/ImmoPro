@@ -6,9 +6,11 @@ import { PortfolioOverviewComponent } from './features/portfolios/portfolio-over
 import { PortfolioPropertiesComponent } from './features/portfolios/portfolio-properties.component';
 import { PortfolioPropertyDetailComponent } from './features/portfolios/portfolio-property-detail.component';
 import { TenantsComponent } from './features/tenants/tenants.component';
+import { TenantDetailComponent } from './features/tenants/tenant-detail.component';
 import { LeasesComponent } from './features/leases/leases.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { AlertsComponent } from './features/alerts/alerts.component';
+import { ReportsComponent } from './features/reports/reports.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { ForgotPasswordComponent } from './features/auth/login/forgot-password.component';
@@ -35,8 +37,10 @@ export const routes: Routes = [
         ],
       },
       { path: 'tenants', component: TenantsComponent },
+      { path: 'tenants/:id', component: TenantDetailComponent },
       { path: 'leases', component: LeasesComponent },
       { path: 'alerts', component: AlertsComponent },
+      { path: 'reports', component: ReportsComponent },
       { path: 'profile', component: ProfileComponent },
     ],
   },

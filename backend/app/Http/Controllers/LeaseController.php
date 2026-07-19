@@ -19,28 +19,50 @@ class LeaseController extends Controller
             ->flatten()
             ->pluck('id');
 
-        return Lease::whereIn('property_id', $propertyIds)->get();
+        return Lease::whereIn('property_id', $propertyIds)->with('coTenants')->get();
     }
 
     public function store(LeaseRequest $request)
     {
-        return Lease::create($request->validated());
+        $lease = Lease::create($request->safe()->except('co_tenants'));
+
+        $this->syncCoTenants($lease, $request->validated('co_tenants', []));
+
+        return $lease->load('coTenants');
     }
 
     public function show(Lease $lease)
     {
         $this->authorize('view', $lease);
 
-        return $lease;
+        return $lease->load('coTenants', 'photos');
     }
 
     public function update(LeaseRequest $request, Lease $lease)
     {
         $this->authorize('update', $lease);
 
-        $lease->update($request->validated());
+        $lease->update($request->safe()->except('co_tenants'));
 
-        return $lease;
+        if ($request->has('co_tenants')) {
+            $this->syncCoTenants($lease, $request->validated('co_tenants', []));
+        }
+
+        return $lease->load('coTenants', 'photos');
+    }
+
+    /**
+     * Synchronise les colocataires et leur éventuelle répartition du loyer.
+     *
+     * @param  array<int, array{tenant_id: int, rent_share?: float|null}>  $coTenants
+     */
+    private function syncCoTenants(Lease $lease, array $coTenants): void
+    {
+        $syncData = collect($coTenants)->mapWithKeys(fn ($coTenant) => [
+            $coTenant['tenant_id'] => ['rent_share' => $coTenant['rent_share'] ?? null],
+        ])->all();
+
+        $lease->coTenants()->sync($syncData);
     }
 
     public function destroy(Lease $lease)

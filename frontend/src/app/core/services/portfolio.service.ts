@@ -67,8 +67,20 @@ export class PortfolioService {
     return this.http.get<Portfolio>(`${this.apiUrl}/${id}`);
   }
 
+  updatePortfolio(id: number, portfolio: CreatePortfolioPayload): Observable<Portfolio> {
+    return this.http.put<Portfolio>(`${this.apiUrl}/${id}`, portfolio);
+  }
+
+  deletePortfolio(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
   getPortfolioProperties(id: number): Observable<Property[]> {
     return this.http.get<Property[]>(`${this.apiUrl}/${id}/properties`);
+  }
+
+  getProperty(portfolioId: number, propertyId: number): Observable<Property> {
+    return this.http.get<Property>(`${this.apiUrl}/${portfolioId}/properties/${propertyId}`);
   }
 
   createProperty(portfolioId: number, property: CreatePropertyPayload): Observable<Property> {

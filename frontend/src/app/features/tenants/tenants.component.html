@@ -28,7 +28,7 @@
         <tr>
           <td class="name-cell">
             <immopro-avatar [initials]="tenant.first_name.charAt(0) + tenant.last_name.charAt(0)"></immopro-avatar>
-            <span class="title-text">{{ tenant.first_name }} {{ tenant.last_name }}</span>
+            <a class="title-text" [routerLink]="['/tenants', tenant.id]">{{ tenant.first_name }} {{ tenant.last_name }}</a>
           </td>
           <td>{{ tenant.email || '-' }}</td>
           <td>{{ tenant.phone || '-' }}</td>

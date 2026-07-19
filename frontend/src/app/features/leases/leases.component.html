@@ -98,7 +98,59 @@
               <strong class="value">Le {{ leaseVal.payment_day }} du mois</strong>
             </div>
           </div>
+
+          @if (leaseVal.co_tenants && leaseVal.co_tenants.length > 0) {
+            <div class="co-tenants-block">
+              <span class="label text-muted">Colocataires</span>
+              <ul class="co-tenants-list">
+                @for (ct of leaseVal.co_tenants; track ct.id) {
+                  <li>
+                    <span>{{ ct.first_name }} {{ ct.last_name }}</span>
+                    @if (ct.pivot.rent_share) {
+                      <immopro-badge tone="neutral">{{ ct.pivot.rent_share }} €</immopro-badge>
+                    }
+                  </li>
+                }
+              </ul>
+            </div>
+          }
         </immopro-card>
+
+        <!-- État des lieux (photos d'entrée / de sortie) -->
+        <div class="inspection-section" style="margin-top: 30px;">
+          <h3 class="luxury-title" style="font-size: 1.5rem;">État des lieux</h3>
+
+          <div class="inspection-grid">
+            @for (type of inspectionTypes; track type) {
+              <div class="inspection-column">
+                <div class="inspection-column-head">
+                  <span>{{ type === 'entree' ? "Entrée" : 'Sortie' }}</span>
+                  <label class="btn btn--outline btn--sm inspection-upload-btn">
+                    @if (photoUploading() === type) {
+                      Envoi...
+                    } @else {
+                      + Ajouter une photo
+                    }
+                    <input type="file" accept="image/*" hidden [disabled]="photoUploading() !== null" (change)="uploadPhoto(type, $event)" />
+                  </label>
+                </div>
+
+                @if (photosByType(type).length === 0) {
+                  <p class="text-muted inspection-empty">Aucune photo pour le moment.</p>
+                } @else {
+                  <div class="inspection-photos">
+                    @for (photo of photosByType(type); track photo.id) {
+                      <div class="inspection-photo">
+                        <img [src]="photo.url" [alt]="photo.original_name || 'Photo état des lieux'" />
+                        <button type="button" class="inspection-photo-remove" (click)="deletePhoto(photo)" title="Supprimer">×</button>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
 
         <!-- Payments Section -->
         <div class="payments-section-wrapper" style="margin-top: 30px;">
@@ -271,6 +323,30 @@
               placeholder="5"
               [error]="submitted() && paymentDay?.invalid ? 'Le jour de paiement doit être compris entre 1 et 28' : null"
             ></immopro-input>
+          </div>
+
+          <div class="co-tenants-form" formArrayName="co_tenants">
+            <div class="co-tenants-form-head">
+              <span>Colocataires (optionnel)</span>
+              <immopro-button variant="outline" type="button" (onClick)="addCoTenant()">+ Ajouter un colocataire</immopro-button>
+            </div>
+
+            @for (group of coTenantsArray.controls; track $index) {
+              <div class="co-tenant-row" [formGroupName]="$index">
+                <immopro-select [inputId]="'co-tenant-' + $index" label="Locataire">
+                  <select [id]="'co-tenant-' + $index" formControlName="tenant_id">
+                    <option value="">Sélectionner un locataire</option>
+                    @for (ten of tenants(); track ten.id) {
+                      <option [value]="ten.id">{{ ten.label }}</option>
+                    }
+                  </select>
+                </immopro-select>
+                <immopro-input [id]="'co-tenant-share-' + $index" label="Part du loyer (€)" type="number" formControlName="rent_share" placeholder="Optionnel"></immopro-input>
+                <immopro-icon-button type="button" tone="danger" label="Retirer ce colocataire" (onClick)="removeCoTenant($index)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                </immopro-icon-button>
+              </div>
+            }
           </div>
         </div>
 

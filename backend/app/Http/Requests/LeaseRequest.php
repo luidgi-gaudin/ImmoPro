@@ -70,6 +70,17 @@ class LeaseRequest extends FormRequest
             'deposit' => ['nullable', 'numeric', 'gte:0'],
             'payment_day' => ['nullable', 'integer', 'between:1,28'],
             'statut' => ['sometimes', new Enum(LeaseStatus::class)],
+
+            // Colocation : colocataires additionnels au-delà du locataire principal, avec
+            // une éventuelle répartition du loyer par personne.
+            'co_tenants' => ['sometimes', 'array'],
+            'co_tenants.*.tenant_id' => [
+                'required',
+                'integer',
+                Rule::exists('tenants', 'id')->where(fn ($q) => $q->where('user_id', $userId)),
+                Rule::notIn([(int) $this->input('tenant_id')]),
+            ],
+            'co_tenants.*.rent_share' => ['nullable', 'numeric', 'gte:0'],
         ];
     }
 
@@ -84,7 +95,21 @@ class LeaseRequest extends FormRequest
 
             $this->validateDepositCap($validator, $type);
             $this->validateDuration($validator, $type);
+            $this->validateCoTenants($validator);
         });
+    }
+
+    /**
+     * Un même colocataire ne peut pas apparaître plusieurs fois sur un même bail.
+     */
+    private function validateCoTenants(Validator $validator): void
+    {
+        $coTenants = collect($this->input('co_tenants', []));
+        $ids = $coTenants->pluck('tenant_id')->filter();
+
+        if ($ids->count() !== $ids->unique()->count()) {
+            $validator->errors()->add('co_tenants', 'Un colocataire ne peut être ajouté qu\'une seule fois sur ce bail.');
+        }
     }
 
     /**

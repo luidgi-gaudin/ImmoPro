@@ -109,6 +109,7 @@ export class TopbarComponent {
       '/tenants': 'Locataires',
       '/leases': 'Baux',
       '/alerts': 'Alertes',
+      '/reports': 'Rapports',
       '/profile': 'Mon profil',
     };
     return map[path] ?? 'ImmoPro';

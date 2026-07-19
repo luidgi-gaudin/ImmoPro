@@ -38,6 +38,14 @@
         </div>
 
         <div card-footer class="card-actions" (click)="$event.stopPropagation()">
+          <div class="card-actions-icons">
+            <immopro-icon-button size="sm" label="Modifier" (onClick)="editPortfolio(portfolio, $event)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            </immopro-icon-button>
+            <immopro-icon-button size="sm" tone="danger" label="Supprimer" [disabled]="deletingId() === portfolio.id" (onClick)="deletePortfolio(portfolio, $event)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+            </immopro-icon-button>
+          </div>
           <immopro-button variant="ghost" (onClick)="viewPortfolio(portfolio)">
             Gérer les biens &rarr;
           </immopro-button>
@@ -52,7 +60,7 @@
   <div class="luxury-modal-overlay" (click)="closeCreateModal()">
     <div class="luxury-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3 class="luxury-title">Nouveau Portfolio</h3>
+        <h3 class="luxury-title">{{ modalTitle }}</h3>
         <button type="button" class="modal-close" (click)="closeCreateModal()">×</button>
       </div>
 
@@ -87,7 +95,7 @@
             Annuler
           </immopro-button>
           <immopro-button type="submit" [loading]="loading()" [disabled]="loading()">
-            Créer le portfolio
+            {{ submitLabel }}
           </immopro-button>
         </div>
       </form>

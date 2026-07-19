@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import {
@@ -13,7 +13,7 @@ import {
   ImmoproEmptyStateComponent,
   ImmoproSelectComponent,
 } from 'ui-lib';
-import { CreateLeasePayload, Lease, LeaseService, RentPayment, QuittanceData } from '../../core/services/lease.service';
+import { CreateLeasePayload, Lease, LeasePhoto, LeaseService, RentPayment, QuittanceData } from '../../core/services/lease.service';
 import { PortfolioService } from '../../core/services/portfolio.service';
 import { TenantService } from '../../core/services/tenant.service';
 
@@ -62,6 +62,7 @@ export class LeasesComponent implements OnInit {
   selectedLease = signal<Lease | null>(null);
   payments = signal<RentPayment[]>([]);
   paymentsLoading = signal(false);
+  photoUploading = signal<'entree' | 'sortie' | null>(null);
 
   // Modals controllers as Signals
   createModalOpen = signal(false);
@@ -97,6 +98,7 @@ export class LeasesComponent implements OnInit {
   ];
 
   paymentMethods = ['Virement', 'Prélèvement', 'Chèque', 'Espèces'];
+  inspectionTypes: ('entree' | 'sortie')[] = ['entree', 'sortie'];
 
   constructor() {
     this.leaseForm = this.fb.group({
@@ -110,6 +112,7 @@ export class LeasesComponent implements OnInit {
       deposit: [null, [Validators.min(0)]],
       payment_day: [1, [Validators.required, Validators.min(1), Validators.max(28)]],
       statut: ['actif', [Validators.required]],
+      co_tenants: this.fb.array([]),
     });
 
     this.revisionForm = this.fb.group({
@@ -244,8 +247,17 @@ export class LeasesComponent implements OnInit {
   }
 
   selectLease(lease: Lease) {
+    // Affiche immédiatement la version en liste, puis rafraîchit avec la version canonique du serveur.
     this.selectedLease.set(lease);
     this.loadPayments();
+
+    this.leaseService.getLease(lease.id).subscribe({
+      next: (fresh) => {
+        if (this.selectedLease()?.id === fresh.id) {
+          this.selectedLease.set(fresh);
+        }
+      },
+    });
   }
 
   loadPayments() {
@@ -272,6 +284,48 @@ export class LeasesComponent implements OnInit {
         this.payments.set(pays);
       }
     });
+  }
+
+  // État des lieux (photos d'entrée / de sortie)
+  uploadPhoto(type: 'entree' | 'sortie', event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    const selected = this.selectedLease();
+    if (!file || !selected) return;
+
+    this.photoUploading.set(type);
+    this.leaseService.uploadLeasePhoto(selected.id, type, file).subscribe({
+      next: (photo) => {
+        this.photoUploading.set(null);
+        this.selectedLease.update((lease) => (lease ? { ...lease, photos: [...(lease.photos ?? []), photo] } : lease));
+      },
+      error: () => {
+        this.photoUploading.set(null);
+        this.error.set("Impossible de téléverser cette photo de l'état des lieux");
+      },
+    });
+
+    input.value = '';
+  }
+
+  deletePhoto(photo: LeasePhoto): void {
+    const selected = this.selectedLease();
+    if (!selected) return;
+    const confirmed = window.confirm('Supprimer cette photo ?');
+    if (!confirmed) return;
+
+    this.leaseService.deleteLeasePhoto(selected.id, photo.id).subscribe({
+      next: () => {
+        this.selectedLease.update((lease) =>
+          lease ? { ...lease, photos: (lease.photos ?? []).filter((p) => p.id !== photo.id) } : lease
+        );
+      },
+      error: () => this.error.set('Impossible de supprimer cette photo'),
+    });
+  }
+
+  photosByType(type: 'entree' | 'sortie'): LeasePhoto[] {
+    return (this.selectedLease()?.photos ?? []).filter((p) => p.type === type);
   }
 
   addLease() {
@@ -326,8 +380,35 @@ export class LeasesComponent implements OnInit {
       statut: lease?.statut ?? 'actif',
     });
 
+    this.setCoTenants(lease);
     this.adjustFormForType(lease?.type ?? 'nu');
     this.createModalOpen.set(true);
+  }
+
+  get coTenantsArray(): FormArray {
+    return this.leaseForm.get('co_tenants') as FormArray;
+  }
+
+  addCoTenant(): void {
+    this.coTenantsArray.push(this.buildCoTenantGroup());
+  }
+
+  removeCoTenant(index: number): void {
+    this.coTenantsArray.removeAt(index);
+  }
+
+  private buildCoTenantGroup(coTenant?: { tenant_id: number | string; rent_share?: number | null }) {
+    return this.fb.group({
+      tenant_id: [coTenant?.tenant_id?.toString() ?? '', Validators.required],
+      rent_share: [coTenant?.rent_share ?? null, [Validators.min(0)]],
+    });
+  }
+
+  private setCoTenants(lease: Lease | null): void {
+    this.coTenantsArray.clear();
+    (lease?.co_tenants ?? []).forEach((ct) => {
+      this.coTenantsArray.push(this.buildCoTenantGroup({ tenant_id: ct.id, rent_share: ct.pivot.rent_share }));
+    });
   }
 
   closeCreateModal() {
@@ -411,6 +492,12 @@ export class LeasesComponent implements OnInit {
       deposit: formValue.deposit !== null && formValue.deposit !== '' ? Number(formValue.deposit) : null,
       payment_day: Number(formValue.payment_day),
       statut: formValue.statut,
+      co_tenants: this.coTenantsArray.value
+        .filter((ct: any) => ct.tenant_id !== '' && ct.tenant_id !== null)
+        .map((ct: any) => ({
+          tenant_id: Number(ct.tenant_id),
+          rent_share: ct.rent_share !== null && ct.rent_share !== '' ? Number(ct.rent_share) : null,
+        })),
     };
 
     const isEdit = !!this.editingLease();
@@ -418,15 +505,16 @@ export class LeasesComponent implements OnInit {
 
     if (isEdit) {
       const editId = this.editingLease()!.id;
-      const updatedLease: Lease = { 
-        ...this.editingLease()!, 
-        ...payload, 
+      const updatedLease: Lease = {
+        ...this.editingLease()!,
+        ...payload,
         type: payload.type as 'nu' | 'meuble' | 'etudiant' | 'mobilite',
         statut: (payload.statut || 'actif') as 'actif' | 'en_attente' | 'termine',
         charges: payload.charges || 0,
         deposit: payload.deposit || null,
         end_date: payload.end_date || null,
-        payment_day: payload.payment_day !== undefined && payload.payment_day !== null ? payload.payment_day : null
+        payment_day: payload.payment_day !== undefined && payload.payment_day !== null ? payload.payment_day : null,
+        co_tenants: this.editingLease()!.co_tenants,
       };
       this.leases.set(previousLeases.map(l => l.id === editId ? updatedLease : l));
       this.createModalOpen.set(false);
@@ -455,7 +543,8 @@ export class LeasesComponent implements OnInit {
         charges: payload.charges || 0,
         deposit: payload.deposit || null,
         end_date: payload.end_date || null,
-        payment_day: payload.payment_day !== undefined && payload.payment_day !== null ? payload.payment_day : null
+        payment_day: payload.payment_day !== undefined && payload.payment_day !== null ? payload.payment_day : null,
+        co_tenants: undefined,
       };
 
       this.leases.set([...previousLeases, tempLease]);
@@ -551,6 +640,19 @@ export class LeasesComponent implements OnInit {
   openPaymentModal(payment: RentPayment | null = null) {
     const selected = this.selectedLease();
     if (!selected) return;
+
+    if (payment) {
+      // Récupère la version canonique de l'échéance avant de préremplir le formulaire d'édition.
+      this.leaseService.getPayment(selected.id, payment.id).subscribe({
+        next: (fresh) => this.fillPaymentModal(selected, fresh),
+        error: () => this.fillPaymentModal(selected, payment),
+      });
+    } else {
+      this.fillPaymentModal(selected, null);
+    }
+  }
+
+  private fillPaymentModal(selected: Lease, payment: RentPayment | null) {
     this.editingPayment.set(payment);
     this.paymentSubmitted.set(false);
     this.error.set(null);

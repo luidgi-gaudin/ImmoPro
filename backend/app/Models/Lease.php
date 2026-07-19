@@ -35,9 +35,28 @@ class Lease extends Model
         return $this->belongsTo(Tenant::class);
     }
 
+    /**
+     * Colocataires additionnels (au-delà du locataire principal), avec répartition
+     * optionnelle du loyer par colocataire.
+     */
+    public function coTenants()
+    {
+        return $this->belongsToMany(Tenant::class, 'lease_tenant')
+            ->withPivot('rent_share')
+            ->withTimestamps();
+    }
+
     public function payments()
     {
         return $this->hasMany(RentPayment::class);
+    }
+
+    /**
+     * Photos de l'état des lieux d'entrée et de sortie.
+     */
+    public function photos()
+    {
+        return $this->hasMany(LeasePhoto::class);
     }
 
     protected function casts()
