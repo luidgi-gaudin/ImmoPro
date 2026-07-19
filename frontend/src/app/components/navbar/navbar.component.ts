@@ -19,6 +19,7 @@ import { AuthService } from '../../services/auth.service';
           <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
           <a routerLink="/portfolios" routerLinkActive="active">Portfolios</a>
           <a routerLink="/tenants" routerLinkActive="active">Locataires</a>
+          <a routerLink="/leases" routerLinkActive="active">Baux</a>
         </nav>
 
         <div class="user-actions">
