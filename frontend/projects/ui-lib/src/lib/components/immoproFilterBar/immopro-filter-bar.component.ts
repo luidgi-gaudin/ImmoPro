@@ -99,6 +99,6 @@ export class ImmoproFilterBarComponent {
 
     const plural = this.itemLabelPlural() || `${this.itemLabel()}s`;
 
-    return `${total} ${total > 1 ? plural : this.itemLabel()}`;
+    return `${total} ${total !== 1 ? plural : this.itemLabel()}`;
   }
 }
