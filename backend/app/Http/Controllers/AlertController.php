@@ -7,25 +7,32 @@ use App\Http\Resources\AlertResource;
 use App\Models\Alert;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AlertController extends Controller
 {
     /**
      * Liste les alertes du bailleur connecté. Par défaut, seules les alertes
      * actives (non résolues) sont retournées ; `?resolved=1` inclut l'historique.
+     * Accepte aussi ?search=, ?type=, ?severity=, ?sort= et ?per_page=.
      */
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): LengthAwarePaginator
     {
         $query = Alert::forUser($request->user())
             ->with('alertable')
-            ->latest();
+            ->filtered($request);
 
         if (! $request->boolean('resolved')) {
             $query->active();
         }
 
-        return AlertResource::collection($query->get());
+        // through() applique AlertResource à chaque ligne tout en conservant
+        // l'enveloppe plate du paginateur (data, current_page, total…).
+        // AlertResource::collection() aurait produit une enveloppe meta/links,
+        // différente de celle des autres listes de l'API.
+        return $query->paginate($this->perPage($request))
+            ->withQueryString()
+            ->through(fn (Alert $alert) => new AlertResource($alert));
     }
 
     public function markAsRead(Request $request, Alert $alert): AlertResource

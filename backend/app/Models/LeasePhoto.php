@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
 class LeasePhoto extends Model
@@ -16,7 +17,8 @@ class LeasePhoto extends Model
 
     protected $appends = ['url'];
 
-    public function lease()
+    /** @return BelongsTo<Lease, $this> */
+    public function lease(): BelongsTo
     {
         return $this->belongsTo(Lease::class);
     }

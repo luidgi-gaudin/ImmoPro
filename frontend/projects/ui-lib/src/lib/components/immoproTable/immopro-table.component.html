@@ -1,8 +1,14 @@
-<div class="ip-table-wrapper">
+<div class="ip-table-wrapper" [class.is-loading]="loading()">
   @if (loading()) {
-    <div class="ip-table-loading">{{ loadingText() }}</div>
+    <div
+      class="ip-table-loading-bar"
+      role="progressbar"
+      aria-label="Chargement des données..."
+    ></div>
   }
-  <table class="ip-table">
-    <ng-content></ng-content>
-  </table>
+  <div class="ip-table-scroll">
+    <table class="ip-table">
+      <ng-content></ng-content>
+    </table>
+  </div>
 </div>

@@ -9,17 +9,21 @@ use Illuminate\Http\Request;
 
 class LeaseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $propertyIds = auth()->user()
-            ->portfolios()
-            ->with('properties')
-            ->get()
-            ->pluck('properties')
-            ->flatten()
-            ->pluck('id');
-
-        return Lease::whereIn('property_id', $propertyIds)->with('coTenants')->get();
+        // La version précédente chargeait en mémoire tous les portefeuilles et
+        // tous leurs biens pour n'en extraire que des identifiants, puis les
+        // réinjectait dans un whereIn. whereHas fait le même filtrage en une
+        // seule requête, sans hydrater d'objets, et surtout sans construire un
+        // whereIn qui grandit avec le patrimoine.
+        return Lease::whereHas(
+            'property.portfolio',
+            fn ($portfolio) => $portfolio->where('user_id', auth()->id())
+        )
+            ->with('coTenants')
+            ->filtered($request)
+            ->paginate($this->perPage($request))
+            ->withQueryString();
     }
 
     public function store(LeaseRequest $request)

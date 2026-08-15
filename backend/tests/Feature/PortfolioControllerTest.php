@@ -24,7 +24,7 @@ class PortfolioControllerTest extends TestCase
         $response = $this->actingAs($user)->getJson('/api/portfolios');
 
         $response->assertStatus(200)
-            ->assertJsonCount(2);
+            ->assertJsonCount(2, 'data');
     }
 
     public function test_index_returns_401_for_unauthenticated_request(): void

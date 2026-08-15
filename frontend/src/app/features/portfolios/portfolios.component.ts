@@ -1,23 +1,66 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { EMPTY, catchError, switchMap, tap } from 'rxjs';
 import { PortfolioService, Portfolio } from '../../core/services/portfolio.service';
-import { ImmoproCardComponent, ImmoproButtonComponent, ImmoproInputComponent, ImmoproPageHeaderComponent, ImmoproIconButtonComponent } from 'ui-lib';
+import { PaginatedResponse } from '../../core/list/pagination.model';
+import { createListQuery } from '../../core/list/list-query';
+import {
+  ImmoproCardComponent,
+  ImmoproButtonComponent,
+  ImmoproInputComponent,
+  ImmoproPageHeaderComponent,
+  ImmoproIconButtonComponent,
+  ImmoproFilterBarComponent,
+  ImmoproPaginationComponent,
+  ImmoproSkeletonComponent,
+} from 'ui-lib';
 
 @Component({
   selector: 'app-portfolios',
   standalone: true,
-  imports: [ReactiveFormsModule, ImmoproCardComponent, ImmoproButtonComponent, ImmoproInputComponent, ImmoproPageHeaderComponent, ImmoproIconButtonComponent],
+  imports: [
+    ReactiveFormsModule,
+    ImmoproCardComponent,
+    ImmoproButtonComponent,
+    ImmoproInputComponent,
+    ImmoproPageHeaderComponent,
+    ImmoproIconButtonComponent,
+    ImmoproFilterBarComponent,
+    ImmoproPaginationComponent,
+    ImmoproSkeletonComponent,
+  ],
   templateUrl: './portfolios.component.html',
   styleUrl: './portfolios.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PortfoliosComponent implements OnInit {
+export class PortfoliosComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private portfolioService = inject(PortfolioService);
 
+  protected readonly list = createListQuery({ defaultSort: 'name', defaultDirection: 'asc' });
+
   portfolios = signal<Portfolio[]>([]);
+  pagination = signal<PaginatedResponse<Portfolio> | undefined>(undefined);
+  listLoading = signal(false);
+
+  /** Passe à faux dès la première réponse reçue, même vide. */
+  private readonly firstLoadDone = signal(false);
+
+  /**
+   * Squelette réservé au tout premier affichage.
+   *
+   * Sur un changement de filtre, la liste précédente reste à l'écran et se
+   * contente de pâlir : substituer des blocs gris à un contenu déjà lisible à
+   * chaque frappe donnerait une impression de clignotement, et ferait sauter la
+   * hauteur de la page.
+   */
+  protected readonly showSkeleton = computed(() => !this.firstLoadDone() && this.listLoading());
+
+  /** Nombre de cartes fantômes, choisi pour remplir une grille sans excès. */
+  protected readonly skeletonCards = Array.from({ length: 6 });
   createForm: FormGroup;
 
   createModalOpen = signal(false);
@@ -32,21 +75,27 @@ export class PortfoliosComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: [''],
     });
-  }
 
-  ngOnInit() {
-    this.loadPortfolios();
-  }
-
-  loadPortfolios() {
-    this.portfolioService.getPortfolios().subscribe({
-      next: (data) => {
-        this.portfolios.set(data);
-      },
-      error: () => {
-        this.error.set('Impossible de charger les portfolios');
-      }
-    });
+    toObservable(this.list.trigger)
+      .pipe(
+        tap(() => this.listLoading.set(true)),
+        switchMap(({ params }) =>
+          this.portfolioService.getPortfolios(params).pipe(
+            catchError(() => {
+              this.error.set('Impossible de charger les portfolios');
+              this.listLoading.set(false);
+              return EMPTY;
+            }),
+          ),
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe((response) => {
+        this.portfolios.set(response.data);
+        this.pagination.set(response);
+        this.listLoading.set(false);
+        this.firstLoadDone.set(true);
+      });
   }
 
   addPortfolio() {
@@ -68,7 +117,9 @@ export class PortfoliosComponent implements OnInit {
 
   deletePortfolio(portfolio: Portfolio, event: MouseEvent) {
     event.stopPropagation();
-    const confirmed = window.confirm(`Supprimer définitivement le portefeuille "${portfolio.name}" et tous ses actifs ?`);
+    const confirmed = window.confirm(
+      `Supprimer définitivement le portefeuille "${portfolio.name}" et tous ses actifs ?`,
+    );
     if (!confirmed) return;
 
     const previousPortfolios = this.portfolios();
@@ -120,7 +171,9 @@ export class PortfoliosComponent implements OnInit {
       this.portfolioService.updatePortfolio(editing.id, payload).subscribe({
         next: (savedPortfolio) => {
           this.loading.set(false);
-          this.portfolios.set(this.portfolios().map((p) => (p.id === editing.id ? savedPortfolio : p)));
+          this.portfolios.set(
+            this.portfolios().map((p) => (p.id === editing.id ? savedPortfolio : p)),
+          );
           this.editingPortfolio.set(null);
         },
         error: (response) => {
@@ -144,7 +197,7 @@ export class PortfoliosComponent implements OnInit {
       next: (savedPortfolio) => {
         this.loading.set(false);
         // Replace temp with saved portfolio
-        this.portfolios.set(this.portfolios().map(p => p.id === tempId ? savedPortfolio : p));
+        this.portfolios.set(this.portfolios().map((p) => (p.id === tempId ? savedPortfolio : p)));
         this.createForm.reset({ name: '', description: '' });
         this.submitted.set(false);
       },

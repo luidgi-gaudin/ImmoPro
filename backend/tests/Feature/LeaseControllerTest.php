@@ -54,7 +54,7 @@ class LeaseControllerTest extends TestCase
 
         $response = $this->actingAs($user)->getJson('/api/leases');
 
-        $response->assertStatus(200)->assertJsonCount(3);
+        $response->assertStatus(200)->assertJsonCount(3, 'data');
     }
 
     public function test_index_returns_401_for_unauthenticated(): void

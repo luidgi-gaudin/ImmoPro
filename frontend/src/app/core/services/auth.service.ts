@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 export interface LoginRequest {
@@ -39,17 +39,18 @@ export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api/auth';
 
   // Global authentication state signals
-  currentUser = signal<User | null>(null);
-  isAuthenticated = computed(() => !!this.currentUser());
+  readonly currentUser = signal<User | null>(this.getStoredUser());
+  readonly isAuthenticated = computed(() => !!this.getToken() || !!this.currentUser());
 
   constructor() {
-    this.loadStoredUser();
+    this.refreshUserInBackground();
   }
 
   getUserProfile(): Observable<AuthResponse> {
     return this.http.get<AuthResponse>(`${this.apiUrl}/user`).pipe(
       tap((response) => {
         if (response.data) {
+          this.setStoredUser(response.data);
           this.currentUser.set(response.data);
         }
       }),
@@ -61,20 +62,26 @@ export class AuthService {
       tap((response) => {
         if (!response.two_factor_required && response.token && response.data) {
           this.setToken(response.token);
+          this.setStoredUser(response.data);
           this.currentUser.set(response.data);
         }
       }),
     );
   }
 
-  verify2FAChallenge(payload: { challenge_token: string; code?: string; recovery_code?: string }): Observable<AuthResponse> {
+  verify2FAChallenge(payload: {
+    challenge_token: string;
+    code?: string;
+    recovery_code?: string;
+  }): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/2fa/challenge`, payload).pipe(
       tap((response) => {
         if (response.token && response.data) {
           this.setToken(response.token);
+          this.setStoredUser(response.data);
           this.currentUser.set(response.data);
         }
-      })
+      }),
     );
   }
 
@@ -83,6 +90,7 @@ export class AuthService {
       tap((response) => {
         if (response.token && response.data) {
           this.setToken(response.token);
+          this.setStoredUser(response.data);
           this.currentUser.set(response.data);
         }
       }),
@@ -99,6 +107,7 @@ export class AuthService {
 
   clearSession(): void {
     this.clearToken();
+    this.clearStoredUser();
     this.currentUser.set(null);
   }
 
@@ -108,29 +117,34 @@ export class AuthService {
 
   // 2FA Management Endpoints
   enable2FA(): Observable<{ secret: string; otpauth_url: string; message: string }> {
-    return this.http.post<{ secret: string; otpauth_url: string; message: string }>(`${this.apiUrl}/2fa/enable`, {});
+    return this.http.post<{ secret: string; otpauth_url: string; message: string }>(
+      `${this.apiUrl}/2fa/enable`,
+      {},
+    );
   }
 
   confirm2FA(code: string): Observable<{ message: string; recovery_codes: string[] }> {
-    return this.http.post<{ message: string; recovery_codes: string[] }>(`${this.apiUrl}/2fa/confirm`, { code }).pipe(
-      tap(() => {
-        // Refresh profile to update 2FA status
-        this.getUserProfile().subscribe();
-      })
-    );
+    return this.http
+      .post<{ message: string; recovery_codes: string[] }>(`${this.apiUrl}/2fa/confirm`, { code })
+      .pipe(
+        tap(() => {
+          this.getUserProfile().subscribe();
+        }),
+      );
   }
 
   disable2FA(password: string): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.apiUrl}/2fa/disable`, { password }).pipe(
       tap(() => {
-        // Refresh profile to update 2FA status
         this.getUserProfile().subscribe();
-      })
+      }),
     );
   }
 
   regenerateRecoveryCodes(password: string): Observable<{ recovery_codes: string[] }> {
-    return this.http.post<{ recovery_codes: string[] }>(`${this.apiUrl}/2fa/recovery-codes`, { password });
+    return this.http.post<{ recovery_codes: string[] }>(`${this.apiUrl}/2fa/recovery-codes`, {
+      password,
+    });
   }
 
   // Password Recovery Endpoints
@@ -147,22 +161,63 @@ export class AuthService {
   }
 
   private setToken(token: string): void {
-    localStorage.setItem('auth_token', token);
+    try {
+      localStorage.setItem('auth_token', token);
+    } catch {
+      // Ignored in SSR or private mode
+    }
   }
 
   public getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    try {
+      return localStorage.getItem('auth_token');
+    } catch {
+      return null;
+    }
   }
 
   private clearToken(): void {
-    localStorage.removeItem('auth_token');
+    try {
+      localStorage.removeItem('auth_token');
+    } catch {
+      // Ignored
+    }
   }
 
-  private loadStoredUser(): void {
+  private setStoredUser(user: User): void {
+    try {
+      localStorage.setItem('auth_user', JSON.stringify(user));
+    } catch {
+      // Ignored
+    }
+  }
+
+  private getStoredUser(): User | null {
+    try {
+      const stored = localStorage.getItem('auth_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private clearStoredUser(): void {
+    try {
+      localStorage.removeItem('auth_user');
+    } catch {
+      // Ignored
+    }
+  }
+
+  private refreshUserInBackground(): void {
     const token = this.getToken();
     if (token) {
       this.getUserProfile().subscribe({
-        error: () => this.clearSession(),
+        error: (error: unknown) => {
+          if (error instanceof HttpErrorResponse && error.status === 401) {
+            this.clearSession();
+          }
+        },
       });
     }
   }

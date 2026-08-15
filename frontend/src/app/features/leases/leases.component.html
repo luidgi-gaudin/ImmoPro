@@ -1,11 +1,20 @@
 <div class="leases-container no-print">
-  <immopro-page-header title="Gestion des Baux" subtitle="Établissez des baux réglementaires, suivez les échéances de loyer et révisez les contrats.">
+  <immopro-page-header
+    title="Gestion des Baux"
+    subtitle="Établissez des baux réglementaires, suivez les échéances de loyer et révisez les contrats."
+  >
     <immopro-button actions (onClick)="addLease()">
       <span>+ Nouveau Bail</span>
     </immopro-button>
   </immopro-page-header>
 
-  @if (error() && !createModalOpen() && !revisionModalOpen() && !terminationModalOpen() && !paymentModalOpen()) {
+  @if (
+    error() &&
+    !createModalOpen() &&
+    !revisionModalOpen() &&
+    !terminationModalOpen() &&
+    !paymentModalOpen()
+  ) {
     <div class="alert alert-error">
       {{ error() }}
     </div>
@@ -14,11 +23,51 @@
   <div class="leases-grid">
     <!-- Left Column: Leases list -->
     <div class="leases-list-column">
-      <h2 class="luxury-title" style="font-size: 1.5rem; margin-bottom: 20px;">Contrats de bail</h2>
-      
+      <h2 class="luxury-title" style="font-size: 1.5rem; margin-bottom: 20px">Contrats de bail</h2>
+
+      <immopro-filter-bar
+        searchPlaceholder="Rechercher un locataire, un bien…"
+        [searchValue]="list.search()"
+        [canReset]="list.isFiltered()"
+        [total]="pagination()?.total ?? null"
+        [activeChips]="activeChips()"
+        itemLabel="bail"
+        itemLabelPlural="baux"
+        [loading]="listLoading()"
+        (searchChange)="list.setSearch($event)"
+        (removeChip)="list.removeFilter($event)"
+        (reset)="list.reset()"
+      >
+        <immopro-select label="Statut" inputId="lease-filter-statut">
+          <select
+            id="lease-filter-statut"
+            [value]="list.filterValue('statut')"
+            (change)="list.setFilter('statut', $any($event.target).value)"
+          >
+            <option value="">Tous</option>
+            @for (status of statusOptions; track status.value) {
+              <option [value]="status.value">{{ status.label }}</option>
+            }
+          </select>
+        </immopro-select>
+
+        <immopro-select label="Type" inputId="lease-filter-type">
+          <select
+            id="lease-filter-type"
+            [value]="list.filterValue('type')"
+            (change)="list.setFilter('type', $any($event.target).value)"
+          >
+            <option value="">Tous</option>
+            @for (type of leaseTypes; track type.value) {
+              <option [value]="type.value">{{ type.label }}</option>
+            }
+          </select>
+        </immopro-select>
+      </immopro-filter-bar>
+
       @for (lease of leases(); track lease.id) {
-        <div 
-          class="lease-item-card" 
+        <div
+          class="lease-item-card"
           [class.selected]="selectedLease()?.id === lease.id"
           (click)="selectLease(lease)"
         >
@@ -27,17 +76,38 @@
             <immopro-badge [tone]="leaseStatusTone(lease.statut)">{{ lease.statut }}</immopro-badge>
           </div>
           <h3 class="property-title">{{ resolvePropertyLabel(lease.property_id) }}</h3>
-          <p class="tenant-name text-secondary">Locataire : {{ resolveTenantLabel(lease.tenant_id) }}</p>
+          <p class="tenant-name text-secondary">
+            Locataire : {{ resolveTenantLabel(lease.tenant_id) }}
+          </p>
           <div class="rent-info">
             <span class="label text-muted">Loyer HC :</span>
             <strong class="value text-gold">{{ lease.monthly_rent }} €</strong>
           </div>
         </div>
-      }
-      @empty {
-        <div class="luxury-card" style="text-align: center; padding: 40px;">
-          <p class="text-secondary">Aucun contrat de bail enregistré.</p>
+      } @empty {
+        <div class="luxury-card" style="text-align: center; padding: 40px">
+          <p class="text-secondary">
+            @if (list.isFiltered()) {
+              Aucun bail ne correspond à ces critères.
+            } @else {
+              Aucun contrat de bail enregistré.
+            }
+          </p>
         </div>
+      }
+
+      @if (pagination(); as pag) {
+        <immopro-pagination
+          [currentPage]="pag.current_page"
+          [lastPage]="pag.last_page"
+          [from]="pag.from"
+          [to]="pag.to"
+          [total]="pag.total"
+          [perPage]="pag.per_page"
+          [perPageChoices]="list.perPageChoices"
+          (pageChange)="list.setPage($event)"
+          (perPageChange)="list.setPerPage($event)"
+        ></immopro-pagination>
       }
     </div>
 
@@ -48,18 +118,50 @@
         <immopro-card>
           <div card-header class="details-card-header">
             <div>
-              <h2 class="luxury-title" style="margin: 0; font-size: 1.6rem;">Bail #{{ leaseVal.id }}</h2>
-              <p class="text-secondary" style="font-size: 0.85rem; margin-top: 4px;">{{ resolveLeaseTypeLabel(leaseVal.type) }}</p>
+              <h2 class="luxury-title" style="margin: 0; font-size: 1.6rem">
+                Bail #{{ leaseVal.id }}
+              </h2>
+              <p class="text-secondary" style="font-size: 0.85rem; margin-top: 4px">
+                {{ resolveLeaseTypeLabel(leaseVal.type) }}
+              </p>
             </div>
             <div class="lease-actions-menu">
-              <immopro-button variant="ghost" (onClick)="openRevisionModal()" [disabled]="leaseVal.statut === 'termine'">
+              <immopro-button
+                variant="ghost"
+                (onClick)="openRevisionModal()"
+                [disabled]="leaseVal.statut === 'termine'"
+              >
                 Réviser le loyer
               </immopro-button>
-              <immopro-button variant="ghost" (onClick)="openTerminationModal()" [disabled]="leaseVal.statut === 'termine'">
+              <immopro-button
+                variant="ghost"
+                (onClick)="openTerminationModal()"
+                [disabled]="leaseVal.statut === 'termine'"
+              >
                 Résilier
               </immopro-button>
-              <immopro-icon-button tone="danger" label="Supprimer le bail" [disabled]="deletingId() === leaseVal.id" (onClick)="deleteLease(leaseVal)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              <immopro-icon-button
+                tone="danger"
+                label="Supprimer le bail"
+                [disabled]="deletingId() === leaseVal.id"
+                (onClick)="deleteLease(leaseVal)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 6h18" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                </svg>
               </immopro-icon-button>
             </div>
           </div>
@@ -75,11 +177,13 @@
             </div>
             <div class="info-item">
               <span class="label text-muted">Date de Début</span>
-              <strong class="value">{{ leaseVal.start_date | date:'dd/MM/yyyy' }}</strong>
+              <strong class="value">{{ leaseVal.start_date | date: 'dd/MM/yyyy' }}</strong>
             </div>
             <div class="info-item">
               <span class="label text-muted">Date de Fin</span>
-              <strong class="value">{{ leaseVal.end_date ? (leaseVal.end_date | date:'dd/MM/yyyy') : 'Indéterminée' }}</strong>
+              <strong class="value">{{
+                leaseVal.end_date ? (leaseVal.end_date | date: 'dd/MM/yyyy') : 'Indéterminée'
+              }}</strong>
             </div>
             <div class="info-item">
               <span class="label text-muted">Loyer mensuel HC</span>
@@ -91,7 +195,9 @@
             </div>
             <div class="info-item">
               <span class="label text-muted">Dépôt de garantie</span>
-              <strong class="value">{{ leaseVal.deposit !== null ? (leaseVal.deposit + ' €') : '-' }}</strong>
+              <strong class="value">{{
+                leaseVal.deposit !== null ? leaseVal.deposit + ' €' : '-'
+              }}</strong>
             </div>
             <div class="info-item">
               <span class="label text-muted">Jour de paiement</span>
@@ -117,21 +223,27 @@
         </immopro-card>
 
         <!-- État des lieux (photos d'entrée / de sortie) -->
-        <div class="inspection-section" style="margin-top: 30px;">
-          <h3 class="luxury-title" style="font-size: 1.5rem;">État des lieux</h3>
+        <div class="inspection-section" style="margin-top: 30px">
+          <h3 class="luxury-title" style="font-size: 1.5rem">État des lieux</h3>
 
           <div class="inspection-grid">
             @for (type of inspectionTypes; track type) {
               <div class="inspection-column">
                 <div class="inspection-column-head">
-                  <span>{{ type === 'entree' ? "Entrée" : 'Sortie' }}</span>
+                  <span>{{ type === 'entree' ? 'Entrée' : 'Sortie' }}</span>
                   <label class="btn btn--outline btn--sm inspection-upload-btn">
                     @if (photoUploading() === type) {
                       Envoi...
                     } @else {
                       + Ajouter une photo
                     }
-                    <input type="file" accept="image/*" hidden [disabled]="photoUploading() !== null" (change)="uploadPhoto(type, $event)" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      [disabled]="photoUploading() !== null"
+                      (change)="uploadPhoto(type, $event)"
+                    />
                   </label>
                 </div>
 
@@ -141,8 +253,18 @@
                   <div class="inspection-photos">
                     @for (photo of photosByType(type); track photo.id) {
                       <div class="inspection-photo">
-                        <img [src]="photo.url" [alt]="photo.original_name || 'Photo état des lieux'" />
-                        <button type="button" class="inspection-photo-remove" (click)="deletePhoto(photo)" title="Supprimer">×</button>
+                        <img
+                          [src]="photo.url"
+                          [alt]="photo.original_name || 'Photo état des lieux'"
+                        />
+                        <button
+                          type="button"
+                          class="inspection-photo-remove"
+                          (click)="deletePhoto(photo)"
+                          title="Supprimer"
+                        >
+                          ×
+                        </button>
                       </div>
                     }
                   </div>
@@ -153,15 +275,60 @@
         </div>
 
         <!-- Payments Section -->
-        <div class="payments-section-wrapper" style="margin-top: 30px;">
+        <div class="payments-section-wrapper" style="margin-top: 30px">
           <div class="payments-section-header">
-            <h3 class="luxury-title" style="font-size: 1.5rem;">Échéancier de loyer</h3>
-            <immopro-button variant="outline" (onClick)="openPaymentModal()" [disabled]="leaseVal.statut === 'termine'">
+            <h3 class="luxury-title" style="font-size: 1.5rem">Échéancier de loyer</h3>
+            <immopro-button
+              variant="outline"
+              (onClick)="openPaymentModal()"
+              [disabled]="leaseVal.statut === 'termine'"
+            >
               + Ajouter une échéance
             </immopro-button>
           </div>
 
-          <immopro-table [loading]="paymentsLoading()" loadingText="Chargement des échéances..." style="margin-top: 15px;">
+          <immopro-filter-bar
+            searchPlaceholder="Rechercher une échéance…"
+            [searchValue]="paymentsList.search()"
+            [canReset]="paymentsList.isFiltered()"
+            [total]="paymentsPagination()?.total ?? null"
+            itemLabel="échéance"
+            [loading]="paymentsLoading()"
+            (searchChange)="paymentsList.setSearch($event)"
+            (reset)="paymentsList.reset()"
+          >
+            <immopro-select label="Statut" inputId="payment-filter-statut">
+              <select
+                id="payment-filter-statut"
+                [value]="paymentsList.filterValue('statut_paiement')"
+                (change)="paymentsList.setFilter('statut_paiement', $any($event.target).value)"
+              >
+                <option value="">Tous</option>
+                @for (status of paymentStatuses; track status.value) {
+                  <option [value]="status.value">{{ status.label }}</option>
+                }
+              </select>
+            </immopro-select>
+
+            <immopro-select label="Année" inputId="payment-filter-annee">
+              <select
+                id="payment-filter-annee"
+                [value]="paymentsList.filterValue('annee')"
+                (change)="paymentsList.setFilter('annee', $any($event.target).value)"
+              >
+                <option value="">Toutes</option>
+                @for (year of paymentYears; track year) {
+                  <option [value]="year">{{ year }}</option>
+                }
+              </select>
+            </immopro-select>
+          </immopro-filter-bar>
+
+          <immopro-table
+            [loading]="paymentsLoading()"
+            loadingText="Chargement des échéances..."
+            style="margin-top: 15px"
+          >
             <thead>
               <tr>
                 <th>Période</th>
@@ -176,36 +343,119 @@
             <tbody>
               @for (payment of payments(); track payment.id) {
                 <tr>
-                  <td><strong>{{ payment.period | date:'MMMM yyyy' }}</strong></td>
+                  <td>
+                    <strong>{{ payment.period | date: 'MMMM yyyy' }}</strong>
+                  </td>
                   <td>{{ payment.amount_rent }} € + {{ payment.amount_charges }} €</td>
-                  <td><strong class="rent-text">{{ payment.total }} €</strong></td>
-                  <td>{{ payment.paid_at ? (payment.paid_at | date:'dd/MM/yyyy') : '-' }}</td>
+                  <td>
+                    <strong class="rent-text">{{ payment.total }} €</strong>
+                  </td>
+                  <td>{{ payment.paid_at ? (payment.paid_at | date: 'dd/MM/yyyy') : '-' }}</td>
                   <td>{{ payment.payment_method || '-' }}</td>
                   <td>
-                    <immopro-badge [tone]="paymentStatusTone(payment.status)">{{ paymentStatusLabel(payment.status) }}</immopro-badge>
+                    <immopro-badge [tone]="paymentStatusTone(payment.status)">{{
+                      paymentStatusLabel(payment.status)
+                    }}</immopro-badge>
                   </td>
                   <td class="actions">
                     <div class="ip-table-actions">
-                      <immopro-icon-button size="sm" label="Afficher la quittance de loyer" [disabled]="payment.status !== 'paye'" (onClick)="viewQuittance(payment)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                      <immopro-icon-button
+                        size="sm"
+                        label="Afficher la quittance de loyer"
+                        [disabled]="payment.status !== 'paye'"
+                        (onClick)="viewQuittance(payment)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <line x1="16" y1="13" x2="8" y2="13" />
+                          <line x1="16" y1="17" x2="8" y2="17" />
+                          <polyline points="10 9 9 9 8 9" />
+                        </svg>
                       </immopro-icon-button>
-                      <immopro-icon-button size="sm" label="Modifier" (onClick)="openPaymentModal(payment)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                      <immopro-icon-button
+                        size="sm"
+                        label="Modifier"
+                        (onClick)="openPaymentModal(payment)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                        </svg>
                       </immopro-icon-button>
-                      <immopro-icon-button size="sm" tone="danger" label="Supprimer" [disabled]="deletingId() === payment.id" (onClick)="deletePayment(payment)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                      <immopro-icon-button
+                        size="sm"
+                        tone="danger"
+                        label="Supprimer"
+                        [disabled]="deletingId() === payment.id"
+                        (onClick)="deletePayment(payment)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M3 6h18" />
+                          <path d="M19 6l-1 14H6L5 6" />
+                          <path d="M10 11v6" />
+                          <path d="M14 11v6" />
+                        </svg>
                       </immopro-icon-button>
                     </div>
                   </td>
                 </tr>
-              }
-              @empty {
+              } @empty {
                 <tr>
-                  <td colspan="7" class="ip-table-empty">Aucune échéance générée pour ce bail.</td>
+                  <td colspan="7" class="ip-table-empty">
+                    @if (paymentsList.isFiltered()) {
+                      Aucune échéance ne correspond à ces critères.
+                    } @else {
+                      Aucune échéance générée pour ce bail.
+                    }
+                  </td>
                 </tr>
               }
             </tbody>
           </immopro-table>
+
+          @if (paymentsPagination(); as pag) {
+            <immopro-pagination
+              [currentPage]="pag.current_page"
+              [lastPage]="pag.last_page"
+              [from]="pag.from"
+              [to]="pag.to"
+              [total]="pag.total"
+              [perPage]="pag.per_page"
+              [perPageChoices]="paymentsList.perPageChoices"
+              (pageChange)="paymentsList.setPage($event)"
+              (perPageChange)="paymentsList.setPerPage($event)"
+            ></immopro-pagination>
+          }
         </div>
       } @else {
         <immopro-empty-state
@@ -213,7 +463,21 @@
           title="Sélectionnez un bail"
           message="Sélectionnez un contrat de bail dans la liste de gauche pour consulter son historique de paiement et gérer ses actions."
         >
-          <svg icon xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <svg
+            icon
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
         </immopro-empty-state>
       }
     </div>
@@ -223,7 +487,7 @@
 <!-- Modal 1: Lease Create/Edit Modal -->
 @if (createModalOpen()) {
   <div class="luxury-modal-overlay" (click)="closeCreateModal()">
-    <div class="luxury-modal" style="max-width: 700px;" (click)="$event.stopPropagation()">
+    <div class="luxury-modal" style="max-width: 700px" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h3 class="luxury-title">{{ modalTitle }}</h3>
         <button type="button" class="modal-close" (click)="closeCreateModal()">×</button>
@@ -238,7 +502,11 @@
           }
 
           <div class="modal-form-grid">
-            <immopro-select inputId="property_id" label="Bien Immobilier" [error]="submitted() && propertyId?.invalid ? 'Le bien immobilier est requis' : null">
+            <immopro-select
+              inputId="property_id"
+              label="Bien Immobilier"
+              [error]="submitted() && propertyId?.invalid ? 'Le bien immobilier est requis' : null"
+            >
               <select id="property_id" formControlName="property_id">
                 <option value="">Sélectionner un bien</option>
                 @for (prop of properties(); track prop.id) {
@@ -247,7 +515,11 @@
               </select>
             </immopro-select>
 
-            <immopro-select inputId="tenant_id" label="Locataire" [error]="submitted() && tenantId?.invalid ? 'Le locataire est requis' : null">
+            <immopro-select
+              inputId="tenant_id"
+              label="Locataire"
+              [error]="submitted() && tenantId?.invalid ? 'Le locataire est requis' : null"
+            >
               <select id="tenant_id" formControlName="tenant_id">
                 <option value="">Sélectionner un locataire</option>
                 @for (ten of tenants(); track ten.id) {
@@ -285,7 +557,11 @@
               label="Date d'échéance contractuelle"
               type="date"
               formControlName="end_date"
-              [error]="submitted() && leaseForm.get('end_date')?.invalid ? 'Date d\'échéance requise pour ce type de bail' : null"
+              [error]="
+                submitted() && leaseForm.get('end_date')?.invalid
+                  ? 'Date d\'échéance requise pour ce type de bail'
+                  : null
+              "
             ></immopro-input>
 
             <immopro-input
@@ -294,7 +570,9 @@
               type="number"
               formControlName="monthly_rent"
               placeholder="1000"
-              [error]="submitted() && monthlyRent?.invalid ? 'Le loyer doit être supérieur à 0' : null"
+              [error]="
+                submitted() && monthlyRent?.invalid ? 'Le loyer doit être supérieur à 0' : null
+              "
             ></immopro-input>
 
             <immopro-input
@@ -321,14 +599,20 @@
               type="number"
               formControlName="payment_day"
               placeholder="5"
-              [error]="submitted() && paymentDay?.invalid ? 'Le jour de paiement doit être compris entre 1 et 28' : null"
+              [error]="
+                submitted() && paymentDay?.invalid
+                  ? 'Le jour de paiement doit être compris entre 1 et 28'
+                  : null
+              "
             ></immopro-input>
           </div>
 
           <div class="co-tenants-form" formArrayName="co_tenants">
             <div class="co-tenants-form-head">
               <span>Colocataires (optionnel)</span>
-              <immopro-button variant="outline" type="button" (onClick)="addCoTenant()">+ Ajouter un colocataire</immopro-button>
+              <immopro-button variant="outline" type="button" (onClick)="addCoTenant()"
+                >+ Ajouter un colocataire</immopro-button
+              >
             </div>
 
             @for (group of coTenantsArray.controls; track $index) {
@@ -341,9 +625,35 @@
                     }
                   </select>
                 </immopro-select>
-                <immopro-input [id]="'co-tenant-share-' + $index" label="Part du loyer (€)" type="number" formControlName="rent_share" placeholder="Optionnel"></immopro-input>
-                <immopro-icon-button type="button" tone="danger" label="Retirer ce colocataire" (onClick)="removeCoTenant($index)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                <immopro-input
+                  [id]="'co-tenant-share-' + $index"
+                  label="Part du loyer (€)"
+                  type="number"
+                  formControlName="rent_share"
+                  placeholder="Optionnel"
+                ></immopro-input>
+                <immopro-icon-button
+                  type="button"
+                  tone="danger"
+                  label="Retirer ce colocataire"
+                  (onClick)="removeCoTenant($index)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M3 6h18" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                  </svg>
                 </immopro-icon-button>
               </div>
             }
@@ -380,8 +690,9 @@
             </div>
           }
 
-          <p class="text-secondary" style="font-size: 0.85rem; margin-bottom: 20px;">
-            La révision du loyer s'applique selon la variation de l'Indice de Référence des Loyers (IRL) publié par l'INSEE.
+          <p class="text-secondary" style="font-size: 0.85rem; margin-bottom: 20px">
+            La révision du loyer s'applique selon la variation de l'Indice de Référence des Loyers
+            (IRL) publié par l'INSEE.
           </p>
 
           <div class="modal-form-grid">
@@ -391,7 +702,9 @@
               type="number"
               formControlName="irl_old"
               placeholder="Ex: 141.22"
-              [error]="submitted() && revisionForm.get('irl_old')?.invalid ? 'Indice valide requis' : null"
+              [error]="
+                submitted() && revisionForm.get('irl_old')?.invalid ? 'Indice valide requis' : null
+              "
             ></immopro-input>
 
             <immopro-input
@@ -400,7 +713,9 @@
               type="number"
               formControlName="irl_new"
               placeholder="Ex: 144.32"
-              [error]="submitted() && revisionForm.get('irl_new')?.invalid ? 'Indice valide requis' : null"
+              [error]="
+                submitted() && revisionForm.get('irl_new')?.invalid ? 'Indice valide requis' : null
+              "
             ></immopro-input>
           </div>
         </div>
@@ -435,8 +750,9 @@
             </div>
           }
 
-          <p class="text-secondary" style="font-size: 0.85rem; margin-bottom: 20px;">
-            Entrez la date effective de résiliation du bail. Le statut passera à "terminé" à cette date.
+          <p class="text-secondary" style="font-size: 0.85rem; margin-bottom: 20px">
+            Entrez la date effective de résiliation du bail. Le statut passera à "terminé" à cette
+            date.
           </p>
 
           <immopro-input
@@ -444,7 +760,11 @@
             label="Date de résiliation"
             type="date"
             formControlName="end_date"
-            [error]="submitted() && terminationForm.get('end_date')?.invalid ? 'Date de fin valide requise' : null"
+            [error]="
+              submitted() && terminationForm.get('end_date')?.invalid
+                ? 'Date de fin valide requise'
+                : null
+            "
           ></immopro-input>
         </div>
 
@@ -464,9 +784,11 @@
 <!-- Modal 4: Payment Create/Edit Modal -->
 @if (paymentModalOpen()) {
   <div class="luxury-modal-overlay" (click)="closePaymentModal()">
-    <div class="luxury-modal" style="max-width: 650px;" (click)="$event.stopPropagation()">
+    <div class="luxury-modal" style="max-width: 650px" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3 class="luxury-title">{{ editingPayment() ? 'Modifier l\'échéance' : 'Nouvelle échéance' }}</h3>
+        <h3 class="luxury-title">
+          {{ editingPayment() ? "Modifier l'échéance" : 'Nouvelle échéance' }}
+        </h3>
         <button type="button" class="modal-close" (click)="closePaymentModal()">×</button>
       </div>
 
@@ -536,12 +858,16 @@
 <!-- Modal 5: Rent Receipt (Quittance) Print Preview modal -->
 @if (quittanceModalOpen() && quittanceDetails(); as details) {
   <div class="luxury-modal-overlay no-print" (click)="closeQuittanceModal()">
-    <div class="luxury-modal" style="max-width: 800px; max-height: 95vh;" (click)="$event.stopPropagation()">
+    <div
+      class="luxury-modal"
+      style="max-width: 800px; max-height: 95vh"
+      (click)="$event.stopPropagation()"
+    >
       <div class="modal-header">
         <h3 class="luxury-title">Quittance de Loyer</h3>
         <button type="button" class="modal-close" (click)="closeQuittanceModal()">×</button>
       </div>
-      
+
       <div class="modal-body quittance-print-area">
         <!-- Receipt Layout -->
         <div class="receipt-box">
@@ -568,15 +894,19 @@
 
           <div class="receipt-description">
             <p>
-              Reçu de <strong>{{ details.quittance.locataire.nom }}</strong> la somme de 
-              <strong>{{ details.quittance.detail.total }} €</strong> (loyer et charges compris), pour le paiement du loyer du bien situé au 
+              Reçu de <strong>{{ details.quittance.locataire.nom }}</strong> la somme de
+              <strong>{{ details.quittance.detail.total }} €</strong> (loyer et charges compris),
+              pour le paiement du loyer du bien situé au
               <strong>
-                {{ details.quittance.bien.adresse }}, 
-                {{ details.quittance.bien.code_postal }} {{ details.quittance.bien.ville }}
-              </strong>.
+                {{ details.quittance.bien.adresse }}, {{ details.quittance.bien.code_postal }}
+                {{ details.quittance.bien.ville }} </strong
+              >.
             </p>
             <p class="receipt-period-desc">
-              Période concernée : du <strong>{{ details.quittance.periode.debut | date:'dd/MM/yyyy' }}</strong> au <strong>{{ details.quittance.periode.fin | date:'dd/MM/yyyy' }}</strong>.
+              Période concernée : du
+              <strong>{{ details.quittance.periode.debut | date: 'dd/MM/yyyy' }}</strong> au
+              <strong>{{ details.quittance.periode.fin | date: 'dd/MM/yyyy' }}</strong
+              >.
             </p>
           </div>
 
@@ -594,7 +924,9 @@
                 <tr>
                   <td>{{ details.quittance.detail.loyer }} €</td>
                   <td>{{ details.quittance.detail.charges }} €</td>
-                  <td><strong>{{ details.quittance.detail.total }} €</strong></td>
+                  <td>
+                    <strong>{{ details.quittance.detail.total }} €</strong>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -603,11 +935,14 @@
           <div class="receipt-meta">
             <div class="meta-item">
               <span class="label">Date de paiement :</span>
-              <strong>{{ details.quittance.date_paiement | date:'dd/MM/yyyy' }}</strong>
+              <strong>{{ details.quittance.date_paiement | date: 'dd/MM/yyyy' }}</strong>
             </div>
             <div class="meta-item">
               <span class="label">Fait à :</span>
-              <strong>{{ details.quittance.bien.ville }}, le {{ details.quittance.date_emission | date:'dd/MM/yyyy' }}</strong>
+              <strong
+                >{{ details.quittance.bien.ville }}, le
+                {{ details.quittance.date_emission | date: 'dd/MM/yyyy' }}</strong
+              >
             </div>
           </div>
 
@@ -629,72 +964,136 @@
   </div>
 
   <!-- Print-only block that will display when calling window.print() -->
-  <div class="print-only receipt-box" style="display: none; padding: 40px; font-family: sans-serif; line-height: 1.5; color: #000;">
-    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px;">
+  <div
+    class="print-only receipt-box"
+    style="display: none; padding: 40px; font-family: sans-serif; line-height: 1.5; color: #000"
+  >
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 2px solid #000;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+      "
+    >
       <div>
-        <h1 style="font-size: 24px; margin: 0; font-family: serif;">QUITTANCE DE LOYER</h1>
-        <span style="font-size: 14px; color: #555;">N° {{ details.quittance.numero }}</span>
+        <h1 style="font-size: 24px; margin: 0; font-family: serif">QUITTANCE DE LOYER</h1>
+        <span style="font-size: 14px; color: #555">N° {{ details.quittance.numero }}</span>
       </div>
-      <div style="font-size: 20px; font-weight: bold; font-family: serif; color: #8a6d3b;">ImmoPro</div>
+      <div style="font-size: 20px; font-weight: bold; font-family: serif; color: #8a6d3b">
+        ImmoPro
+      </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-      <div style="width: 48%; border: 1px solid #ccc; padding: 15px; border-radius: 4px;">
-        <span style="font-size: 11px; text-transform: uppercase; color: #666; display: block; margin-bottom: 5px;">Bailleur :</span>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 30px">
+      <div style="width: 48%; border: 1px solid #ccc; padding: 15px; border-radius: 4px">
+        <span
+          style="
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #666;
+            display: block;
+            margin-bottom: 5px;
+          "
+          >Bailleur :</span
+        >
         <strong>{{ details.quittance.bailleur.nom }}</strong>
       </div>
-      <div style="width: 48%; border: 1px solid #ccc; padding: 15px; border-radius: 4px;">
-        <span style="font-size: 11px; text-transform: uppercase; color: #666; display: block; margin-bottom: 5px;">Locataire :</span>
+      <div style="width: 48%; border: 1px solid #ccc; padding: 15px; border-radius: 4px">
+        <span
+          style="
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #666;
+            display: block;
+            margin-bottom: 5px;
+          "
+          >Locataire :</span
+        >
         <strong>{{ details.quittance.locataire.nom }}</strong>
       </div>
     </div>
 
-    <div style="margin-bottom: 30px; font-size: 15px;">
+    <div style="margin-bottom: 30px; font-size: 15px">
       <p>
-        Reçu de <strong>{{ details.quittance.locataire.nom }}</strong> la somme de 
-        <strong>{{ details.quittance.detail.total }} €</strong> (loyer et charges compris), pour le paiement du loyer du bien situé au 
+        Reçu de <strong>{{ details.quittance.locataire.nom }}</strong> la somme de
+        <strong>{{ details.quittance.detail.total }} €</strong> (loyer et charges compris), pour le
+        paiement du loyer du bien situé au
         <strong>
-          {{ details.quittance.bien.adresse }}, 
-          {{ details.quittance.bien.code_postal }} {{ details.quittance.bien.ville }}
-        </strong>.
+          {{ details.quittance.bien.adresse }}, {{ details.quittance.bien.code_postal }}
+          {{ details.quittance.bien.ville }} </strong
+        >.
       </p>
-      <p style="margin-top: 10px;">
-        Période concernée : du <strong>{{ details.quittance.periode.debut | date:'dd/MM/yyyy' }}</strong> au <strong>{{ details.quittance.periode.fin | date:'dd/MM/yyyy' }}</strong>.
+      <p style="margin-top: 10px">
+        Période concernée : du
+        <strong>{{ details.quittance.periode.debut | date: 'dd/MM/yyyy' }}</strong> au
+        <strong>{{ details.quittance.periode.fin | date: 'dd/MM/yyyy' }}</strong
+        >.
       </p>
     </div>
 
-    <div style="margin-bottom: 30px;">
-      <h4 style="margin: 0 0 10px; font-size: 14px;">Détail du Règlement :</h4>
-      <table style="width: 100%; border-collapse: collapse;">
+    <div style="margin-bottom: 30px">
+      <h4 style="margin: 0 0 10px; font-size: 14px">Détail du Règlement :</h4>
+      <table style="width: 100%; border-collapse: collapse">
         <thead>
-          <tr style="background: #f5f5f5;">
-            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">Loyer principal</th>
-            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">Provisions pour charges</th>
-            <th style="border: 1px solid #ccc; padding: 10px; text-align: left;">Total reçu</th>
+          <tr style="background: #f5f5f5">
+            <th style="border: 1px solid #ccc; padding: 10px; text-align: left">Loyer principal</th>
+            <th style="border: 1px solid #ccc; padding: 10px; text-align: left">
+              Provisions pour charges
+            </th>
+            <th style="border: 1px solid #ccc; padding: 10px; text-align: left">Total reçu</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="border: 1px solid #ccc; padding: 10px;">{{ details.quittance.detail.loyer }} €</td>
-            <td style="border: 1px solid #ccc; padding: 10px;">{{ details.quittance.detail.charges }} €</td>
-            <td style="border: 1px solid #ccc; padding: 10px;"><strong>{{ details.quittance.detail.total }} €</strong></td>
+            <td style="border: 1px solid #ccc; padding: 10px">
+              {{ details.quittance.detail.loyer }} €
+            </td>
+            <td style="border: 1px solid #ccc; padding: 10px">
+              {{ details.quittance.detail.charges }} €
+            </td>
+            <td style="border: 1px solid #ccc; padding: 10px">
+              <strong>{{ details.quittance.detail.total }} €</strong>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div style="display: flex; justify-content: space-between; border-top: 1px solid #ccc; padding-top: 20px; margin-bottom: 40px; font-size: 14px;">
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #ccc;
+        padding-top: 20px;
+        margin-bottom: 40px;
+        font-size: 14px;
+      "
+    >
       <div>
         <span>Date de paiement :</span>
-        <strong>{{ details.quittance.date_paiement | date:'dd/MM/yyyy' }}</strong>
+        <strong>{{ details.quittance.date_paiement | date: 'dd/MM/yyyy' }}</strong>
       </div>
       <div>
         <span>Fait à :</span>
-        <strong>{{ details.quittance.bien.ville }}, le {{ details.quittance.date_emission | date:'dd/MM/yyyy' }}</strong>
+        <strong
+          >{{ details.quittance.bien.ville }}, le
+          {{ details.quittance.date_emission | date: 'dd/MM/yyyy' }}</strong
+        >
       </div>
     </div>
 
-    <div style="font-size: 11px; color: #555; border-top: 1px solid #eee; padding-top: 15px; text-align: justify; font-style: italic;">
+    <div
+      style="
+        font-size: 11px;
+        color: #555;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+        text-align: justify;
+        font-style: italic;
+      "
+    >
       <p>{{ details.quittance.mention_legale }}</p>
     </div>
   </div>

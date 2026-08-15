@@ -1,25 +1,91 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TenantService, Tenant, PaginatedResponse } from '../../core/services/tenant.service';
-import { ImmoproButtonComponent, ImmoproInputComponent, ImmoproPageHeaderComponent, ImmoproTableComponent, ImmoproAvatarComponent, ImmoproIconButtonComponent, ImmoproPaginationComponent } from 'ui-lib';
+import { EMPTY, catchError, switchMap, tap } from 'rxjs';
+import { TenantService, Tenant } from '../../core/services/tenant.service';
+import { PaginatedResponse } from '../../core/list/pagination.model';
+import { createListQuery } from '../../core/list/list-query';
+import {
+  ImmoproButtonComponent,
+  ImmoproInputComponent,
+  ImmoproPageHeaderComponent,
+  ImmoproTableComponent,
+  ImmoproAvatarComponent,
+  ImmoproIconButtonComponent,
+  ImmoproPaginationComponent,
+  ImmoproSkeletonComponent,
+  ImmoproFilterBarComponent,
+  ImmoproSelectComponent,
+  FilterChip,
+} from 'ui-lib';
 
 @Component({
   selector: 'app-tenants',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ImmoproButtonComponent, ImmoproInputComponent, ImmoproPageHeaderComponent, ImmoproTableComponent, ImmoproAvatarComponent, ImmoproIconButtonComponent, ImmoproPaginationComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    ImmoproButtonComponent,
+    ImmoproInputComponent,
+    ImmoproPageHeaderComponent,
+    ImmoproTableComponent,
+    ImmoproAvatarComponent,
+    ImmoproIconButtonComponent,
+    ImmoproPaginationComponent,
+    ImmoproSkeletonComponent,
+    ImmoproFilterBarComponent,
+    ImmoproSelectComponent,
+  ],
   templateUrl: './tenants.component.html',
   styleUrl: './tenants.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TenantsComponent implements OnInit {
+export class TenantsComponent {
   private fb = inject(FormBuilder);
   private tenantService = inject(TenantService);
 
+  /** Page, recherche et tri, mémorisés dans l'URL. */
+  protected readonly list = createListQuery({
+    defaultSort: 'last_name',
+    defaultDirection: 'asc',
+    filterKeys: ['country', 'loue'],
+  });
+
+  readonly activeChips = computed<FilterChip[]>(() => {
+    const chips: FilterChip[] = [];
+    const filters = this.list.filters();
+    if (filters['country']) {
+      chips.push({ key: 'country', label: 'Pays', value: filters['country'] });
+    }
+    if (filters['loue']) {
+      chips.push({
+        key: 'loue',
+        label: 'Bail actif',
+        value: filters['loue'] === '1' ? 'Sous contrat' : 'Sans contrat',
+      });
+    }
+    return chips;
+  });
+
   tenants = signal<Tenant[]>([]);
   pagination = signal<PaginatedResponse<Tenant> | undefined>(undefined);
+  listLoading = signal(false);
+
+  /** Passe à vrai dès la première réponse reçue, même vide. */
+  private readonly firstLoadDone = signal(false);
+
+  /**
+   * Squelette réservé au tout premier affichage : sur un changement de filtre,
+   * la liste en place pâlit au lieu d'être remplacée par des blocs gris, ce qui
+   * évite un clignotement à chaque frappe.
+   */
+  protected readonly showSkeleton = computed(() => !this.firstLoadDone() && this.listLoading());
+
+  /** Lignes fantômes, calées sur la taille de page courante. */
+  protected readonly skeletonRows = Array.from({ length: 8 });
   createForm: FormGroup;
-  
+
   createModalOpen = signal(false);
   editingTenant = signal<Tenant | null>(null);
   loading = signal(false);
@@ -38,36 +104,32 @@ export class TenantsComponent implements OnInit {
       country: [''],
       address: [''],
     });
-  }
 
-  ngOnInit() {
-    this.loadTenants();
-  }
-
-  loadTenants(page: number = 1) {
-    this.tenantService.getTenants(page).subscribe({
-      next: (response) => {
+    // Un seul point de chargement, déclenché par tout changement de critère.
+    // switchMap annule la requête précédente : en tapant dans la recherche, seul
+    // le dernier appel compte, et une réponse lente ne peut plus écraser une
+    // réponse plus récente.
+    toObservable(this.list.trigger)
+      .pipe(
+        tap(() => this.listLoading.set(true)),
+        switchMap(({ params }) =>
+          this.tenantService.getTenants(params).pipe(
+            catchError(() => {
+              this.error.set('Impossible de charger les locataires');
+              this.listLoading.set(false);
+              return EMPTY;
+            }),
+          ),
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe((response) => {
         this.tenants.set(response.data);
         this.pagination.set(response);
-      },
-      error: () => {
-        this.error.set('Impossible de charger les locataires');
-      }
-    });
-  }
-
-  loadTenantsBackground(page: number = 1) {
-    // Silent update to refresh metadata/list in background
-    this.tenantService.getTenants(page).subscribe({
-      next: (response) => {
-        this.tenants.set(response.data);
-        this.pagination.set(response);
-      }
-    });
-  }
-
-  changePage(page: number) {
-    this.loadTenants(page);
+        this.listLoading.set(false);
+        this.firstLoadDone.set(true);
+        this.error.set(null);
+      });
   }
 
   addTenant() {
@@ -79,15 +141,17 @@ export class TenantsComponent implements OnInit {
   }
 
   deleteTenant(tenant: Tenant) {
-    const confirmed = window.confirm(`Supprimer le locataire ${tenant.first_name} ${tenant.last_name} ?`);
+    const confirmed = window.confirm(
+      `Supprimer le locataire ${tenant.first_name} ${tenant.last_name} ?`,
+    );
     if (!confirmed) {
       return;
     }
 
     const previousTenants = this.tenants();
-    
+
     // Optimistic UI Deletion
-    this.tenants.set(previousTenants.filter(t => t.id !== tenant.id));
+    this.tenants.set(previousTenants.filter((t) => t.id !== tenant.id));
     this.deletingId.set(tenant.id);
     this.error.set(null);
 
@@ -95,7 +159,7 @@ export class TenantsComponent implements OnInit {
       next: () => {
         this.deletingId.set(null);
         // Sync layout data quietly
-        this.loadTenantsBackground(this.pagination()?.current_page ?? 1);
+        this.list.refresh();
       },
       error: () => {
         this.deletingId.set(null);
@@ -148,55 +212,55 @@ export class TenantsComponent implements OnInit {
     if (isEdit) {
       const editId = this.editingTenant()!.id;
       const updatedTenant: Tenant = { ...this.editingTenant()!, ...payload };
-      
+
       // Optimistic UI Update
-      this.tenants.set(previousTenants.map(t => t.id === editId ? updatedTenant : t));
+      this.tenants.set(previousTenants.map((t) => (t.id === editId ? updatedTenant : t)));
       this.createModalOpen.set(false);
 
       this.tenantService.updateTenant(editId, payload).subscribe({
         next: (savedTenant) => {
           this.loading.set(false);
-          this.tenants.set(this.tenants().map(t => t.id === editId ? savedTenant : t));
+          this.tenants.set(this.tenants().map((t) => (t.id === editId ? savedTenant : t)));
           this.editingTenant.set(null);
-          this.loadTenantsBackground(this.pagination()?.current_page ?? 1);
+          this.list.refresh();
         },
         error: (err) => {
           this.loading.set(false);
           this.createModalOpen.set(true); // reopen
           this.tenants.set(previousTenants); // rollback
           this.error.set(err.error?.message || 'Erreur lors de la modification du locataire');
-        }
+        },
       });
     } else {
       // Optimistic UI Creation with temporary ID
       const tempId = -Date.now();
-      const tempTenant: Tenant = { 
-        id: tempId, 
-        ...payload, 
-        phone: payload.phone || '', 
-        iban: payload.iban || '', 
-        bic: payload.bic || '', 
-        country: payload.country || '', 
-        address: payload.address || '' 
+      const tempTenant: Tenant = {
+        id: tempId,
+        ...payload,
+        phone: payload.phone || '',
+        iban: payload.iban || '',
+        bic: payload.bic || '',
+        country: payload.country || '',
+        address: payload.address || '',
       };
-      
+
       this.tenants.set([tempTenant, ...previousTenants]);
       this.createModalOpen.set(false);
 
       this.tenantService.createTenant(payload).subscribe({
         next: (savedTenant) => {
           this.loading.set(false);
-          this.tenants.set(this.tenants().map(t => t.id === tempId ? savedTenant : t));
+          this.tenants.set(this.tenants().map((t) => (t.id === tempId ? savedTenant : t)));
           this.createForm.reset();
           this.submitted.set(false);
-          this.loadTenantsBackground(this.pagination()?.current_page ?? 1);
+          this.list.refresh();
         },
         error: (err) => {
           this.loading.set(false);
           this.createModalOpen.set(true); // reopen
           this.tenants.set(previousTenants); // rollback
           this.error.set(err.error?.message || 'Erreur lors de la création du locataire');
-        }
+        },
       });
     }
   }

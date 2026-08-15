@@ -7,7 +7,13 @@
         <router-outlet />
       </main>
     </div>
+    <app-global-search />
   } @else {
     <router-outlet />
   }
 </div>
+
+<!-- Hors du shell : le bandeau doit apparaître aussi bien sur la landing et les
+     écrans de connexion que dans l'application, puisque le stockage local est
+     utilisé dès la première visite. -->
+<app-cookie-banner />

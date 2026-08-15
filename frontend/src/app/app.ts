@@ -3,12 +3,20 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { TopbarComponent } from './shared/components/topbar/topbar.component';
+import { GlobalSearchComponent } from './shared/components/global-search/global-search.component';
+import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner.component';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent, TopbarComponent],
+  imports: [
+    RouterOutlet,
+    SidebarComponent,
+    TopbarComponent,
+    GlobalSearchComponent,
+    CookieBannerComponent,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,10 +48,10 @@ export class App {
     this.currentUrl.set(this.router.url);
 
     // Track route changes
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      this.currentUrl.set(event.urlAfterRedirects || event.url);
-    });
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.currentUrl.set(event.urlAfterRedirects || event.url);
+      });
   }
 }

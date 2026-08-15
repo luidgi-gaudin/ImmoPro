@@ -1,0 +1,188 @@
+/* Bandeau de consentement — aligné sur les tokens du design system. */
+
+.ip-cookie-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: min(1080px, calc(100vw - 32px));
+  padding: 20px 24px;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: cookieSlideUp var(--transition-smooth);
+}
+
+.ip-cookie-inner {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.ip-cookie-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ip-cookie-title {
+  margin: 0 0 6px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+
+.ip-cookie-text p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.ip-cookie-text a {
+  color: var(--primary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition-fast);
+
+  &:hover {
+    border-bottom-color: var(--primary);
+  }
+}
+
+.ip-cookie-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ── Panneau détaillé ─────────────────────────────────────────────────── */
+
+.ip-cookie-details {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: cookieFadeIn var(--transition-fast);
+}
+
+.ip-cookie-category-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.ip-cookie-category-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ip-cookie-always {
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.ip-cookie-category-desc {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+
+  code {
+    padding: 1px 5px;
+    border-radius: var(--radius-sm);
+    background: var(--overlay-strong);
+    font-size: 0.8rem;
+    color: var(--text-primary);
+  }
+}
+
+.ip-cookie-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+}
+
+.ip-cookie-details-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@keyframes cookieSlideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes cookieFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ip-cookie-banner,
+  .ip-cookie-details {
+    animation: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .ip-cookie-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .ip-cookie-actions {
+    /* « Refuser » et « Tout accepter » occupent exactement la même largeur sur
+       la même ligne. Une largeur inégale suffirait à orienter le choix, ce que
+       la CNIL proscrit ; « Personnaliser », qui n'est pas un choix de
+       consentement, passe au-dessus sur toute la largeur. */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    immopro-button {
+      display: block;
+      width: 100%;
+
+      /* Le composant enveloppe un <button> en inline-flex : sans cela, il
+         garderait sa largeur intrinsèque au lieu de remplir sa cellule. */
+      ::ng-deep button {
+        width: 100%;
+      }
+    }
+
+    immopro-button:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+}

@@ -9,12 +9,33 @@ immopro-table {
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 10px 35px -15px rgba(var(--shadow-rgb), 0.3);
+  transition: border-color var(--transition-fast);
+
+  &.is-loading {
+    .ip-table tbody {
+      opacity: 0.6;
+      pointer-events: none;
+      transition: opacity 150ms ease;
+    }
+  }
 }
 
-.ip-table-loading {
-  padding: 40px;
-  text-align: center;
-  color: var(--text-secondary);
+.ip-table-loading-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary, #46a07d), transparent);
+  background-size: 200% 100%;
+  animation: shimmerLoading 1.2s infinite linear;
+  z-index: 5;
+}
+
+.ip-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .ip-table {
@@ -25,13 +46,14 @@ immopro-table {
 
   th {
     padding: 16px 22px;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border);
     background: var(--overlay-softer);
+    white-space: nowrap;
   }
 
   td {
@@ -39,12 +61,18 @@ immopro-table {
     border-bottom: 1px solid var(--border);
     color: var(--text-secondary);
     vertical-align: middle;
-    transition: background-color var(--transition-fast);
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast);
   }
 
-  tr:hover td {
-    background-color: color-mix(in srgb, var(--primary) 5%, transparent);
-    color: var(--text-primary);
+  tbody tr {
+    transition: background-color var(--transition-fast);
+
+    &:hover td {
+      background-color: color-mix(in srgb, var(--primary) 6%, transparent);
+      color: var(--text-primary);
+    }
   }
 
   tr:last-child td {
@@ -66,8 +94,73 @@ immopro-table {
 
   .ip-table-empty {
     text-align: center;
-    padding: 40px !important;
+    padding: 48px 24px !important;
     color: var(--text-muted);
     font-style: italic;
+    font-size: 0.95rem;
+  }
+}
+
+.ip-sortable {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.ip-sort-arrow {
+  font-size: 0.75rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+@keyframes shimmerLoading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Lignes fantômes du premier chargement. Le survol et le curseur sont neutres :
+   rien n'est cliquable tant que les données ne sont pas là. */
+.ip-skeleton-row {
+  cursor: default;
+
+  &:hover {
+    background: transparent;
+  }
+
+  td {
+    vertical-align: middle;
+  }
+}
+
+.ip-skeleton-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  immopro-skeleton {
+    width: auto;
   }
 }

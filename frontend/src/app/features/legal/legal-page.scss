@@ -1,0 +1,207 @@
+/* Mise en page commune aux pages légales (confidentialité, cookies).
+   Colonne de lecture étroite : au-delà de ~70 caractères par ligne, l'œil
+   perd la ligne suivante, et ces textes sont déjà assez ingrats. */
+
+.legal-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+.legal-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 28px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--primary);
+  }
+}
+
+.legal-title {
+  margin: 0 0 8px;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+.legal-updated {
+  margin: 0 0 40px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.legal-section {
+  margin-bottom: 40px;
+
+  /* La police des titres (Space Grotesk) vient de la règle globale sur h1-h6 :
+     on ne redéclare ici que la taille. */
+  h2 {
+    margin: 0 0 12px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  h3 {
+    margin: 24px 0 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  p,
+  li {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  p {
+    margin: 0 0 12px;
+  }
+
+  ul {
+    margin: 0 0 12px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+
+    &:hover {
+      border-bottom-color: var(--primary);
+    }
+  }
+
+  code {
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    background: var(--overlay-strong);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+  }
+}
+
+/* Champs que l'exploitant doit renseigner : volontairement très visibles,
+   pour qu'aucun ne parte en production tel quel. */
+.legal-todo {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--error) 12%, transparent);
+  border: 1px dashed var(--error);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--error);
+}
+
+.legal-notice {
+  padding: 16px 18px;
+  margin-bottom: 32px;
+  border: 1px dashed var(--error);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--error) 7%, transparent);
+
+  p {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  strong {
+    color: var(--text-primary);
+  }
+}
+
+/* ── Tableau des traceurs ─────────────────────────────────────────────── */
+
+.legal-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+.legal-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+
+  th,
+  td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  td {
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+
+  code {
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    background: var(--overlay-strong);
+    font-size: 0.82rem;
+    color: var(--text-primary);
+  }
+}
+
+/* ── Panneau de gestion du consentement ───────────────────────────────── */
+
+.consent-panel {
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+}
+
+.consent-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.consent-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+
+  &.is-on {
+    background: var(--success);
+  }
+}
+
+.consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

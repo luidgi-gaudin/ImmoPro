@@ -9,7 +9,7 @@
   &:hover {
     border-color: var(--border-hover);
     transform: translateY(-3px);
-    box-shadow: 0 15px 35px -15px rgba(70, 160, 125, 0.14);
+    box-shadow: 0 15px 35px -15px rgba(var(--shadow-rgb), 0.18);
   }
 
   .stat-header {

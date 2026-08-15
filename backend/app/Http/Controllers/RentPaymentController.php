@@ -5,17 +5,32 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RentPaymentRequest;
 use App\Models\Lease;
 use App\Models\RentPayment;
+use Illuminate\Http\Request;
 
 class RentPaymentController extends Controller
 {
-    public function index(Lease $lease)
+    public function index(Request $request, Lease $lease)
     {
         $this->authorize('view', $lease);
 
-        return $lease->payments()
-            ->orderByDesc('period')
-            ->get()
-            ->each->setRelation('lease', $lease); // évite un N+1 lors du calcul du statut
+        $query = $lease->payments()->filtered($request);
+
+        // Le statut n'est pas une colonne : il se déduit de paid_at et du jour
+        // d'échéance du bail, que l'on connaît ici puisque la liste est cadrée
+        // à ce bail. Le filtre vit donc dans le contrôleur et non dans le trait.
+        $status = trim((string) ($request->query('statut_paiement') ?: $request->query('statut', '')));
+
+        if ($status !== '') {
+            $query->withStatus($status, (int) ($lease->payment_day ?? 1));
+        }
+
+        $payments = $query->paginate($this->perPage($request))->withQueryString();
+
+        // Le calcul du statut relit le bail sur chaque ligne : on lui fournit
+        // celui déjà chargé, sinon c'est une requête par échéance affichée.
+        $payments->getCollection()->each->setRelation('lease', $lease);
+
+        return $payments;
     }
 
     public function store(RentPaymentRequest $request, Lease $lease)

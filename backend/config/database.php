@@ -97,6 +97,20 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+
+            // Connexion persistante : le processus PHP réutilise la même
+            // connexion d'une requête à l'autre, au lieu de refaire une
+            // poignée de main TLS avec Supabase à chaque appel. Sur une base
+            // distante, cette poignée de main coûte plus cher que l'ensemble
+            // des requêtes de la page.
+            //
+            // À n'activer que sur le pooler en mode *session* (port 5432) ou en
+            // connexion directe. En mode transaction (port 6543), la connexion
+            // change de serveur d'un appel à l'autre et les requêtes préparées
+            // se télescopent.
+            'options' => array_filter([
+                PDO::ATTR_PERSISTENT => env('DB_PERSISTENT', false),
+            ]),
         ],
 
         'sqlsrv' => [

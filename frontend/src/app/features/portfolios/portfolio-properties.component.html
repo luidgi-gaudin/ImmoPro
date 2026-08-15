@@ -6,65 +6,218 @@
   </div>
 </div>
 
-<immopro-table [loading]="ctx.propertiesLoading()" loadingText="Chargement des actifs...">
+<immopro-filter-bar
+  searchPlaceholder="Rechercher un titre, une adresse, une ville…"
+  [searchValue]="list.search()"
+  [canReset]="list.isFiltered()"
+  [total]="pagination()?.total ?? null"
+  [activeChips]="activeChips()"
+  itemLabel="actif"
+  [loading]="listLoading()"
+  (searchChange)="list.setSearch($event)"
+  (removeChip)="list.removeFilter($event)"
+  (reset)="list.reset()"
+>
+  <immopro-select label="Type" inputId="property-filter-type">
+    <select
+      id="property-filter-type"
+      [value]="list.filterValue('property_type')"
+      (change)="list.setFilter('property_type', $any($event.target).value)"
+    >
+      <option value="">Tous</option>
+      @for (type of propertyTypes; track type.value) {
+        <option [value]="type.value">{{ type.label }}</option>
+      }
+    </select>
+  </immopro-select>
+
+  <immopro-select label="DPE" inputId="property-filter-dpe">
+    <select
+      id="property-filter-dpe"
+      [value]="list.filterValue('dpe')"
+      (change)="list.setFilter('dpe', $any($event.target).value)"
+    >
+      <option value="">Tous</option>
+      @for (dpe of dpeValues; track dpe) {
+        <option [value]="dpe">{{ dpe }}</option>
+      }
+    </select>
+  </immopro-select>
+
+  <immopro-select label="Occupation" inputId="property-filter-loue">
+    <select
+      id="property-filter-loue"
+      [value]="list.filterValue('loue')"
+      (change)="list.setFilter('loue', $any($event.target).value)"
+    >
+      <option value="">Tous</option>
+      @for (option of rentedOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </immopro-select>
+</immopro-filter-bar>
+
+@if (listError()) {
+  <div class="alert alert-error">{{ listError() }}</div>
+}
+
+<immopro-table [loading]="listLoading()" loadingText="Chargement des actifs...">
   <thead>
     <tr>
-      <th>Titre de l'Actif</th>
+      <th>
+        <button type="button" class="ip-sortable" (click)="list.toggleSort('title')">
+          Titre de l'Actif
+          @if (list.sort() === 'title') {
+            <span class="ip-sort-arrow">{{ list.direction() === 'asc' ? '↑' : '↓' }}</span>
+          }
+        </button>
+      </th>
       <th>Type</th>
       <th>Adresse</th>
-      <th>Ville / CP</th>
+      <th>
+        <button type="button" class="ip-sortable" (click)="list.toggleSort('city')">
+          Ville / CP
+          @if (list.sort() === 'city') {
+            <span class="ip-sort-arrow">{{ list.direction() === 'asc' ? '↑' : '↓' }}</span>
+          }
+        </button>
+      </th>
       <th>DPE</th>
       <th>Loyer Prévu</th>
       <th>Statut</th>
       <th class="actions">Actions</th>
     </tr>
   </thead>
-  <tbody>
-    @for (property of ctx.properties(); track property.id) {
-      <tr>
-        <td class="name-cell">
-          <immopro-avatar [initials]="property.title.charAt(0)"></immopro-avatar>
-          <a class="title-text" [routerLink]="['/portfolios', ctx.portfolioId(), 'properties', property.id]">{{ property.title }}</a>
-        </td>
-        <td><span class="capitalize">{{ property.property_type }}</span></td>
-        <td><span class="address-text">{{ property.address }}</span></td>
-        <td>{{ property.city }} ({{ property.postal_code }})</td>
-        <td>
-          <immopro-dpe-badge [value]="property.dpe"></immopro-dpe-badge>
-        </td>
-        <td>
-          <strong class="rent-text">{{ property.monthly_rent ? (property.monthly_rent + ' €') : '-' }}</strong>
-        </td>
-        <td>
-          <immopro-badge [tone]="property.is_rented ? 'info' : 'success'">
-            {{ property.is_rented ? 'Loué' : 'Disponible' }}
-          </immopro-badge>
-        </td>
-        <td class="actions">
-          <div class="ip-table-actions">
-            <immopro-icon-button size="sm" label="Modifier" (onClick)="editProperty(property)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-            </immopro-icon-button>
-            <immopro-icon-button size="sm" tone="danger" label="Supprimer" [disabled]="ctx.deletingId() === property.id" (onClick)="deleteProperty(property)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-            </immopro-icon-button>
-          </div>
-        </td>
-      </tr>
-    }
+  <tbody [attr.aria-busy]="showSkeleton() ? 'true' : null">
+    @if (showSkeleton()) {
+      @for (row of skeletonRows; track $index) {
+        <tr class="ip-skeleton-row">
+          <td>
+            <div class="ip-skeleton-name">
+              <immopro-skeleton variant="avatar"></immopro-skeleton>
+              <immopro-skeleton width="150px"></immopro-skeleton>
+            </div>
+          </td>
+          <td><immopro-skeleton width="90px"></immopro-skeleton></td>
+          <td><immopro-skeleton width="160px"></immopro-skeleton></td>
+          <td><immopro-skeleton width="120px"></immopro-skeleton></td>
+          <td><immopro-skeleton variant="badge" width="34px"></immopro-skeleton></td>
+          <td><immopro-skeleton width="80px"></immopro-skeleton></td>
+          <td><immopro-skeleton variant="badge"></immopro-skeleton></td>
+          <td class="actions"><immopro-skeleton width="60px"></immopro-skeleton></td>
+        </tr>
+      }
+    } @else {
+      @for (property of properties(); track property.id) {
+        <tr>
+          <td class="name-cell">
+            <immopro-avatar [initials]="property.title.charAt(0)"></immopro-avatar>
+            <a
+              class="title-text"
+              [routerLink]="['/portfolios', ctx.portfolioId(), 'properties', property.id]"
+              >{{ property.title }}</a
+            >
+          </td>
+          <td>
+            <span class="capitalize">{{ property.property_type }}</span>
+          </td>
+          <td>
+            <span class="address-text">{{ property.address }}</span>
+          </td>
+          <td>{{ property.city }} ({{ property.postal_code }})</td>
+          <td>
+            <immopro-dpe-badge [value]="property.dpe"></immopro-dpe-badge>
+          </td>
+          <td>
+            <strong class="rent-text">{{
+              property.monthly_rent ? property.monthly_rent + ' €' : '-'
+            }}</strong>
+          </td>
+          <td>
+            <immopro-badge [tone]="property.is_rented ? 'info' : 'success'">
+              {{ property.is_rented ? 'Loué' : 'Disponible' }}
+            </immopro-badge>
+          </td>
+          <td class="actions">
+            <div class="ip-table-actions">
+              <immopro-icon-button size="sm" label="Modifier" (onClick)="editProperty(property)">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                </svg>
+              </immopro-icon-button>
+              <immopro-icon-button
+                size="sm"
+                tone="danger"
+                label="Supprimer"
+                [disabled]="ctx.deletingId() === property.id"
+                (onClick)="deleteProperty(property)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 6h18" />
+                  <path d="M8 6V4h8v2" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                </svg>
+              </immopro-icon-button>
+            </div>
+          </td>
+        </tr>
 
-    @empty {
-      <tr>
-        <td colspan="8" class="ip-table-empty">Aucun actif rattaché à ce portfolio.</td>
-      </tr>
+      } @empty {
+        <tr>
+          <td colspan="8" class="ip-table-empty">
+            @if (list.isFiltered()) {
+              Aucun actif ne correspond à ces critères.
+            } @else {
+              Aucun actif rattaché à ce portfolio.
+            }
+          </td>
+        </tr>
+      }
     }
   </tbody>
 </immopro-table>
 
+@if (pagination(); as pag) {
+  <immopro-pagination
+    [currentPage]="pag.current_page"
+    [lastPage]="pag.last_page"
+    [from]="pag.from"
+    [to]="pag.to"
+    [total]="pag.total"
+    [perPage]="pag.per_page"
+    [perPageChoices]="list.perPageChoices"
+    (pageChange)="list.setPage($event)"
+    (perPageChange)="list.setPerPage($event)"
+  ></immopro-pagination>
+}
+
 <!-- Luxury Create/Edit Modal -->
 @if (createModalOpen()) {
   <div class="luxury-modal-overlay" (click)="closePropertyModal()">
-    <div class="luxury-modal" style="max-width: 700px;" (click)="$event.stopPropagation()">
+    <div class="luxury-modal" style="max-width: 700px" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h3 class="luxury-title">{{ modalTitle }}</h3>
         <button type="button" class="modal-close" (click)="closePropertyModal()">×</button>
@@ -84,10 +237,20 @@
               label="Nom de l'actif"
               formControlName="title"
               placeholder="Ex: Appartement République"
-              [error]="submitted() && title?.invalid ? (title?.hasError('required') ? 'Le nom est requis' : 'Minimum 2 caractères') : null"
+              [error]="
+                submitted() && title?.invalid
+                  ? title?.hasError('required')
+                    ? 'Le nom est requis'
+                    : 'Minimum 2 caractères'
+                  : null
+              "
             ></immopro-input>
 
-            <immopro-select inputId="property-type" label="Type de Bien" [error]="submitted() && propertyType?.invalid ? 'Le type est requis' : null">
+            <immopro-select
+              inputId="property-type"
+              label="Type de Bien"
+              [error]="submitted() && propertyType?.invalid ? 'Le type est requis' : null"
+            >
               <select id="property-type" formControlName="property_type">
                 <option value="">Choisir un type</option>
                 @for (type of propertyTypes; track type.value) {
@@ -120,7 +283,11 @@
               [error]="submitted() && postalCode?.invalid ? 'Le code postal est requis' : null"
             ></immopro-input>
 
-            <immopro-select inputId="property-dpe" label="DPE (Diagnostic de performance énergétique)" [error]="submitted() && dpe?.invalid ? 'Le DPE est requis' : null">
+            <immopro-select
+              inputId="property-dpe"
+              label="DPE (Diagnostic de performance énergétique)"
+              [error]="submitted() && dpe?.invalid ? 'Le DPE est requis' : null"
+            >
               <select id="property-dpe" formControlName="dpe">
                 <option value="">Choisir un DPE</option>
                 @for (value of dpeValues; track value) {
@@ -129,9 +296,27 @@
               </select>
             </immopro-select>
 
-            <immopro-input id="property-rooms" label="Nombre de pièces" type="number" formControlName="rooms" placeholder="3"></immopro-input>
-            <immopro-input id="property-area" label="Surface habitable (m²)" type="number" formControlName="area_sqm" placeholder="70"></immopro-input>
-            <immopro-input id="property-rent" label="Loyer mensuel prévu (Hors charges, €)" type="number" formControlName="monthly_rent" placeholder="950"></immopro-input>
+            <immopro-input
+              id="property-rooms"
+              label="Nombre de pièces"
+              type="number"
+              formControlName="rooms"
+              placeholder="3"
+            ></immopro-input>
+            <immopro-input
+              id="property-area"
+              label="Surface habitable (m²)"
+              type="number"
+              formControlName="area_sqm"
+              placeholder="70"
+            ></immopro-input>
+            <immopro-input
+              id="property-rent"
+              label="Loyer mensuel prévu (Hors charges, €)"
+              type="number"
+              formControlName="monthly_rent"
+              placeholder="950"
+            ></immopro-input>
           </div>
 
           <!-- Luxury Checkboxes -->
@@ -171,7 +356,7 @@
             label="Description et notes de l'actif"
             formControlName="description"
             placeholder="Description des prestations exclusives de l'actif"
-            style="margin-top: 20px;"
+            style="margin-top: 20px"
           ></immopro-input>
         </div>
 

@@ -1,0 +1,257 @@
+:host {
+  display: block;
+}
+
+.ip-filter-bar-wrapper {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ip-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.2);
+  transition: border-color var(--transition-fast, 150ms ease);
+}
+
+/* ── Recherche ─────────────────────────────────────────────────────────── */
+
+.ip-filter-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 240px;
+  min-width: 200px;
+}
+
+.ip-filter-search-icon {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.ip-filter-search-input {
+  width: 100%;
+  padding: 10px 34px 10px 36px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  background: var(--surface-color, rgba(0, 0, 0, 0.2));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--gold, #d4af37);
+    box-shadow: 0 0 0 3px var(--primary-glow, rgba(212, 175, 55, 0.15));
+  }
+
+  /* La croix native de Safari/Chrome doublerait notre propre bouton. */
+  &::-webkit-search-cancel-button {
+    appearance: none;
+  }
+}
+
+.ip-filter-clear {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast, 120ms ease);
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--overlay-soft, rgba(255, 255, 255, 0.1));
+  }
+}
+
+/* ── Filtres projetés ──────────────────────────────────────────────────── */
+
+.ip-filter-slots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+
+  /* Les selects projetés ne doivent pas s'étirer sur toute la largeur. */
+  ::ng-deep immopro-select {
+    width: auto;
+    min-width: 140px;
+  }
+}
+
+/* ── Compteur et réinitialisation ──────────────────────────────────────── */
+
+.ip-filter-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.ip-filter-count {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: opacity var(--transition-fast);
+
+  &.is-loading {
+    opacity: 0.4;
+  }
+}
+
+.ip-filter-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast, 150ms ease);
+
+  .reset-icon {
+    transition: transform 250ms ease;
+  }
+
+  &:hover {
+    color: var(--gold, #d4af37);
+    border-color: var(--gold, #d4af37);
+    background: rgba(212, 175, 55, 0.06);
+
+    .reset-icon {
+      transform: rotate(-45deg);
+    }
+  }
+}
+
+/* ── Active Filter Chips ───────────────────────────────────────────────── */
+
+.ip-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  animation: fadeIn 180ms ease;
+}
+
+.ip-chips-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ip-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: all var(--transition-fast, 120ms ease);
+
+  &:hover {
+    border-color: var(--gold, #d4af37);
+  }
+
+  .chip-label {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .chip-value {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .chip-remove {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 2px;
+    border-radius: 50%;
+    transition: color 120ms ease;
+
+    &:hover {
+      color: var(--error, #ef4444);
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sur mobile, la barre passe en colonne pour rester utilisable au pouce. */
+@media (max-width: 640px) {
+  .ip-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ip-filter-slots {
+    ::ng-deep immopro-select {
+      width: 100%;
+    }
+  }
+
+  .ip-filter-meta {
+    margin-left: 0;
+    justify-content: space-between;
+  }
+}

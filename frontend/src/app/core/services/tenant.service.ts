@@ -1,6 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {
+  ListParams,
+  PaginatedResponse,
+  fetchAllPages,
+  toHttpParams,
+} from '../list/pagination.model';
 
 export interface Tenant {
   id: number;
@@ -25,13 +31,9 @@ export interface CreateTenantPayload {
   address?: string | null;
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-}
+// Réexport pour ne pas casser les imports existants ; la définition de
+// référence vit désormais dans core/list/pagination.model.ts.
+export type { PaginatedResponse };
 
 @Injectable({
   providedIn: 'root',
@@ -40,9 +42,20 @@ export class TenantService {
   private http = inject(HttpClient);
   private apiUrl = 'http://127.0.0.1:8000/api/tenants';
 
-  getTenants(page: number = 1): Observable<PaginatedResponse<Tenant>> {
-    const params = new HttpParams().set('page', page.toString());
-    return this.http.get<PaginatedResponse<Tenant>>(this.apiUrl, { params });
+  getTenants(params: Partial<ListParams> = {}): Observable<PaginatedResponse<Tenant>> {
+    return this.http.get<PaginatedResponse<Tenant>>(this.apiUrl, {
+      params: toHttpParams(params),
+    });
+  }
+
+  /**
+   * Tous les locataires, pour alimenter un menu déroulant.
+   *
+   * À ne pas utiliser pour afficher une liste : c'est précisément ce que la
+   * pagination sert à éviter.
+   */
+  getAllTenants(): Observable<Tenant[]> {
+    return fetchAllPages((page) => this.getTenants({ page, per_page: 100 }));
   }
 
   getTenant(id: number): Observable<Tenant> {

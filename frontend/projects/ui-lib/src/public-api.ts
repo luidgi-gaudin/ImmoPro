@@ -9,6 +9,8 @@ export * from './lib/components/immoproIconButton/immopro-icon-button.component'
 export * from './lib/components/immoproEmptyState/immopro-empty-state.component';
 export * from './lib/components/immoproTable/immopro-table.component';
 export * from './lib/components/immoproPagination/immopro-pagination.component';
+export * from './lib/components/immoproFilterBar/immopro-filter-bar.component';
+export * from './lib/components/immoproSkeleton/immopro-skeleton.component';
 export * from './lib/components/immoproBadge/immopro-badge.component';
 export * from './lib/components/immoproDpeBadge/immopro-dpe-badge.component';
 export * from './lib/components/immoproSelect/immopro-select.component';

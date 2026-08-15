@@ -1,58 +1,151 @@
 <div class="portfolios-container">
-  <immopro-page-header title="Mes Portfolios" subtitle="Gérez vos ensembles immobiliers de prestige et suivez leurs performances.">
+  <immopro-page-header
+    title="Mes Portfolios"
+    subtitle="Gérez vos ensembles immobiliers de prestige et suivez leurs performances."
+  >
     <immopro-button actions (onClick)="addPortfolio()">
       <span>+ Nouveau Portfolio</span>
     </immopro-button>
   </immopro-page-header>
 
-  <div class="portfolios-grid">
-    @for (portfolio of portfolios(); track portfolio.id) {
-      <immopro-card [hoverable]="true" style="cursor: pointer;" (click)="viewPortfolio(portfolio)">
-        <div card-header>
-          <h3 class="luxury-title" style="margin: 0; font-size: 1.5rem;">{{ portfolio.name }}</h3>
-          <p class="text-secondary" style="font-size: 0.85rem; margin: 5px 0 0;">
-            {{ portfolio.description || 'Aucune description disponible' }}
-          </p>
-        </div>
-        
-        <div class="properties-preview">
-          <div class="preview-header">
-            <span class="count">{{ portfolio.properties_count || 0 }} actifs immobiliers</span>
-          </div>
-          <ul class="property-list">
-            @for (property of portfolio.properties?.slice(0, 3); track property.id) {
-              <li>
-                <span class="prop-name">{{ property.title }}</span>
-                <span class="prop-city">{{ property.city }}</span>
-              </li>
-            }
-            @if ((portfolio.properties_count ?? 0) > 3) {
-              <li class="more-props text-gold">
-                + {{ (portfolio.properties_count ?? 0) - 3 }} autres propriétés de prestige...
-              </li>
-            }
-            @if (!portfolio.properties || portfolio.properties.length === 0) {
-              <li class="empty-preview text-muted">Aucune propriété enregistrée.</li>
-            }
-          </ul>
-        </div>
+  <immopro-filter-bar
+    searchPlaceholder="Rechercher un portfolio…"
+    [searchValue]="list.search()"
+    [canReset]="list.isFiltered()"
+    [total]="pagination()?.total ?? null"
+    itemLabel="portfolio"
+    [loading]="listLoading()"
+    (searchChange)="list.setSearch($event)"
+    (reset)="list.reset()"
+  ></immopro-filter-bar>
 
-        <div card-footer class="card-actions" (click)="$event.stopPropagation()">
-          <div class="card-actions-icons">
-            <immopro-icon-button size="sm" label="Modifier" (onClick)="editPortfolio(portfolio, $event)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-            </immopro-icon-button>
-            <immopro-icon-button size="sm" tone="danger" label="Supprimer" [disabled]="deletingId() === portfolio.id" (onClick)="deletePortfolio(portfolio, $event)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-            </immopro-icon-button>
+  <!-- Squelettes au tout premier chargement seulement. Sur un simple changement
+       de filtre, la liste précédente reste affichée en léger fondu : remplacer
+       un contenu déjà lisible par des blocs gris à chaque frappe donnerait une
+       impression de clignotement. -->
+  @if (showSkeleton()) {
+    <div class="portfolios-grid" aria-busy="true" aria-label="Chargement des portfolios">
+      @for (placeholder of skeletonCards; track $index) {
+        <div class="portfolio-skeleton-card">
+          <immopro-skeleton variant="title" width="60%"></immopro-skeleton>
+          <immopro-skeleton width="85%"></immopro-skeleton>
+          <div class="portfolio-skeleton-list">
+            <immopro-skeleton [count]="3" width="100%"></immopro-skeleton>
           </div>
-          <immopro-button variant="ghost" (onClick)="viewPortfolio(portfolio)">
-            Gérer les biens &rarr;
-          </immopro-button>
+          <immopro-skeleton variant="badge"></immopro-skeleton>
         </div>
-      </immopro-card>
-    }
-  </div>
+      }
+    </div>
+  } @else {
+    <div class="portfolios-grid" [class.is-refreshing]="listLoading()">
+      @for (portfolio of portfolios(); track portfolio.id) {
+        <immopro-card [hoverable]="true" style="cursor: pointer" (click)="viewPortfolio(portfolio)">
+          <div card-header>
+            <h3 class="luxury-title" style="margin: 0; font-size: 1.5rem">{{ portfolio.name }}</h3>
+            <p class="text-secondary" style="font-size: 0.85rem; margin: 5px 0 0">
+              {{ portfolio.description || 'Aucune description disponible' }}
+            </p>
+          </div>
+
+          <div class="properties-preview">
+            <div class="preview-header">
+              <span class="count">{{ portfolio.properties_count || 0 }} actifs immobiliers</span>
+            </div>
+            <ul class="property-list">
+              @for (property of portfolio.properties?.slice(0, 3); track property.id) {
+                <li>
+                  <span class="prop-name">{{ property.title }}</span>
+                  <span class="prop-city">{{ property.city }}</span>
+                </li>
+              }
+              @if ((portfolio.properties_count ?? 0) > 3) {
+                <li class="more-props text-gold">
+                  + {{ (portfolio.properties_count ?? 0) - 3 }} autres propriétés de prestige...
+                </li>
+              }
+              @if (!portfolio.properties || portfolio.properties.length === 0) {
+                <li class="empty-preview text-muted">Aucune propriété enregistrée.</li>
+              }
+            </ul>
+          </div>
+
+          <div card-footer class="card-actions" (click)="$event.stopPropagation()">
+            <div class="card-actions-icons">
+              <immopro-icon-button
+                size="sm"
+                label="Modifier"
+                (onClick)="editPortfolio(portfolio, $event)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                </svg>
+              </immopro-icon-button>
+              <immopro-icon-button
+                size="sm"
+                tone="danger"
+                label="Supprimer"
+                [disabled]="deletingId() === portfolio.id"
+                (onClick)="deletePortfolio(portfolio, $event)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 6h18" />
+                  <path d="M8 6V4h8v2" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                </svg>
+              </immopro-icon-button>
+            </div>
+            <immopro-button variant="ghost" (onClick)="viewPortfolio(portfolio)">
+              Gérer les biens &rarr;
+            </immopro-button>
+          </div>
+        </immopro-card>
+      } @empty {
+        <p class="text-secondary" style="grid-column: 1 / -1; text-align: center; padding: 40px">
+          @if (list.isFiltered()) {
+            Aucun portfolio ne correspond à votre recherche.
+          } @else {
+            Aucun portfolio enregistré pour le moment.
+          }
+        </p>
+      }
+    </div>
+  }
+
+  @if (pagination(); as pag) {
+    <immopro-pagination
+      [currentPage]="pag.current_page"
+      [lastPage]="pag.last_page"
+      [from]="pag.from"
+      [to]="pag.to"
+      [total]="pag.total"
+      [perPage]="pag.per_page"
+      [perPageChoices]="list.perPageChoices"
+      (pageChange)="list.setPage($event)"
+      (perPageChange)="list.setPerPage($event)"
+    ></immopro-pagination>
+  }
 </div>
 
 <!-- Luxury Create Modal -->
@@ -72,13 +165,19 @@
             </div>
           }
 
-          <div style="display: flex; flex-direction: column; gap: 20px;">
+          <div style="display: flex; flex-direction: column; gap: 20px">
             <immopro-input
               id="portfolio-name"
               label="Nom du portfolio"
               formControlName="name"
               placeholder="Ex: Résidences Centre Ville"
-              [error]="submitted() && name?.invalid ? (name?.hasError('required') ? 'Le nom est requis' : 'Minimum 2 caractères') : null"
+              [error]="
+                submitted() && name?.invalid
+                  ? name?.hasError('required')
+                    ? 'Le nom est requis'
+                    : 'Minimum 2 caractères'
+                  : null
+              "
             ></immopro-input>
 
             <immopro-input

@@ -35,7 +35,7 @@
   &:hover {
     border-color: var(--border-hover);
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px -10px rgba(70, 160, 125, 0.1);
+    box-shadow: 0 10px 20px -10px rgba(var(--shadow-rgb), 0.14);
   }
 
   &.selected {
@@ -320,7 +320,9 @@
   color: #1a1a1a;
   font-family: 'Inter', sans-serif;
 
-  h2, h3, h4 {
+  h2,
+  h3,
+  h4 {
     color: #1a1a1a;
   }
 }
@@ -470,7 +472,8 @@
   body * {
     visibility: hidden;
   }
-  .print-only, .print-only * {
+  .print-only,
+  .print-only * {
     visibility: visible;
   }
   .print-only {

@@ -17,12 +17,12 @@ class PropertyControllerTest extends TestCase
     private function validPayload(array $overrides = []): array
     {
         return array_merge([
-            'title'         => 'Appartement Paris 11',
+            'title' => 'Appartement Paris 11',
             'property_type' => PropertyType::Appartement->value,
-            'address'       => '12 rue de la Paix',
-            'city'          => 'Paris',
-            'postal_code'   => '75011',
-            'dpe'           => Dpe::B->value,
+            'address' => '12 rue de la Paix',
+            'city' => 'Paris',
+            'postal_code' => '75011',
+            'dpe' => Dpe::B->value,
         ], $overrides);
     }
 
@@ -41,7 +41,7 @@ class PropertyControllerTest extends TestCase
         $response = $this->actingAs($user)->getJson("/api/portfolios/{$portfolio->id}/properties");
 
         $response->assertStatus(200)
-            ->assertJsonCount(3);
+            ->assertJsonCount(3, 'data');
     }
 
     public function test_index_returns_403_for_non_owner(): void
@@ -81,7 +81,7 @@ class PropertyControllerTest extends TestCase
             ->assertJsonPath('portfolio_id', $portfolio->id);
 
         $this->assertDatabaseHas('properties', [
-            'title'        => 'Appartement Paris 11',
+            'title' => 'Appartement Paris 11',
             'portfolio_id' => $portfolio->id,
         ]);
     }
@@ -224,9 +224,9 @@ class PropertyControllerTest extends TestCase
             ->assertJsonPath('title', 'Nouveau titre');
 
         $this->assertDatabaseHas('properties', [
-            'id'    => $property->id,
+            'id' => $property->id,
             'title' => 'Nouveau titre',
-            'dpe'   => Dpe::A->value,
+            'dpe' => Dpe::A->value,
         ]);
     }
 

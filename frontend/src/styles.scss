@@ -8,11 +8,11 @@
   --surface-sidebar: #0e1413;
 
   --primary: #46a07d; /* Refined Emerald */
-  --primary-glow: rgba(70, 160, 125, 0.10);
+  --primary-glow: rgba(70, 160, 125, 0.1);
   --primary-hover: #57b591;
   --on-primary: #05130d; /* Text on primary surfaces */
 
-  --border: rgba(120, 165, 148, 0.10);
+  --border: rgba(120, 165, 148, 0.1);
   --border-hover: rgba(120, 165, 148, 0.24);
 
   --text-primary: #f3f6f4; /* Cool Off-White */
@@ -42,7 +42,8 @@
 }
 
 /* Light Theme Override - Warm Ivory & Deep Pine, soft & inviting */
-html.light-theme, body.light-theme {
+html.light-theme,
+body.light-theme {
   --bg-color: #faf6ee; /* Warm Ivory */
   --surface-color: #faf6ee;
   --surface-card: #ffffff;
@@ -78,18 +79,31 @@ html.light-theme, body.light-theme {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   background-color: var(--bg-color);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   font-size: 16px;
   line-height: 1.6;
-  transition: background-color var(--transition-smooth), color var(--transition-smooth);
+  transition:
+    background-color var(--transition-smooth),
+    color var(--transition-smooth);
 }
 
-h1, h2, h3, h4, h5, h6, .luxury-title {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.luxury-title {
   color: var(--text-primary);
   font-family: 'Space Grotesk', system-ui, sans-serif;
   font-weight: 600;
@@ -98,17 +112,25 @@ h1, h2, h3, h4, h5, h6, .luxury-title {
   line-height: 1.15;
 }
 
-h1 { font-size: 2.4rem; }
-h2 { font-size: 1.9rem; }
-h3 { font-size: 1.45rem; }
-h4 { font-size: 1.2rem; }
+h1 {
+  font-size: 2.4rem;
+}
+h2 {
+  font-size: 1.9rem;
+}
+h3 {
+  font-size: 1.45rem;
+}
+h4 {
+  font-size: 1.2rem;
+}
 
 a {
   color: var(--primary);
   text-decoration: none;
   transition: var(--transition-fast);
   border-bottom: 1px solid transparent;
-  
+
   &:hover {
     color: var(--primary-hover);
     border-color: var(--primary-hover);
@@ -122,22 +144,35 @@ a {
   border-radius: var(--radius-lg);
   padding: 30px;
   box-shadow: 0 10px 30px -15px rgba(var(--shadow-rgb), 0.3);
-  transition: transform var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth);
-  
+  transition:
+    transform var(--transition-smooth),
+    border-color var(--transition-smooth),
+    box-shadow var(--transition-smooth);
+
   &.hoverable:hover {
     transform: translateY(-4px);
     border-color: var(--border-hover);
-    box-shadow: 0 20px 40px -20px rgba(70, 160, 125, 0.15);
+    /* --shadow-rgb suit le thème (noir en sombre, brun chaud en clair) : une
+       ombre verte figée virait au sale sur l'ivoire du thème clair. */
+    box-shadow: 0 20px 40px -20px rgba(var(--shadow-rgb), 0.2);
   }
 }
 
 /* Utilities */
-.text-secondary { color: var(--text-secondary); }
-.text-muted { color: var(--text-muted); }
-.text-gold { color: var(--primary); }
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-muted {
+  color: var(--text-muted);
+}
+.text-gold {
+  color: var(--primary);
+}
 
 /* Global Forms styling */
-input, select, textarea {
+input,
+select,
+textarea {
   background-color: var(--overlay-softer);
   border: 1px solid var(--border);
   color: var(--text-primary);
@@ -158,12 +193,12 @@ input, select, textarea {
   &::placeholder {
     color: var(--text-muted);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
+
   &.is-invalid {
     border-color: var(--error);
     &:focus {
@@ -180,7 +215,7 @@ select {
   background-position: right 12px center;
   background-size: 16px;
   padding-right: 40px;
-  
+
   body.light-theme & {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231f7a5a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   }
@@ -257,7 +292,7 @@ select {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   h3 {
     margin: 0;
     font-size: 1.6rem;
@@ -273,7 +308,7 @@ select {
   transition: var(--transition-fast);
   padding: 0;
   line-height: 1;
-  
+
   &:hover {
     color: var(--primary);
   }
@@ -305,7 +340,7 @@ select {
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 10px;
-  
+
   &:hover {
     background: var(--border-hover);
   }
@@ -313,13 +348,23 @@ select {
 
 /* Animations */
 @keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInModal {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes structureRise {
@@ -333,7 +378,15 @@ select {
   }
 }
 
-.luxury-card, .lease-item-card, .table-wrapper, .feature-card, .main-card, .side-card, .tenants-container, .portfolios-container, .leases-container {
+.luxury-card,
+.lease-item-card,
+.table-wrapper,
+.feature-card,
+.main-card,
+.side-card,
+.tenants-container,
+.portfolios-container,
+.leases-container {
   animation: structureRise 550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 

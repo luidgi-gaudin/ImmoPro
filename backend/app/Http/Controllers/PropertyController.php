@@ -11,11 +11,14 @@ use Illuminate\Validation\Rule;
 
 class PropertyController extends Controller
 {
-    public function index(Portfolio $portfolio)
+    public function index(Request $request, Portfolio $portfolio)
     {
         $this->authorize('view', $portfolio);
 
-        return $portfolio->properties()->get();
+        return $portfolio->properties()
+            ->filtered($request)
+            ->paginate($this->perPage($request))
+            ->withQueryString();
     }
 
     public function store(Request $request, Portfolio $portfolio)
@@ -23,23 +26,23 @@ class PropertyController extends Controller
         $this->authorize('update', $portfolio);
 
         $data = $request->validate([
-            'title'         => ['required', 'string'],
+            'title' => ['required', 'string'],
             'property_type' => ['required', Rule::enum(PropertyType::class)],
-            'address'       => ['required', 'string'],
-            'city'          => ['required', 'string'],
-            'postal_code'   => ['required', 'string'],
-            'latitude'      => ['nullable', 'numeric'],
-            'longitude'     => ['nullable', 'numeric'],
-            'dpe'           => ['required', Rule::enum(Dpe::class)],
-            'rooms'         => ['nullable', 'integer'],
-            'area_sqm'      => ['nullable', 'numeric'],
-            'has_balcony'   => ['boolean'],
-            'has_garden'    => ['boolean'],
-            'has_parking'   => ['boolean'],
-            'has_cave'      => ['boolean'],
-            'is_rented'     => ['boolean'],
-            'monthly_rent'  => ['nullable', 'numeric'],
-            'description'   => ['nullable', 'string'],
+            'address' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'postal_code' => ['required', 'string'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
+            'dpe' => ['required', Rule::enum(Dpe::class)],
+            'rooms' => ['nullable', 'integer'],
+            'area_sqm' => ['nullable', 'numeric'],
+            'has_balcony' => ['boolean'],
+            'has_garden' => ['boolean'],
+            'has_parking' => ['boolean'],
+            'has_cave' => ['boolean'],
+            'is_rented' => ['boolean'],
+            'monthly_rent' => ['nullable', 'numeric'],
+            'description' => ['nullable', 'string'],
         ]);
 
         return $portfolio->properties()->create($data);
@@ -57,23 +60,23 @@ class PropertyController extends Controller
         $this->authorize('update', $portfolio);
 
         $data = $request->validate([
-            'title'         => ['required', 'string'],
+            'title' => ['required', 'string'],
             'property_type' => ['required', Rule::enum(PropertyType::class)],
-            'address'       => ['required', 'string'],
-            'city'          => ['required', 'string'],
-            'postal_code'   => ['required', 'string'],
-            'latitude'      => ['nullable', 'numeric'],
-            'longitude'     => ['nullable', 'numeric'],
-            'dpe'           => ['required', Rule::enum(Dpe::class)],
-            'rooms'         => ['nullable', 'integer'],
-            'area_sqm'      => ['nullable', 'numeric'],
-            'has_balcony'   => ['boolean'],
-            'has_garden'    => ['boolean'],
-            'has_parking'   => ['boolean'],
-            'has_cave'      => ['boolean'],
-            'is_rented'     => ['boolean'],
-            'monthly_rent'  => ['nullable', 'numeric'],
-            'description'   => ['nullable', 'string'],
+            'address' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'postal_code' => ['required', 'string'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
+            'dpe' => ['required', Rule::enum(Dpe::class)],
+            'rooms' => ['nullable', 'integer'],
+            'area_sqm' => ['nullable', 'numeric'],
+            'has_balcony' => ['boolean'],
+            'has_garden' => ['boolean'],
+            'has_parking' => ['boolean'],
+            'has_cave' => ['boolean'],
+            'is_rented' => ['boolean'],
+            'monthly_rent' => ['nullable', 'numeric'],
+            'description' => ['nullable', 'string'],
         ]);
 
         $property->update($data);
