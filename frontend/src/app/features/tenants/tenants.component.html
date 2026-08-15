@@ -1,5 +1,8 @@
 <div class="tenants-container">
-  <immopro-page-header title="Locataires" subtitle="Suivez les dossiers locataires, informations de contact et coordonnées bancaires.">
+  <immopro-page-header
+    title="Locataires"
+    subtitle="Suivez les dossiers locataires, informations de contact et coordonnées bancaires."
+  >
     <immopro-button actions (onClick)="addTenant()">
       <span>+ Nouveau Locataire</span>
     </immopro-button>
@@ -11,11 +14,50 @@
     </div>
   }
 
-  <immopro-table>
+  <immopro-filter-bar
+    searchPlaceholder="Rechercher un nom, un e-mail, un téléphone…"
+    [searchValue]="list.search()"
+    [canReset]="list.isFiltered()"
+    [total]="pagination()?.total ?? null"
+    [activeChips]="activeChips()"
+    itemLabel="locataire"
+    [loading]="listLoading()"
+    (searchChange)="list.setSearch($event)"
+    (removeChip)="list.removeFilter($event)"
+    (reset)="list.reset()"
+  >
+    <immopro-select label="Bail" inputId="tenant-filter-loue">
+      <select
+        id="tenant-filter-loue"
+        [value]="list.filterValue('loue')"
+        (change)="list.setFilter('loue', $any($event.target).value)"
+      >
+        <option value="">Tous les dossiers</option>
+        <option value="1">Sous contrat actif</option>
+        <option value="0">Sans bail en cours</option>
+      </select>
+    </immopro-select>
+  </immopro-filter-bar>
+
+  <immopro-table [loading]="listLoading()">
     <thead>
       <tr>
-        <th>Nom / Prénom</th>
-        <th>Adresse E-mail</th>
+        <th>
+          <button type="button" class="ip-sortable" (click)="list.toggleSort('last_name')">
+            Nom / Prénom
+            @if (list.sort() === 'last_name') {
+              <span class="ip-sort-arrow">{{ list.direction() === 'asc' ? '↑' : '↓' }}</span>
+            }
+          </button>
+        </th>
+        <th>
+          <button type="button" class="ip-sortable" (click)="list.toggleSort('email')">
+            Adresse E-mail
+            @if (list.sort() === 'email') {
+              <span class="ip-sort-arrow">{{ list.direction() === 'asc' ? '↑' : '↓' }}</span>
+            }
+          </button>
+        </th>
         <th>Téléphone</th>
         <th>IBAN</th>
         <th>BIC</th>
@@ -23,54 +65,135 @@
         <th class="actions">Actions</th>
       </tr>
     </thead>
-    <tbody>
-      @for (tenant of tenants(); track tenant.id) {
-        <tr>
-          <td class="name-cell">
-            <immopro-avatar [initials]="tenant.first_name.charAt(0) + tenant.last_name.charAt(0)"></immopro-avatar>
-            <a class="title-text" [routerLink]="['/tenants', tenant.id]">{{ tenant.first_name }} {{ tenant.last_name }}</a>
-          </td>
-          <td>{{ tenant.email || '-' }}</td>
-          <td>{{ tenant.phone || '-' }}</td>
-          <td><code class="bank-code">{{ tenant.iban || '-' }}</code></td>
-          <td><code class="bank-code">{{ tenant.bic || '-' }}</code></td>
-          <td>
-            <span>{{ tenant.address || '-' }}</span>
-            @if (tenant.country) {
-              <span class="text-muted" style="font-size: 0.75rem; display: block; text-transform: uppercase;">
-                {{ tenant.country }}
-              </span>
-            }
-          </td>
-          <td class="actions">
-            <div class="ip-table-actions">
-              <immopro-icon-button size="sm" label="Modifier" (onClick)="editTenant(tenant)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-              </immopro-icon-button>
-              <immopro-icon-button size="sm" tone="danger" label="Supprimer" [disabled]="deletingId() === tenant.id" (onClick)="deleteTenant(tenant)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-              </immopro-icon-button>
-            </div>
-          </td>
-        </tr>
-      }
-      @empty {
-        <tr>
-          <td colspan="7" class="ip-table-empty">Aucun locataire enregistré pour le moment.</td>
-        </tr>
+    <tbody [attr.aria-busy]="showSkeleton() ? 'true' : null">
+      @if (showSkeleton()) {
+        <!-- Lignes fantômes au premier chargement : le tableau occupe déjà sa
+             hauteur définitive, la page ne sursaute pas à l'arrivée des données. -->
+        @for (row of skeletonRows; track $index) {
+          <tr class="ip-skeleton-row">
+            <td>
+              <div class="ip-skeleton-name">
+                <immopro-skeleton variant="avatar"></immopro-skeleton>
+                <immopro-skeleton width="140px"></immopro-skeleton>
+              </div>
+            </td>
+            <td><immopro-skeleton width="170px"></immopro-skeleton></td>
+            <td><immopro-skeleton width="110px"></immopro-skeleton></td>
+            <td><immopro-skeleton width="130px"></immopro-skeleton></td>
+            <td><immopro-skeleton width="70px"></immopro-skeleton></td>
+            <td><immopro-skeleton width="150px"></immopro-skeleton></td>
+            <td class="actions"><immopro-skeleton width="60px"></immopro-skeleton></td>
+          </tr>
+        }
+      } @else {
+        @for (tenant of tenants(); track tenant.id) {
+          <tr>
+            <td class="name-cell">
+              <immopro-avatar
+                [initials]="tenant.first_name.charAt(0) + tenant.last_name.charAt(0)"
+              ></immopro-avatar>
+              <a class="title-text" [routerLink]="['/tenants', tenant.id]"
+                >{{ tenant.first_name }} {{ tenant.last_name }}</a
+              >
+            </td>
+            <td>{{ tenant.email || '-' }}</td>
+            <td>{{ tenant.phone || '-' }}</td>
+            <td>
+              <code class="bank-code">{{ tenant.iban || '-' }}</code>
+            </td>
+            <td>
+              <code class="bank-code">{{ tenant.bic || '-' }}</code>
+            </td>
+            <td>
+              <span>{{ tenant.address || '-' }}</span>
+              @if (tenant.country) {
+                <span
+                  class="text-muted"
+                  style="font-size: 0.75rem; display: block; text-transform: uppercase"
+                >
+                  {{ tenant.country }}
+                </span>
+              }
+            </td>
+            <td class="actions">
+              <div class="ip-table-actions">
+                <immopro-icon-button size="sm" label="Modifier" (onClick)="editTenant(tenant)">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                  </svg>
+                </immopro-icon-button>
+                <immopro-icon-button
+                  size="sm"
+                  tone="danger"
+                  label="Supprimer"
+                  [disabled]="deletingId() === tenant.id"
+                  (onClick)="deleteTenant(tenant)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M3 6h18" />
+                    <path d="M8 6V4h8v2" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                  </svg>
+                </immopro-icon-button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="ip-table-empty">
+              @if (list.isFiltered()) {
+                Aucun locataire ne correspond à votre recherche.
+              } @else {
+                Aucun locataire enregistré pour le moment.
+              }
+            </td>
+          </tr>
+        }
       }
     </tbody>
   </immopro-table>
 
   @if (pagination(); as pag) {
-    <immopro-pagination [currentPage]="pag.current_page" [lastPage]="pag.last_page" (pageChange)="changePage($event)"></immopro-pagination>
+    <immopro-pagination
+      [currentPage]="pag.current_page"
+      [lastPage]="pag.last_page"
+      [from]="pag.from"
+      [to]="pag.to"
+      [total]="pag.total"
+      [perPage]="pag.per_page"
+      [perPageChoices]="list.perPageChoices"
+      (pageChange)="list.setPage($event)"
+      (perPageChange)="list.setPerPage($event)"
+    ></immopro-pagination>
   }
 </div>
 
 <!-- Luxury Create/Edit Modal -->
 @if (createModalOpen()) {
   <div class="luxury-modal-overlay" (click)="closeCreateModal()">
-    <div class="luxury-modal" style="max-width: 650px;" (click)="$event.stopPropagation()">
+    <div class="luxury-modal" style="max-width: 650px" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h3 class="luxury-title">{{ modalTitle }}</h3>
         <button type="button" class="modal-close" (click)="closeCreateModal()">×</button>
@@ -90,7 +213,13 @@
               label="Prénom"
               formControlName="first_name"
               placeholder="Jean"
-              [error]="submitted() && firstName?.invalid ? (firstName?.hasError('required') ? 'Le prénom est requis' : 'Minimum 2 caractères') : null"
+              [error]="
+                submitted() && firstName?.invalid
+                  ? firstName?.hasError('required')
+                    ? 'Le prénom est requis'
+                    : 'Minimum 2 caractères'
+                  : null
+              "
             ></immopro-input>
 
             <immopro-input
@@ -98,7 +227,13 @@
               label="Nom de famille"
               formControlName="last_name"
               placeholder="Dupont"
-              [error]="submitted() && lastName?.invalid ? (lastName?.hasError('required') ? 'Le nom est requis' : 'Minimum 2 caractères') : null"
+              [error]="
+                submitted() && lastName?.invalid
+                  ? lastName?.hasError('required')
+                    ? 'Le nom est requis'
+                    : 'Minimum 2 caractères'
+                  : null
+              "
             ></immopro-input>
 
             <immopro-input
@@ -110,15 +245,40 @@
               [error]="submitted() && email?.invalid ? 'Email invalide' : null"
             ></immopro-input>
 
-            <immopro-input id="tenant-phone" label="Numéro de Téléphone" formControlName="phone" placeholder="06 00 00 00 00"></immopro-input>
+            <immopro-input
+              id="tenant-phone"
+              label="Numéro de Téléphone"
+              formControlName="phone"
+              placeholder="06 00 00 00 00"
+            ></immopro-input>
 
-            <immopro-input id="tenant-iban" label="Coordonnées IBAN" formControlName="iban" placeholder="FR76..."></immopro-input>
+            <immopro-input
+              id="tenant-iban"
+              label="Coordonnées IBAN"
+              formControlName="iban"
+              placeholder="FR76..."
+            ></immopro-input>
 
-            <immopro-input id="tenant-bic" label="Code BIC" formControlName="bic" placeholder="AGRIFRPP"></immopro-input>
+            <immopro-input
+              id="tenant-bic"
+              label="Code BIC"
+              formControlName="bic"
+              placeholder="AGRIFRPP"
+            ></immopro-input>
 
-            <immopro-input id="tenant-country" label="Pays" formControlName="country" placeholder="France"></immopro-input>
+            <immopro-input
+              id="tenant-country"
+              label="Pays"
+              formControlName="country"
+              placeholder="France"
+            ></immopro-input>
 
-            <immopro-input id="tenant-address" label="Adresse postale complète" formControlName="address" placeholder="12 rue des Lilas"></immopro-input>
+            <immopro-input
+              id="tenant-address"
+              label="Adresse postale complète"
+              formControlName="address"
+              placeholder="12 rue des Lilas"
+            ></immopro-input>
           </div>
         </div>
 

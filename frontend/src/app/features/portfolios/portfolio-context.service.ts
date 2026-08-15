@@ -56,10 +56,15 @@ export class PortfolioContextService {
 
   private loadProperties(id: number): void {
     this.propertiesLoading.set(true);
-    this.portfolioService.getPortfolioProperties(id).subscribe({
+    // Le contexte a besoin de TOUS les biens du portefeuille : les statistiques
+    // (occupés, disponibles, loyer cumulé) portent sur l'ensemble, et la fiche
+    // détaillée d'un bien y cherche le sien par identifiant, quelle que soit la
+    // page où il se trouverait. La liste affichée à l'écran, elle, reste paginée
+    // et interroge le serveur de son côté.
+    this.portfolioService.getAllPortfolioProperties(id).subscribe({
       next: (properties) => {
         this.portfolio.update((current) =>
-          current ? { ...current, properties, properties_count: properties.length } : current
+          current ? { ...current, properties, properties_count: properties.length } : current,
         );
         this.propertiesLoading.set(false);
       },
@@ -76,7 +81,12 @@ export class PortfolioContextService {
 
     this.portfolioService.getPortfolio(id).subscribe({
       next: (portfolio) => {
-        this.portfolioService.getPortfolioProperties(id).subscribe({
+        // Le contexte a besoin de TOUS les biens du portefeuille : les statistiques
+        // (occupés, disponibles, loyer cumulé) portent sur l'ensemble, et la fiche
+        // détaillée d'un bien y cherche le sien par identifiant, quelle que soit la
+        // page où il se trouverait. La liste affichée à l'écran, elle, reste paginée
+        // et interroge le serveur de son côté.
+        this.portfolioService.getAllPortfolioProperties(id).subscribe({
           next: (properties) => {
             this.portfolio.set({ ...portfolio, properties, properties_count: properties.length });
           },
@@ -103,7 +113,7 @@ export class PortfolioContextService {
 
   setProperties(properties: Property[]): void {
     this.portfolio.update((current) =>
-      current ? { ...current, properties, properties_count: properties.length } : current
+      current ? { ...current, properties, properties_count: properties.length } : current,
     );
   }
 
@@ -131,7 +141,7 @@ export class PortfolioContextService {
       error: () => {
         this.deletingId.set(null);
         this.portfolio.set(currentPortfolio);
-        this.error.set("Impossible de supprimer cet actif");
+        this.error.set('Impossible de supprimer cet actif');
       },
     });
   }

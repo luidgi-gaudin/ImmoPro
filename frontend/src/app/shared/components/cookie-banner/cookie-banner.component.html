@@ -1,0 +1,70 @@
+@if (consent.needsDecision()) {
+  <div
+    class="ip-cookie-banner"
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="cookie-banner-title"
+    aria-describedby="cookie-banner-text"
+  >
+    <div class="ip-cookie-inner">
+      <div class="ip-cookie-text">
+        <h2 class="ip-cookie-title" id="cookie-banner-title">Votre vie privée</h2>
+        <p id="cookie-banner-text">
+          ImmoPro n'utilise ni traceur publicitaire, ni outil de mesure d'audience. Seul le
+          strictement nécessaire à votre connexion est conservé. Vous pouvez en plus autoriser la
+          mémorisation de votre thème d'affichage.
+          <a routerLink="/cookies">Politique de cookies</a>
+          ·
+          <a routerLink="/confidentialite">Confidentialité</a>
+        </p>
+      </div>
+
+      <!-- Accepter et refuser sont au même niveau, de même taille : le refus ne
+           doit demander ni plus de clics ni plus d'attention que l'acceptation. -->
+      <div class="ip-cookie-actions">
+        <immopro-button variant="outline" (onClick)="toggleDetails()">
+          {{ detailsOpen() ? 'Masquer le détail' : 'Personnaliser' }}
+        </immopro-button>
+        <immopro-button variant="outline" (onClick)="rejectAll()">Refuser</immopro-button>
+        <immopro-button (onClick)="acceptAll()">Tout accepter</immopro-button>
+      </div>
+    </div>
+
+    @if (detailsOpen()) {
+      <div class="ip-cookie-details">
+        <div class="ip-cookie-category">
+          <div class="ip-cookie-category-head">
+            <span class="ip-cookie-category-name">Strictement nécessaires</span>
+            <span class="ip-cookie-always">Toujours actifs</span>
+          </div>
+          <p class="ip-cookie-category-desc">
+            <code>auth_token</code> et <code>auth_user</code> maintiennent votre session ouverte.
+            Sans eux, l'application ne peut pas vous reconnaître. Ils sont supprimés à la
+            déconnexion.
+          </p>
+        </div>
+
+        <div class="ip-cookie-category">
+          <div class="ip-cookie-category-head">
+            <label class="ip-cookie-switch">
+              <input
+                type="checkbox"
+                [checked]="preferences()"
+                (change)="togglePreferences($event)"
+              />
+              <span class="ip-cookie-category-name">Préférences d'affichage</span>
+            </label>
+          </div>
+          <p class="ip-cookie-category-desc">
+            <code>theme</code> retient votre choix entre l'affichage clair et sombre. Sans cette
+            autorisation, l'application repart du thème par défaut à chaque visite.
+          </p>
+        </div>
+
+        <div class="ip-cookie-details-actions">
+          <immopro-button (onClick)="saveChoices()">Enregistrer mes choix</immopro-button>
+        </div>
+      </div>
+    }
+  </div>
+}

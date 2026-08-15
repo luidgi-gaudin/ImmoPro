@@ -4,11 +4,12 @@ import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { AlertService } from '../../../core/services/alert.service';
 import { LayoutService } from '../../../core/services/layout.service';
+import { GlobalSearchService } from '../../../core/services/global-search.service';
 import { ImmoproAvatarComponent, ImmoproThemeToggleComponent } from 'ui-lib';
 
 /**
  * Barre supérieure du shell : ouverture du menu (mobile), titre de section,
- * accès aux alertes, bascule de thème et menu utilisateur.
+ * recherche globale instantanée, accès aux alertes, bascule de thème et menu utilisateur.
  */
 @Component({
   selector: 'app-topbar',
@@ -18,19 +19,87 @@ import { ImmoproAvatarComponent, ImmoproThemeToggleComponent } from 'ui-lib';
   template: `
     <header class="topbar">
       <div class="topbar-left">
-        <button class="icon-btn burger" (click)="layout.toggleSidebar()" aria-label="Ouvrir le menu">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <button
+          class="icon-btn burger"
+          (click)="layout.toggleSidebar()"
+          aria-label="Ouvrir le menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
         </button>
         <h1 class="section-title">{{ sectionLabel() }}</h1>
       </div>
 
+      <div class="topbar-center">
+        <button
+          class="topbar-search-trigger"
+          (click)="searchService.open()"
+          type="button"
+          aria-label="Rechercher (Cmd+K)"
+        >
+          <svg
+            class="search-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span class="search-placeholder">Rechercher un bien, locataire, bail...</span>
+          <kbd class="search-shortcut">⌘K</kbd>
+        </button>
+      </div>
+
       <div class="topbar-right">
-        <a class="icon-btn bell" routerLink="/alerts" routerLinkActive="active"
-           [title]="alerts.unreadCount() > 0 ? alerts.unreadCount() + ' alerte(s) non lue(s)' : 'Voir mes alertes'"
-           aria-label="Voir mes alertes">
-          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <a
+          class="icon-btn bell"
+          routerLink="/alerts"
+          routerLinkActive="active"
+          [title]="
+            alerts.unreadCount() > 0
+              ? alerts.unreadCount() + ' alerte(s) non lue(s)'
+              : 'Voir mes alertes'
+          "
+          aria-label="Voir mes alertes"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="19"
+            height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+          </svg>
           @if (alerts.unreadCount() > 0) {
-            <span class="badge-dot">{{ alerts.unreadCount() > 9 ? '9+' : alerts.unreadCount() }}</span>
+            <span class="badge-dot">{{
+              alerts.unreadCount() > 9 ? '9+' : alerts.unreadCount()
+            }}</span>
           }
         </a>
 
@@ -38,10 +107,28 @@ import { ImmoproAvatarComponent, ImmoproThemeToggleComponent } from 'ui-lib';
 
         @if (auth.currentUser(); as user) {
           <div class="user-menu">
-            <button class="user-chip" (click)="toggleMenu()" [class.open]="menuOpen()" aria-haspopup="menu">
+            <button
+              class="user-chip"
+              (click)="toggleMenu()"
+              [class.open]="menuOpen()"
+              aria-haspopup="menu"
+            >
               <immopro-avatar size="sm" [initials]="user.name.charAt(0) || 'U'"></immopro-avatar>
               <span class="user-name-label">{{ user.name }}</span>
-              <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              <svg
+                class="chevron"
+                xmlns="http://www.w3.org/2000/svg"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
             </button>
 
             @if (menuOpen()) {
@@ -52,11 +139,38 @@ import { ImmoproAvatarComponent, ImmoproThemeToggleComponent } from 'ui-lib';
                   <span class="text-muted">{{ user.email }}</span>
                 </div>
                 <a routerLink="/profile" (click)="closeMenu()" role="menuitem">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
                   Mon profil
                 </a>
                 <button class="danger" (click)="logout()" role="menuitem">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
                   Déconnexion
                 </button>
               </div>
@@ -72,6 +186,7 @@ export class TopbarComponent {
   protected auth = inject(AuthService);
   protected alerts = inject(AlertService);
   protected layout = inject(LayoutService);
+  protected searchService = inject(GlobalSearchService);
   private router = inject(Router);
 
   protected readonly menuOpen = signal(false);

@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\PersonalAccessToken;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,6 +14,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Notre modèle n'écrit `last_used_at` que toutes les cinq minutes, au
+        // lieu d'une écriture distante à chaque requête authentifiée.
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
         Password::defaults(fn () => Password::min(8)->letters()->numbers());
 
         // Le lien de réinitialisation pointe vers le front (SPA), pas vers l'API.

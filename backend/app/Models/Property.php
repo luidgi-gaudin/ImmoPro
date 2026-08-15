@@ -3,13 +3,59 @@
 namespace App\Models;
 
 use App\Enums\Dpe;
+use App\Enums\LeaseStatus;
 use App\Enums\PropertyType;
+use App\Models\Concerns\Filterable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Property extends Model
 {
-    use HasFactory;
+    use Filterable, HasFactory;
+
+    /** @return list<string> */
+    protected function searchable(): array
+    {
+        return ['title', 'address', 'city', 'postal_code', 'description'];
+    }
+
+    /** @return list<string> */
+    protected function sortable(): array
+    {
+        return ['title', 'city', 'area_sqm', 'rooms', 'monthly_rent', 'created_at'];
+    }
+
+    /**
+     * @return array<int|string, string|\Closure>
+     */
+    protected function filters(): array
+    {
+        return [
+            'property_type',
+            'dpe',
+            'loue' => function (Builder $query, string $value): void {
+                $expectsRented = in_array($value, ['1', 'true', 'oui'], true);
+
+                $hasActiveLease = fn (Builder $lease) => $lease->where('statut', LeaseStatus::Actif->value);
+
+                $expectsRented
+                    ? $query->whereHas('leases', $hasActiveLease)
+                    : $query->whereDoesntHave('leases', $hasActiveLease);
+            },
+            'min_rent' => fn (Builder $query, string $val) => is_numeric($val) ? $query->where('monthly_rent', '>=', (float) $val) : null,
+            'max_rent' => fn (Builder $query, string $val) => is_numeric($val) ? $query->where('monthly_rent', '<=', (float) $val) : null,
+            'min_area' => fn (Builder $query, string $val) => is_numeric($val) ? $query->where('area_sqm', '>=', (float) $val) : null,
+            'max_area' => fn (Builder $query, string $val) => is_numeric($val) ? $query->where('area_sqm', '<=', (float) $val) : null,
+            'rooms' => fn (Builder $query, string $val) => is_numeric($val) ? $query->where('rooms', (int) $val) : null,
+            'has_balcony' => fn (Builder $query, string $val) => in_array($val, ['1', 'true'], true) ? $query->where('has_balcony', true) : null,
+            'has_garden' => fn (Builder $query, string $val) => in_array($val, ['1', 'true'], true) ? $query->where('has_garden', true) : null,
+            'has_parking' => fn (Builder $query, string $val) => in_array($val, ['1', 'true'], true) ? $query->where('has_parking', true) : null,
+            'has_cave' => fn (Builder $query, string $val) => in_array($val, ['1', 'true'], true) ? $query->where('has_cave', true) : null,
+        ];
+    }
 
     protected $fillable = [
         'title',
@@ -33,12 +79,14 @@ class Property extends Model
         'description',
     ];
 
-    public function portfolio()
+    /** @return BelongsTo<Portfolio, $this> */
+    public function portfolio(): BelongsTo
     {
         return $this->belongsTo(Portfolio::class);
     }
 
-    public function leases()
+    /** @return HasMany<Lease, $this> */
+    public function leases(): HasMany
     {
         return $this->hasMany(Lease::class);
     }
@@ -47,8 +95,8 @@ class Property extends Model
     {
         return [
             'property_type' => PropertyType::class,
-            'dpe'           => Dpe::class,
-            'dpe_date'      => 'date',
+            'dpe' => Dpe::class,
+            'dpe_date' => 'date',
             'has_balcony' => 'boolean',
             'has_garden' => 'boolean',
             'has_parking' => 'boolean',
@@ -57,7 +105,7 @@ class Property extends Model
             'monthly_rent' => 'decimal:2',
             'area_sqm' => 'decimal:2',
             'latitude' => 'decimal:7',
-            'longitude' => 'decimal:7'
+            'longitude' => 'decimal:7',
         ];
     }
 }

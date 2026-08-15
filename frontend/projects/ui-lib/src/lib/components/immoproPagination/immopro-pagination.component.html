@@ -1,21 +1,61 @@
-@if (lastPage() > 1) {
+@if (isVisible()) {
   <div class="ip-pagination">
-    <button
-      type="button"
-      class="ip-page-nav-btn"
-      [disabled]="currentPage() === 1"
-      (click)="goTo(currentPage() - 1)"
-    >
-      &larr; Précédent
-    </button>
-    <span class="ip-page-numbers">Page {{ currentPage() }} sur {{ lastPage() }}</span>
-    <button
-      type="button"
-      class="ip-page-nav-btn"
-      [disabled]="currentPage() === lastPage()"
-      (click)="goTo(currentPage() + 1)"
-    >
-      Suivant &rarr;
-    </button>
+    @if (summary()) {
+      <span class="ip-page-summary">{{ summary() }}</span>
+    }
+
+    @if (lastPage() > 1) {
+      <nav class="ip-page-nav" aria-label="Pagination">
+        <button
+          type="button"
+          class="ip-page-nav-btn"
+          [disabled]="currentPage() === 1"
+          (click)="goTo(currentPage() - 1)"
+          aria-label="Page précédente"
+        >
+          &larr; Précédent
+        </button>
+
+        <span class="ip-page-numbers">
+          @for (slot of slots(); track $index) {
+            @if (isGap(slot)) {
+              <span class="ip-page-gap" aria-hidden="true">…</span>
+            } @else {
+              <button
+                type="button"
+                class="ip-page-number"
+                [class.is-current]="slot === currentPage()"
+                [attr.aria-current]="slot === currentPage() ? 'page' : null"
+                [attr.aria-label]="'Page ' + slot"
+                (click)="goTo(slot)"
+              >
+                {{ slot }}
+              </button>
+            }
+          }
+        </span>
+
+        <button
+          type="button"
+          class="ip-page-nav-btn"
+          [disabled]="currentPage() === lastPage()"
+          (click)="goTo(currentPage() + 1)"
+          aria-label="Page suivante"
+        >
+          Suivant &rarr;
+        </button>
+      </nav>
+    }
+
+    @if (perPage() > 0) {
+      <label class="ip-page-size">
+        <span>Par page</span>
+        <select [value]="perPage()" (change)="onPerPageChange($event)">
+          @for (choice of perPageChoices(); track choice) {
+            <option [value]="choice">{{ choice }}</option>
+          }
+        </select>
+      </label>
+    }
   </div>
 }

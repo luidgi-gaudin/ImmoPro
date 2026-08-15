@@ -59,11 +59,13 @@ class User extends Authenticatable  // implements MustVerifyEmail  Décommenter 
         return $this->two_factor_confirmed_at !== null;
     }
 
+    /** @return HasMany<Portfolio, $this> */
     public function portfolios(): HasMany
     {
         return $this->hasMany(Portfolio::class);
     }
 
+    /** @return HasMany<Tenant, $this> */
     public function tenants(): HasMany
     {
         return $this->hasMany(Tenant::class);

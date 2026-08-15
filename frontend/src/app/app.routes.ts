@@ -1,51 +1,123 @@
 import { Routes } from '@angular/router';
-import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { PortfoliosComponent } from './features/portfolios/portfolios.component';
-import { PortfolioShellComponent } from './features/portfolios/portfolio-shell.component';
-import { PortfolioOverviewComponent } from './features/portfolios/portfolio-overview.component';
-import { PortfolioPropertiesComponent } from './features/portfolios/portfolio-properties.component';
-import { PortfolioPropertyDetailComponent } from './features/portfolios/portfolio-property-detail.component';
-import { TenantsComponent } from './features/tenants/tenants.component';
-import { TenantDetailComponent } from './features/tenants/tenant-detail.component';
-import { LeasesComponent } from './features/leases/leases.component';
-import { ProfileComponent } from './features/profile/profile.component';
-import { AlertsComponent } from './features/alerts/alerts.component';
-import { ReportsComponent } from './features/reports/reports.component';
-import { LoginComponent } from './features/auth/login/login.component';
-import { RegisterComponent } from './features/auth/register/register.component';
-import { ForgotPasswordComponent } from './features/auth/login/forgot-password.component';
-import { ResetPasswordComponent } from './features/auth/login/reset-password.component';
-import { WelcomeComponent } from './features/welcome/welcome.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: WelcomeComponent, pathMatch: 'full' },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/welcome/welcome.component').then((m) => m.WelcomeComponent),
+    pathMatch: 'full',
+  },
   {
     path: '',
     canActivateChild: [authGuard],
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'portfolios', component: PortfoliosComponent },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+      },
+      {
+        path: 'portfolios',
+        loadComponent: () =>
+          import('./features/portfolios/portfolios.component').then((m) => m.PortfoliosComponent),
+      },
       {
         path: 'portfolios/:id',
-        component: PortfolioShellComponent,
+        loadComponent: () =>
+          import('./features/portfolios/portfolio-shell.component').then(
+            (m) => m.PortfolioShellComponent,
+          ),
         children: [
           { path: '', pathMatch: 'full', redirectTo: 'overview' },
-          { path: 'overview', component: PortfolioOverviewComponent },
-          { path: 'properties', component: PortfolioPropertiesComponent },
-          { path: 'properties/:propertyId', component: PortfolioPropertyDetailComponent },
+          {
+            path: 'overview',
+            loadComponent: () =>
+              import('./features/portfolios/portfolio-overview.component').then(
+                (m) => m.PortfolioOverviewComponent,
+              ),
+          },
+          {
+            path: 'properties',
+            loadComponent: () =>
+              import('./features/portfolios/portfolio-properties.component').then(
+                (m) => m.PortfolioPropertiesComponent,
+              ),
+          },
+          {
+            path: 'properties/:propertyId',
+            loadComponent: () =>
+              import('./features/portfolios/portfolio-property-detail.component').then(
+                (m) => m.PortfolioPropertyDetailComponent,
+              ),
+          },
         ],
       },
-      { path: 'tenants', component: TenantsComponent },
-      { path: 'tenants/:id', component: TenantDetailComponent },
-      { path: 'leases', component: LeasesComponent },
-      { path: 'alerts', component: AlertsComponent },
-      { path: 'reports', component: ReportsComponent },
-      { path: 'profile', component: ProfileComponent },
+      {
+        path: 'tenants',
+        loadComponent: () =>
+          import('./features/tenants/tenants.component').then((m) => m.TenantsComponent),
+      },
+      {
+        path: 'tenants/:id',
+        loadComponent: () =>
+          import('./features/tenants/tenant-detail.component').then((m) => m.TenantDetailComponent),
+      },
+      {
+        path: 'leases',
+        loadComponent: () =>
+          import('./features/leases/leases.component').then((m) => m.LeasesComponent),
+      },
+      {
+        path: 'alerts',
+        loadComponent: () =>
+          import('./features/alerts/alerts.component').then((m) => m.AlertsComponent),
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./features/reports/reports.component').then((m) => m.ReportsComponent),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+      },
     ],
   },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
+  // Pages légales : accessibles sans compte, comme l'exige leur raison d'être.
+  {
+    path: 'confidentialite',
+    loadComponent: () =>
+      import('./features/legal/privacy.component').then((m) => m.PrivacyComponent),
+  },
+  {
+    path: 'cookies',
+    loadComponent: () =>
+      import('./features/legal/cookies.component').then((m) => m.CookiesComponent),
+  },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./features/auth/login/forgot-password.component').then(
+        (m) => m.ForgotPasswordComponent,
+      ),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./features/auth/login/reset-password.component').then(
+        (m) => m.ResetPasswordComponent,
+      ),
+  },
 ];

@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TenantRequest;
 use App\Models\Tenant;
+use Illuminate\Http\Request;
 
 class TenantController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return auth()->user()->tenants()->paginate(10);
+        return auth()->user()->tenants()
+            ->filtered($request)
+            ->paginate($this->perPage($request))
+            // Sans cela, les liens de pagination perdent la recherche et les
+            // filtres, et la page 2 réaffiche la liste complète.
+            ->withQueryString();
     }
 
     public function store(TenantRequest $request)

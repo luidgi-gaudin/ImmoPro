@@ -1,0 +1,32 @@
+# Larastan — analyse statique adaptée à Laravel.
+# Lancer : ./vendor/bin/phpstan analyse
+includes:
+    - vendor/larastan/larastan/extension.neon
+    # Les 50 erreurs déjà présentes dans le code au moment de l'installation,
+    # gelées pour que l'analyse parte d'une base verte. Seul le code écrit
+    # à partir de maintenant est contrôlé.
+    # Pour en résorber : corriger, puis régénérer avec --generate-baseline.
+    - phpstan-baseline.neon
+
+parameters:
+    paths:
+        - app
+        - database
+        - routes
+
+    # Niveau 0 à 10, du plus permissif au plus strict.
+    # 5 est un bon palier de départ sur un projet existant : il attrape les
+    # vraies erreurs (méthodes inexistantes, mauvais types d'arguments) sans
+    # noyer sous les annotations manquantes. À monter d'un cran quand le code
+    # est propre à ce niveau.
+    level: 5
+
+    # Laravel génère beaucoup de magie que l'analyse ne peut pas suivre.
+    ignoreErrors:
+        # Les propriétés dynamiques des modèles Eloquent viennent des colonnes
+        # en base : impossible de les connaître statiquement.
+        - identifier: property.notFound
+
+    # Rapporte les règles ignorées devenues inutiles : évite que le fichier
+    # se remplisse d'exclusions périmées.
+    reportUnmatchedIgnoredErrors: true

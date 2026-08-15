@@ -1,6 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {
+  ListParams,
+  PaginatedResponse,
+  fetchAllPages,
+  toHttpParams,
+} from '../list/pagination.model';
 
 export interface LeaseCoTenant {
   id: number;
@@ -87,8 +93,15 @@ export class LeaseService {
   private http = inject(HttpClient);
   private apiUrl = 'http://127.0.0.1:8000/api/leases';
 
-  getLeases(): Observable<Lease[]> {
-    return this.http.get<Lease[]>(this.apiUrl);
+  getLeases(params: Partial<ListParams> = {}): Observable<PaginatedResponse<Lease>> {
+    return this.http.get<PaginatedResponse<Lease>>(this.apiUrl, {
+      params: toHttpParams(params),
+    });
+  }
+
+  /** Tous les baux, pour les écrans qui ont besoin de la vue complète. */
+  getAllLeases(): Observable<Lease[]> {
+    return fetchAllPages((page) => this.getLeases({ page, per_page: 100 }));
   }
 
   getLease(id: number): Observable<Lease> {
@@ -112,16 +125,28 @@ export class LeaseService {
     return this.http.post<Lease>(`${this.apiUrl}/${id}/terminate`, { end_date: endDate });
   }
 
-  reviseRent(id: number, irlOld: number, irlNew: number): Observable<{ message: string; old_rent: number; new_rent: number; data: Lease }> {
-    return this.http.post<{ message: string; old_rent: number; new_rent: number; data: Lease }>(`${this.apiUrl}/${id}/revise-rent`, {
-      irl_old: irlOld,
-      irl_new: irlNew,
-    });
+  reviseRent(
+    id: number,
+    irlOld: number,
+    irlNew: number,
+  ): Observable<{ message: string; old_rent: number; new_rent: number; data: Lease }> {
+    return this.http.post<{ message: string; old_rent: number; new_rent: number; data: Lease }>(
+      `${this.apiUrl}/${id}/revise-rent`,
+      {
+        irl_old: irlOld,
+        irl_new: irlNew,
+      },
+    );
   }
 
   // Rent Payments API
-  getPayments(leaseId: number): Observable<RentPayment[]> {
-    return this.http.get<RentPayment[]>(`${this.apiUrl}/${leaseId}/payments`);
+  getPayments(
+    leaseId: number,
+    params: Partial<ListParams> = {},
+  ): Observable<PaginatedResponse<RentPayment>> {
+    return this.http.get<PaginatedResponse<RentPayment>>(`${this.apiUrl}/${leaseId}/payments`, {
+      params: toHttpParams(params),
+    });
   }
 
   getPayment(leaseId: number, paymentId: number): Observable<RentPayment> {
@@ -141,7 +166,9 @@ export class LeaseService {
   }
 
   getQuittance(leaseId: number, paymentId: number): Observable<QuittanceData> {
-    return this.http.get<QuittanceData>(`${this.apiUrl}/${leaseId}/payments/${paymentId}/quittance`);
+    return this.http.get<QuittanceData>(
+      `${this.apiUrl}/${leaseId}/payments/${paymentId}/quittance`,
+    );
   }
 
   // État des lieux (photos d'entrée / de sortie)

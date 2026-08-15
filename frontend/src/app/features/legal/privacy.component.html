@@ -1,0 +1,177 @@
+<div class="legal-page">
+  <a class="legal-back" routerLink="/">&larr; Retour à l'accueil</a>
+
+  <h1 class="legal-title">Politique de confidentialité</h1>
+  <p class="legal-updated">Dernière mise à jour : {{ lastUpdated }}</p>
+
+  <div class="legal-notice">
+    <p>
+      <strong>À compléter avant mise en ligne.</strong> Les mentions encadrées en rouge dépendent de
+      votre situation juridique (identité de l'exploitant, durées de conservation, coordonnées de
+      contact). Elles n'ont pas été inventées : à vous de les renseigner. Le reste du document
+      décrit le fonctionnement réel de l'application, vérifié dans le code.
+    </p>
+  </div>
+
+  <section class="legal-section">
+    <h2>1. Responsable du traitement</h2>
+    <p>
+      Le responsable du traitement des données collectées via ImmoPro est
+      <span class="legal-todo">[raison sociale, forme juridique, SIREN]</span>, dont le siège est
+      situé <span class="legal-todo">[adresse postale]</span>.
+    </p>
+    <p>
+      Pour toute question relative à vos données :
+      <span class="legal-todo">[adresse e-mail de contact]</span>.
+    </p>
+  </section>
+
+  <section class="legal-section">
+    <h2>2. Données que nous traitons</h2>
+    <p>
+      ImmoPro est un outil de gestion locative. Vous y saisissez des données vous concernant, et des
+      données concernant vos locataires — pour lesquelles vous agissez en tant que responsable de
+      traitement.
+    </p>
+
+    <h3>Votre compte de bailleur</h3>
+    <ul>
+      <li>Nom et adresse e-mail, utilisés pour vous identifier et vous contacter.</li>
+      <li>Mot de passe, jamais stocké en clair (empreinte cryptographique uniquement).</li>
+      <li>
+        Si vous activez la double authentification : la clé secrète associée et vos codes de
+        secours.
+      </li>
+    </ul>
+
+    <h3>Vos locataires</h3>
+    <ul>
+      <li>Identité, adresse postale, adresse e-mail et numéro de téléphone.</li>
+      <li>
+        Coordonnées bancaires (IBAN, BIC), <strong>chiffrées au repos</strong> en base de données.
+        Elles ne sont lisibles que par l'application, jamais par simple consultation de la base.
+      </li>
+    </ul>
+
+    <h3>Votre patrimoine</h3>
+    <ul>
+      <li>Portefeuilles, biens (adresse, surface, DPE, caractéristiques), baux et loyers.</li>
+      <li>Photos d'état des lieux que vous choisissez de téléverser.</li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>3. Finalités et bases légales</h2>
+    <ul>
+      <li>
+        <strong>Fourniture du service</strong> (gestion des biens, baux, quittances, alertes) :
+        exécution du contrat qui nous lie.
+      </li>
+      <li>
+        <strong>Sécurité du compte</strong> (authentification, double facteur, journalisation des
+        erreurs) : intérêt légitime à protéger votre accès.
+      </li>
+      <li>
+        <strong>Mémorisation de votre thème d'affichage</strong> : votre consentement, recueilli via
+        le bandeau et révocable à tout moment depuis la
+        <a routerLink="/cookies">politique de cookies</a>.
+      </li>
+    </ul>
+    <p>
+      Aucune donnée n'est utilisée à des fins publicitaires, revendue ou cédée à des tiers à des
+      fins commerciales.
+    </p>
+  </section>
+
+  <section class="legal-section">
+    <h2>4. Hébergement et sous-traitants</h2>
+    <p>
+      Les données sont stockées dans une base PostgreSQL managée par
+      <strong>Supabase</strong>, qui agit en qualité de sous-traitant. La région d'hébergement
+      retenue est <span class="legal-todo">[région, ex. eu-west-1 — Irlande]</span>.
+    </p>
+    <p>
+      Les échanges entre votre navigateur, l'application et la base sont chiffrés en transit (TLS).
+    </p>
+  </section>
+
+  <section class="legal-section">
+    <h2>5. Durées de conservation</h2>
+    <ul>
+      <li>
+        Données de compte : conservées tant que le compte est actif, puis
+        <span class="legal-todo">[durée après clôture]</span>.
+      </li>
+      <li>
+        Données locatives et quittances :
+        <span class="legal-todo"
+          >[durée retenue au regard des obligations comptables et fiscales]</span
+        >.
+      </li>
+      <li>
+        Suppression d'une fiche : les locataires et les baux sont d'abord placés en suppression
+        douce (réversible), avant purge définitive.
+      </li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>6. Vos droits</h2>
+    <p>
+      Conformément au Règlement général sur la protection des données et à la loi Informatique et
+      Libertés, vous disposez des droits suivants :
+    </p>
+    <ul>
+      <li><strong>Accès</strong> : obtenir une copie des données vous concernant.</li>
+      <li><strong>Rectification</strong> : corriger une donnée inexacte ou incomplète.</li>
+      <li><strong>Effacement</strong> : demander la suppression de vos données.</li>
+      <li><strong>Limitation</strong> : demander le gel temporaire d'un traitement.</li>
+      <li><strong>Portabilité</strong> : recevoir vos données dans un format réutilisable.</li>
+      <li>
+        <strong>Opposition</strong> : vous opposer à un traitement fondé sur l'intérêt légitime.
+      </li>
+      <li>
+        <strong>Retrait du consentement</strong> à tout moment, sans que cela remette en cause ce
+        qui a été fait avant.
+      </li>
+    </ul>
+    <p>
+      Ces droits s'exercent auprès de
+      <span class="legal-todo">[adresse e-mail de contact]</span>. Une réponse vous sera apportée
+      dans un délai d'un mois.
+    </p>
+    <p>
+      Si la réponse ne vous satisfait pas, vous pouvez saisir la Commission nationale de
+      l'informatique et des libertés (CNIL),
+      <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>.
+    </p>
+  </section>
+
+  <section class="legal-section">
+    <h2>7. Vos obligations envers vos locataires</h2>
+    <p>
+      Les données de vos locataires que vous saisissez relèvent de votre propre responsabilité de
+      traitement. Il vous appartient de les informer de la finalité de cette collecte et de leur
+      permettre d'exercer leurs droits.
+    </p>
+  </section>
+
+  <section class="legal-section">
+    <h2>8. Sécurité</h2>
+    <ul>
+      <li>Mots de passe protégés par empreinte cryptographique à coût de calcul élevé.</li>
+      <li>Coordonnées bancaires des locataires chiffrées en base.</li>
+      <li>Double authentification disponible sur votre compte.</li>
+      <li>Limitation du nombre de tentatives sur les points d'entrée sensibles.</li>
+      <li>Cloisonnement strict : chaque requête ne peut atteindre que vos propres données.</li>
+    </ul>
+  </section>
+
+  <section class="legal-section">
+    <h2>9. Modifications</h2>
+    <p>
+      Cette politique peut évoluer. En cas de changement affectant vos droits ou les finalités de
+      traitement, vous en serez informé et votre consentement sera de nouveau recueilli.
+    </p>
+  </section>
+</div>

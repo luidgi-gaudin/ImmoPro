@@ -4,13 +4,58 @@ namespace App\Models;
 
 use App\Enums\LeaseStatus;
 use App\Enums\LeaseType;
+use App\Models\Concerns\Filterable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Lease extends Model
 {
-    use HasFactory, SoftDeletes;
+    use Filterable, HasFactory, SoftDeletes;
+
+    /**
+     * @return list<string>
+     */
+    protected function searchable(): array
+    {
+        return ['tenant.first_name', 'tenant.last_name', 'property.title', 'property.city', 'property.address'];
+    }
+
+    /** @return list<string> */
+    protected function sortable(): array
+    {
+        return ['start_date', 'end_date', 'monthly_rent', 'statut', 'created_at'];
+    }
+
+    /**
+     * @return array<int|string, string|\Closure>
+     */
+    protected function filters(): array
+    {
+        return [
+            'type',
+            'statut',
+            'tenant_id',
+            'property_id',
+            'min_rent' => fn (Builder $query, string $val) => is_numeric($val) ? $query->where('monthly_rent', '>=', (float) $val) : null,
+            'max_rent' => fn (Builder $query, string $val) => is_numeric($val) ? $query->where('monthly_rent', '<=', (float) $val) : null,
+        ];
+    }
+
+    /**
+     * Les baux les plus récents en premier : ce sont ceux sur lesquels on
+     * travaille.
+     *
+     * @return array{0: string, 1: 'asc'|'desc'}
+     */
+    protected function defaultSort(): array
+    {
+        return ['start_date', 'desc'];
+    }
 
     protected $fillable = [
         'property_id',
@@ -25,12 +70,14 @@ class Lease extends Model
         'statut',
     ];
 
-    public function property()
+    /** @return BelongsTo<Property, $this> */
+    public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class);
     }
 
-    public function tenant()
+    /** @return BelongsTo<Tenant, $this> */
+    public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
     }
@@ -38,23 +85,28 @@ class Lease extends Model
     /**
      * Colocataires additionnels (au-delà du locataire principal), avec répartition
      * optionnelle du loyer par colocataire.
+     *
+     * @return BelongsToMany<Tenant, $this>
      */
-    public function coTenants()
+    public function coTenants(): BelongsToMany
     {
         return $this->belongsToMany(Tenant::class, 'lease_tenant')
             ->withPivot('rent_share')
             ->withTimestamps();
     }
 
-    public function payments()
+    /** @return HasMany<RentPayment, $this> */
+    public function payments(): HasMany
     {
         return $this->hasMany(RentPayment::class);
     }
 
     /**
      * Photos de l'état des lieux d'entrée et de sortie.
+     *
+     * @return HasMany<LeasePhoto, $this>
      */
-    public function photos()
+    public function photos(): HasMany
     {
         return $this->hasMany(LeasePhoto::class);
     }

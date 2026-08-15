@@ -1,6 +1,8 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { EMPTY, catchError, combineLatest, filter, switchMap, tap } from 'rxjs';
 import {
   ImmoproButtonComponent,
   ImmoproInputComponent,
@@ -10,8 +12,18 @@ import {
   ImmoproBadgeComponent,
   ImmoproDpeBadgeComponent,
   ImmoproSelectComponent,
+  ImmoproFilterBarComponent,
+  ImmoproPaginationComponent,
+  ImmoproSkeletonComponent,
 } from 'ui-lib';
-import { CreatePropertyPayload, Property } from '../../core/services/portfolio.service';
+import { FilterChip } from 'ui-lib';
+import {
+  CreatePropertyPayload,
+  PortfolioService,
+  Property,
+} from '../../core/services/portfolio.service';
+import { PaginatedResponse } from '../../core/list/pagination.model';
+import { createListQuery } from '../../core/list/list-query';
 import { PortfolioContextService } from './portfolio-context.service';
 
 @Component({
@@ -28,6 +40,9 @@ import { PortfolioContextService } from './portfolio-context.service';
     ImmoproBadgeComponent,
     ImmoproDpeBadgeComponent,
     ImmoproSelectComponent,
+    ImmoproFilterBarComponent,
+    ImmoproPaginationComponent,
+    ImmoproSkeletonComponent,
   ],
   templateUrl: './portfolio-properties.component.html',
   styleUrl: './portfolio-properties.component.scss',
@@ -35,7 +50,38 @@ import { PortfolioContextService } from './portfolio-context.service';
 })
 export class PortfolioPropertiesComponent {
   private fb = inject(FormBuilder);
+  private portfolioService = inject(PortfolioService);
   protected ctx = inject(PortfolioContextService);
+
+  protected readonly list = createListQuery({
+    defaultSort: 'title',
+    defaultDirection: 'asc',
+    filterKeys: ['property_type', 'dpe', 'loue'],
+  });
+
+  /**
+   * Liste affichée : paginée et filtrée par le serveur, indépendamment du
+   * contexte du portefeuille — celui-ci garde l'ensemble des biens pour ses
+   * statistiques et la navigation vers une fiche.
+   */
+  properties = signal<Property[]>([]);
+  pagination = signal<PaginatedResponse<Property> | undefined>(undefined);
+  listLoading = signal(false);
+
+  /** Passe à vrai dès la première réponse reçue, même vide. */
+  private readonly firstLoadDone = signal(false);
+
+  /**
+   * Squelette réservé au tout premier affichage : sur un changement de filtre,
+   * la liste en place pâlit au lieu d'être remplacée par des blocs gris, ce qui
+   * évite un clignotement à chaque frappe.
+   */
+  protected readonly showSkeleton = computed(() => !this.firstLoadDone() && this.listLoading());
+
+  /** Lignes fantômes affichées pendant le premier chargement. */
+  protected readonly skeletonRows = Array.from({ length: 8 });
+
+  listError = signal<string | null>(null);
 
   propertyTypes = [
     { label: 'Appartement', value: 'appartement' },
@@ -43,6 +89,32 @@ export class PortfolioPropertiesComponent {
     { label: 'Terrain', value: 'terrain' },
   ];
   dpeValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  rentedOptions = [
+    { value: '1', label: 'Loué' },
+    { value: '0', label: 'Disponible' },
+  ];
+
+  readonly activeChips = computed<FilterChip[]>(() => {
+    const chips: FilterChip[] = [];
+    const filters = this.list.filters();
+    if (filters['property_type']) {
+      const typeLabel =
+        this.propertyTypes.find((t) => t.value === filters['property_type'])?.label ??
+        filters['property_type'];
+      chips.push({ key: 'property_type', label: 'Type', value: typeLabel });
+    }
+    if (filters['dpe']) {
+      chips.push({ key: 'dpe', label: 'DPE', value: filters['dpe'] });
+    }
+    if (filters['loue']) {
+      chips.push({
+        key: 'loue',
+        label: 'Occupation',
+        value: filters['loue'] === '1' ? 'Loué' : 'Disponible',
+      });
+    }
+    return chips;
+  });
   propertyForm: FormGroup;
 
   createModalOpen = signal(false);
@@ -51,6 +123,32 @@ export class PortfolioPropertiesComponent {
   submitted = signal(false);
 
   constructor() {
+    // Le portefeuille est résolu de façon asynchrone par le shell : on écoute
+    // les deux sources, sans quoi le premier déclenchement partirait avec un
+    // identifiant nul et plus rien ne relancerait la requête ensuite.
+    combineLatest([toObservable(this.ctx.portfolioId), toObservable(this.list.trigger)])
+      .pipe(
+        filter(([portfolioId]) => portfolioId !== null),
+        tap(() => this.listLoading.set(true)),
+        switchMap(([portfolioId, { params }]) =>
+          this.portfolioService.getPortfolioProperties(portfolioId!, params).pipe(
+            catchError(() => {
+              this.listError.set('Impossible de charger la liste des actifs');
+              this.listLoading.set(false);
+              return EMPTY;
+            }),
+          ),
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe((response) => {
+        this.properties.set(response.data);
+        this.pagination.set(response);
+        this.listLoading.set(false);
+        this.firstLoadDone.set(true);
+        this.listError.set(null);
+      });
+
     this.propertyForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(2)]],
       property_type: ['', [Validators.required]],
@@ -81,7 +179,13 @@ export class PortfolioPropertiesComponent {
   deleteProperty(property: Property) {
     const confirmed = window.confirm(`Supprimer l'actif "${property.title}" ?`);
     if (!confirmed) return;
+
+    // Retrait immédiat de la page affichée, puis rechargement : la ligne
+    // disparaît sans attendre l'aller-retour, et la page se recomplète ensuite
+    // avec l'élément suivant.
+    this.properties.update((list) => list.filter((p) => p.id !== property.id));
     this.ctx.deleteProperty(property);
+    this.list.refresh();
   }
 
   openPropertyModal(property: Property | null = null) {
@@ -149,9 +253,12 @@ export class PortfolioPropertiesComponent {
       this.ctx.updateProperty(editId, payload).subscribe({
         next: (savedProp) => {
           this.saving.set(false);
-          this.ctx.setProperties(this.ctx.properties().map((p) => (p.id === editId ? savedProp : p)));
+          this.ctx.setProperties(
+            this.ctx.properties().map((p) => (p.id === editId ? savedProp : p)),
+          );
           this.editingProperty.set(null);
           this.ctx.reloadBackground();
+          this.list.refresh();
         },
         error: (err) => {
           this.saving.set(false);
@@ -182,10 +289,13 @@ export class PortfolioPropertiesComponent {
       this.ctx.createProperty(payload).subscribe({
         next: (savedProp) => {
           this.saving.set(false);
-          this.ctx.setProperties(this.ctx.properties().map((p) => (p.id === tempId ? savedProp : p)));
+          this.ctx.setProperties(
+            this.ctx.properties().map((p) => (p.id === tempId ? savedProp : p)),
+          );
           this.propertyForm.reset();
           this.submitted.set(false);
           this.ctx.reloadBackground();
+          this.list.refresh();
         },
         error: (err) => {
           this.saving.set(false);
@@ -197,12 +307,24 @@ export class PortfolioPropertiesComponent {
     }
   }
 
-  get title() { return this.propertyForm.get('title'); }
-  get propertyType() { return this.propertyForm.get('property_type'); }
-  get address() { return this.propertyForm.get('address'); }
-  get city() { return this.propertyForm.get('city'); }
-  get postalCode() { return this.propertyForm.get('postal_code'); }
-  get dpe() { return this.propertyForm.get('dpe'); }
+  get title() {
+    return this.propertyForm.get('title');
+  }
+  get propertyType() {
+    return this.propertyForm.get('property_type');
+  }
+  get address() {
+    return this.propertyForm.get('address');
+  }
+  get city() {
+    return this.propertyForm.get('city');
+  }
+  get postalCode() {
+    return this.propertyForm.get('postal_code');
+  }
+  get dpe() {
+    return this.propertyForm.get('dpe');
+  }
 
   get modalTitle() {
     return this.editingProperty() ? 'Modifier un actif' : 'Créer un actif';

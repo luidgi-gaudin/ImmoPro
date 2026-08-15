@@ -1,6 +1,19 @@
-import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ImmoproStatCardComponent, ImmoproPageHeaderComponent, ImmoproAvatarComponent, ImmoproBadgeComponent, ImmoproEmptyStateComponent } from 'ui-lib';
+import {
+  ImmoproStatCardComponent,
+  ImmoproPageHeaderComponent,
+  ImmoproAvatarComponent,
+  ImmoproBadgeComponent,
+  ImmoproEmptyStateComponent,
+} from 'ui-lib';
 import { DashboardService, DashboardData } from '../../core/services/dashboard.service';
 import { AuthService } from '../../core/services/auth.service';
 import { AlertService, AppAlert } from '../../core/services/alert.service';
@@ -8,7 +21,14 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, ImmoproStatCardComponent, ImmoproPageHeaderComponent, ImmoproAvatarComponent, ImmoproBadgeComponent, ImmoproEmptyStateComponent],
+  imports: [
+    RouterLink,
+    ImmoproStatCardComponent,
+    ImmoproPageHeaderComponent,
+    ImmoproAvatarComponent,
+    ImmoproBadgeComponent,
+    ImmoproEmptyStateComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="page dashboard">
@@ -47,18 +67,40 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
             </div>
 
             @if (priorityAlerts().length === 0) {
-              <immopro-empty-state message="Tout est à jour. Aucune échéance ne requiert votre attention.">
-                <svg icon xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+              <immopro-empty-state
+                message="Tout est à jour. Aucune échéance ne requiert votre attention."
+              >
+                <svg
+                  icon
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="34"
+                  height="34"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M9 12l2 2 4-4" />
+                  <circle cx="12" cy="12" r="9" />
+                </svg>
               </immopro-empty-state>
             } @else {
               <ul class="priority-list">
                 @for (alert of priorityAlerts(); track alert.id) {
-                  <li class="priority-item" [class]="'sev-' + alert.severity" [routerLink]="'/alerts'">
+                  <li
+                    class="priority-item"
+                    [class]="'sev-' + alert.severity"
+                    [routerLink]="'/alerts'"
+                  >
                     <span class="sev-dot" aria-hidden="true"></span>
                     <div class="priority-body">
                       <div class="priority-top">
                         <span class="priority-title">{{ alert.title }}</span>
-                        <immopro-badge [tone]="badgeTone(alert.severity)">{{ severityLabel(alert.severity) }}</immopro-badge>
+                        <immopro-badge [tone]="badgeTone(alert.severity)">{{
+                          severityLabel(alert.severity)
+                        }}</immopro-badge>
                       </div>
                       <p class="priority-msg">{{ alert.message }}</p>
                     </div>
@@ -74,19 +116,105 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
               <div class="panel-head"><h3>Actions rapides</h3></div>
               <div class="quick-actions">
                 <a routerLink="/portfolios" class="quick-action">
-                  <span class="qa-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg></span>
+                  <span class="qa-icon"
+                    ><svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M3 21h18" />
+                      <path d="M5 21V7l7-4 7 4v14" />
+                      <path d="M9 21v-6h6v6" /></svg
+                  ></span>
                   <span>Ajouter un bien</span>
-                  <svg class="qa-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  <svg
+                    class="qa-chevron"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
                 </a>
                 <a routerLink="/tenants" class="quick-action">
-                  <span class="qa-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span>
+                  <span class="qa-icon"
+                    ><svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <line x1="19" y1="8" x2="19" y2="14" />
+                      <line x1="22" y1="11" x2="16" y2="11" /></svg
+                  ></span>
                   <span>Ajouter un locataire</span>
-                  <svg class="qa-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  <svg
+                    class="qa-chevron"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
                 </a>
                 <a routerLink="/leases" class="quick-action">
-                  <span class="qa-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>
+                  <span class="qa-icon"
+                    ><svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="12" y1="18" x2="12" y2="12" />
+                      <line x1="9" y1="15" x2="15" y2="15" /></svg
+                  ></span>
                   <span>Créer un bail</span>
-                  <svg class="qa-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  <svg
+                    class="qa-chevron"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
                 </a>
               </div>
             </div>
@@ -100,7 +228,10 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
               <ul class="mini-list">
                 @for (tenant of d.recentTenants; track tenant.id) {
                   <li>
-                    <immopro-avatar size="md" [initials]="tenant.first_name.charAt(0) + tenant.last_name.charAt(0)"></immopro-avatar>
+                    <immopro-avatar
+                      size="md"
+                      [initials]="tenant.first_name.charAt(0) + tenant.last_name.charAt(0)"
+                    ></immopro-avatar>
                     <div>
                       <strong>{{ tenant.first_name }} {{ tenant.last_name }}</strong>
                       <span class="text-muted">{{ tenant.email || 'Aucun email' }}</span>
@@ -129,18 +260,11 @@ export class DashboardComponent implements OnInit {
 
   protected readonly firstName = computed(() => this.auth.currentUser()?.name?.split(' ')[0] ?? '');
 
-  private readonly severityRank: Record<AppAlert['severity'], number> = {
-    critical: 0,
-    warning: 1,
-    info: 2,
-  };
-
-  /** Les alertes les plus urgentes, tous types confondus, pour l'aperçu. */
-  protected readonly priorityAlerts = computed(() =>
-    [...this.alerts.alerts()]
-      .sort((a, b) => this.severityRank[a.severity] - this.severityRank[b.severity])
-      .slice(0, 4)
-  );
+  /**
+   * Les alertes les plus urgentes, tous types confondus, pour l'aperçu.
+   * L'ordre vient du serveur : trier ici ne classerait que la page reçue.
+   */
+  protected readonly priorityAlerts = computed(() => this.alerts.alerts());
 
   ngOnInit(): void {
     this.loading.set(true);
@@ -155,10 +279,11 @@ export class DashboardComponent implements OnInit {
       },
     });
 
-    // Rafraîchit les alertes si le shell ne les a pas déjà chargées.
-    if (this.alerts.alerts().length === 0) {
-      this.alerts.load();
-    }
+    // L'aperçu ne montre que les quatre alertes les plus urgentes : on demande
+    // une page de quatre, triée par gravité côté serveur, plutôt que de charger
+    // toutes les alertes pour n'en afficher qu'une poignée.
+    this.alerts.load({ per_page: 4, sort: 'severity', direction: 'asc' });
+    this.alerts.loadUnreadCount();
   }
 
   formatEur(amount: number): string {
@@ -174,6 +299,8 @@ export class DashboardComponent implements OnInit {
   }
 
   badgeTone(severity: AppAlert['severity']): 'danger' | 'warning' | 'info' {
-    return { critical: 'danger' as const, warning: 'warning' as const, info: 'info' as const }[severity];
+    return { critical: 'danger' as const, warning: 'warning' as const, info: 'info' as const }[
+      severity
+    ];
   }
 }

@@ -4,6 +4,8 @@ use App\Http\Controllers\AlertController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\LeasePhotoController;
 use App\Http\Controllers\PortfolioController;
@@ -38,6 +40,14 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    // Recherche globale. Le throttle n'est pas décoratif : chaque appel balaie
+    // cinq tables avec un LIKE non indexable, et la barre interroge l'API à
+    // chaque frappe. Sans plafond, un onglet laissé ouvert suffit à saturer la
+    // base distante. 60 requêtes par minute laissent une frappe confortable.
+    Route::get('/search', [GlobalSearchController::class, 'search'])
+        ->middleware('throttle:60,1')
+        ->name('search');
+
     Route::apiResource('portfolios', PortfolioController::class);
     Route::apiResource('portfolios.properties', PropertyController::class)->scoped();
     Route::apiResource('tenants', TenantController::class);
@@ -56,6 +66,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/leases/{lease}/photos/{photo}', [LeasePhotoController::class, 'destroy'])
         ->scopeBindings()
         ->name('leases.photos.destroy');
+
+    // Tout le tableau de bord en un appel, plutôt que cinq.
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Rapports agrégés (bailleur, biens, locataires).
     Route::get('/reports/overview', [ReportController::class, 'overview'])->name('reports.overview');

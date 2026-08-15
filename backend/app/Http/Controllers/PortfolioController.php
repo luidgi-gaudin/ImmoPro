@@ -7,14 +7,16 @@ use Illuminate\Http\Request;
 
 class PortfolioController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         return auth()->user()->portfolios()
             ->with(['properties' => function ($query) {
                 $query->take(3);
             }])
             ->withCount('properties')
-            ->get();
+            ->filtered($request)
+            ->paginate($this->perPage($request))
+            ->withQueryString();
     }
 
     public function store(Request $request)

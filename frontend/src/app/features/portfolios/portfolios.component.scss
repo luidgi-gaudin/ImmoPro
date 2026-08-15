@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 30px;
-  
+
   @media (max-width: 500px) {
     grid-template-columns: 1fr;
   }
@@ -24,7 +24,7 @@
 
 .preview-header {
   margin-bottom: 12px;
-  
+
   .count {
     font-size: 0.7rem;
     font-weight: 600;
@@ -41,19 +41,19 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  
+
   li {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 0.85rem;
     color: var(--text-secondary);
-    
+
     .prop-name {
       color: var(--text-primary);
       font-weight: 500;
     }
-    
+
     .prop-city {
       font-size: 0.75rem;
       text-transform: uppercase;
@@ -69,7 +69,7 @@
     padding-top: 6px;
     border-top: 1px solid var(--border);
   }
-  
+
   .empty-preview {
     font-style: italic;
     font-size: 0.8rem;
@@ -89,4 +89,29 @@
 .card-actions-icons {
   display: flex;
   gap: 6px;
+}
+
+/* ── Chargement ───────────────────────────────────────────────────────── */
+
+.portfolio-skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+}
+
+.portfolio-skeleton-list {
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+/* Rechargement sur changement de filtre : la liste en place pâlit au lieu de
+   disparaître, ce qui garde la page stable sous le curseur. */
+.portfolios-grid.is-refreshing {
+  opacity: 0.55;
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
 }

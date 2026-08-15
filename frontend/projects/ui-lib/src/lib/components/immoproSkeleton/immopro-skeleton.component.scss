@@ -1,0 +1,67 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.ip-skeleton {
+  display: block;
+  border-radius: var(--radius-sm);
+  /* Même motif que les squelettes déjà en place sur le tableau de bord et les
+     alertes, pour que le chargement ait partout la même signature visuelle. */
+  background: linear-gradient(
+    90deg,
+    var(--surface-card) 25%,
+    var(--border) 50%,
+    var(--surface-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: ipSkeletonShimmer 1.4s infinite;
+}
+
+.is-line {
+  height: 12px;
+}
+
+.is-title {
+  height: 20px;
+  border-radius: var(--radius-sm);
+}
+
+.is-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.is-badge {
+  width: 72px;
+  height: 22px;
+  border-radius: 999px;
+}
+
+.is-block {
+  height: 108px;
+  border-radius: var(--radius-lg);
+}
+
+@keyframes ipSkeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Le scintillement est une animation décorative en boucle : c'est exactement le
+   type de mouvement que le réglage système vise à supprimer. On garde le bloc
+   gris, qui suffit à signaler le chargement. */
+@media (prefers-reduced-motion: reduce) {
+  .ip-skeleton {
+    animation: none;
+    background: var(--overlay-strong);
+  }
+}

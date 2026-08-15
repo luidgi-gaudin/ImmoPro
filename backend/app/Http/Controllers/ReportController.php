@@ -20,7 +20,15 @@ class ReportController extends Controller
         $user = auth()->user();
 
         $portfolios = Portfolio::where('user_id', $user->id)->with('properties')->get();
-        $properties = $portfolios->pluck('properties')->flatten();
+
+        // Chaque bien reçoit le portefeuille déjà chargé. Sans cela, le
+        // `$property->portfolio?->name` plus bas déclenche une requête par bien :
+        // sur une base distante à ~110 ms l'aller-retour, vingt biens coûtent
+        // deux secondes à eux seuls.
+        $properties = $portfolios
+            ->flatMap(fn (Portfolio $portfolio) => $portfolio->properties->each(
+                fn ($property) => $property->setRelation('portfolio', $portfolio)
+            ));
         $propertyIds = $properties->pluck('id');
 
         $leases = Lease::whereIn('property_id', $propertyIds)->with(['tenant', 'property'])->get();
@@ -38,6 +46,8 @@ class ReportController extends Controller
                 'total_properties' => $properties->count(),
                 'occupied_properties' => $properties->where('is_rented', true)->count(),
                 'vacant_properties' => $properties->where('is_rented', false)->count(),
+                'total_tenants' => $tenants->count(),
+                'total_leases' => $leases->count(),
                 'active_leases' => $activeLeases->count(),
                 'monthly_rent_expected' => round((float) $activeLeases->sum('monthly_rent'), 2),
                 'this_month' => [

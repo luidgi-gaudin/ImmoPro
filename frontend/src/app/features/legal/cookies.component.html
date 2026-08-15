@@ -1,0 +1,136 @@
+<div class="legal-page">
+  <a class="legal-back" routerLink="/">&larr; Retour à l'accueil</a>
+
+  <h1 class="legal-title">Cookies et stockage local</h1>
+  <p class="legal-updated">Dernière mise à jour : {{ lastUpdated }}</p>
+
+  <section class="legal-section">
+    <h2>Ce que nous déposons, et ce que nous ne déposons pas</h2>
+    <p>
+      ImmoPro n'utilise
+      <strong
+        >aucun traceur publicitaire, aucun outil de mesure d'audience et aucun service tiers</strong
+      >
+      déposant des données sur votre appareil. Il n'y a ni Google Analytics, ni pixel de réseau
+      social, ni régie.
+    </p>
+    <p>
+      L'application n'écrit pas de cookies à proprement parler : elle utilise le
+      <em>stockage local</em> de votre navigateur, qui obéit aux mêmes règles de consentement. Le
+      tableau ci-dessous en donne la liste exhaustive.
+    </p>
+  </section>
+
+  <section class="legal-section">
+    <h2>Liste complète</h2>
+
+    <div class="legal-table-wrapper">
+      <table class="legal-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Finalité</th>
+            <th>Durée</th>
+            <th>Consentement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>auth_token</code></td>
+            <td>Maintient votre session ouverte entre deux pages.</td>
+            <td>Jusqu'à la déconnexion</td>
+            <td>Non requis (strictement nécessaire)</td>
+          </tr>
+          <tr>
+            <td><code>auth_user</code></td>
+            <td>
+              Mémorise votre nom et votre e-mail pour afficher l'interface sans attendre le serveur.
+            </td>
+            <td>Jusqu'à la déconnexion</td>
+            <td>Non requis (strictement nécessaire)</td>
+          </tr>
+          <tr>
+            <td><code>theme</code></td>
+            <td>Retient votre choix d'affichage clair ou sombre.</td>
+            <td>Jusqu'à effacement</td>
+            <td>Requis</td>
+          </tr>
+          <tr>
+            <td><code>cookie_consent</code></td>
+            <td>
+              Enregistre le choix que vous faites sur cette page, pour ne pas vous le redemander.
+            </td>
+            <td>Jusqu'à effacement</td>
+            <td>Non requis (conserve la preuve de votre choix)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Les entrées « strictement nécessaires » ne peuvent pas être désactivées : sans elles,
+      l'application est incapable de vous reconnaître d'une page à l'autre.
+    </p>
+  </section>
+
+  <section class="legal-section">
+    <h2>Gérer mon choix</h2>
+
+    <div class="consent-panel">
+      @if (consent.needsDecision()) {
+        <div class="consent-state">
+          <span class="consent-dot" aria-hidden="true"></span>
+          <span
+            >Vous n'avez pas encore fait de choix. Seul le strictement nécessaire est actif.</span
+          >
+        </div>
+      } @else {
+        <div class="consent-state">
+          <span
+            class="consent-dot"
+            [class.is-on]="consent.allowsPreferences()"
+            aria-hidden="true"
+          ></span>
+          <span>
+            Préférences d'affichage :
+            <strong>{{ consent.allowsPreferences() ? 'autorisées' : 'refusées' }}</strong>
+            @if (consent.decidedAt(); as date) {
+              — choix enregistré le {{ date | date: 'dd/MM/yyyy à HH:mm' }}
+            }
+          </span>
+        </div>
+      }
+
+      <div class="consent-actions">
+        <immopro-button (onClick)="acceptAll()">Autoriser les préférences</immopro-button>
+        <immopro-button variant="outline" (onClick)="rejectAll()">
+          Refuser les préférences
+        </immopro-button>
+        <immopro-button variant="ghost" (onClick)="reopenBanner()">
+          Revoir le bandeau
+        </immopro-button>
+      </div>
+    </div>
+
+    <p style="margin-top: 16px">
+      Refuser efface immédiatement la préférence déjà enregistrée : le retrait du consentement a un
+      effet concret, il ne se contente pas d'être noté.
+    </p>
+  </section>
+
+  <section class="legal-section">
+    <h2>Depuis votre navigateur</h2>
+    <p>
+      Vous pouvez également effacer ces données directement dans les réglages de votre navigateur, à
+      la rubrique de gestion des données de sites. Cela vous déconnectera d'ImmoPro.
+    </p>
+  </section>
+
+  <section class="legal-section">
+    <h2>Pour aller plus loin</h2>
+    <p>
+      Le traitement de vos données personnelles est détaillé dans notre
+      <a routerLink="/confidentialite">politique de confidentialité</a>.
+    </p>
+  </section>
+</div>

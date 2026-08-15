@@ -1,0 +1,88 @@
+<div class="ip-filter-bar-wrapper">
+  <div class="ip-filter-bar">
+    <div class="ip-filter-search">
+      <svg class="ip-filter-search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" />
+        <line x1="16.5" y1="16.5" x2="21" y2="21" />
+      </svg>
+
+      <input
+        type="search"
+        class="ip-filter-search-input"
+        [attr.placeholder]="searchPlaceholder()"
+        [value]="draft()"
+        (input)="onInput($event)"
+        [attr.aria-label]="searchPlaceholder()"
+      />
+
+      @if (draft()) {
+        <button
+          type="button"
+          class="ip-filter-clear"
+          (click)="clearSearch()"
+          aria-label="Effacer la recherche"
+        >
+          &times;
+        </button>
+      }
+    </div>
+
+    <!-- Filtres propres à l'écran (selects, cases à cocher…). -->
+    <div class="ip-filter-slots">
+      <ng-content></ng-content>
+    </div>
+
+    <div class="ip-filter-meta">
+      @if (total() !== null) {
+        <span class="ip-filter-count" [class.is-loading]="loading()">{{ countLabel }}</span>
+      }
+
+      @if (canReset()) {
+        <button
+          type="button"
+          class="ip-filter-reset"
+          (click)="onReset()"
+          aria-label="Réinitialiser tous les filtres"
+        >
+          <svg
+            class="reset-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          Réinitialiser
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Active Filter Chips -->
+  @if (activeChips().length > 0) {
+    <div class="ip-filter-chips">
+      <span class="ip-chips-label">Filtres actifs :</span>
+      @for (chip of activeChips(); track chip.key) {
+        <span class="ip-filter-chip">
+          <span class="chip-label">{{ chip.label }}:</span>
+          <strong class="chip-value">{{ chip.value }}</strong>
+          <button
+            type="button"
+            class="chip-remove"
+            (click)="onRemoveChip(chip.key)"
+            [attr.aria-label]="'Supprimer le filtre ' + chip.label"
+          >
+            &times;
+          </button>
+        </span>
+      }
+    </div>
+  }
+</div>
