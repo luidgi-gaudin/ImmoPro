@@ -7,13 +7,15 @@ import { Injectable, computed, signal } from '@angular/core';
  * une catégorie « statistiques » ou « marketing » inexistante serait faux, et le
  * RGPD impose d'informer sur les traceurs effectivement présents.
  */
-export type ConsentCategory = 'necessaires' | 'preferences';
+export type ConsentCategory = 'necessaires' | 'preferences' | 'statistiques';
 
 export interface ConsentChoices {
   /** Session et authentification. Toujours actif : sans lui, pas de connexion. */
   necessaires: true;
   /** Mémorisation du thème clair/sombre. */
   preferences: boolean;
+  /** Mesure d'audience Google Analytics. Aucun script tiers avant cet accord. */
+  statistiques: boolean;
 }
 
 interface StoredConsent {
@@ -28,7 +30,7 @@ const STORAGE_KEY = 'cookie_consent';
  * Incrémenter cette version remet tout le monde devant le bandeau. À faire
  * uniquement si les finalités changent — pas à chaque retouche de texte.
  */
-const CONSENT_VERSION = 1;
+const CONSENT_VERSION = 2;
 
 @Injectable({ providedIn: 'root' })
 export class CookieConsentService {
@@ -38,7 +40,7 @@ export class CookieConsentService {
   readonly needsDecision = computed(() => this.stored() === null);
 
   readonly choices = computed<ConsentChoices>(
-    () => this.stored()?.choices ?? { necessaires: true, preferences: false },
+    () => this.stored()?.choices ?? { necessaires: true, preferences: false, statistiques: false },
   );
 
   readonly decidedAt = computed(() => this.stored()?.decidedAt ?? null);
@@ -46,8 +48,11 @@ export class CookieConsentService {
   /** Le thème n'est mémorisé que si l'utilisateur l'a accepté. */
   readonly allowsPreferences = computed(() => this.choices().preferences);
 
+  /** Vrai uniquement après un accord explicite : le silence vaut refus. */
+  readonly allowsStatistics = computed(() => this.choices().statistiques);
+
   acceptAll(): void {
-    this.save({ necessaires: true, preferences: true });
+    this.save({ necessaires: true, preferences: true, statistiques: true });
   }
 
   /**
@@ -58,7 +63,7 @@ export class CookieConsentService {
    * une préférence de design.
    */
   rejectAll(): void {
-    this.save({ necessaires: true, preferences: false });
+    this.save({ necessaires: true, preferences: false, statistiques: false });
   }
 
   save(choices: ConsentChoices): void {

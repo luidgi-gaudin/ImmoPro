@@ -6,10 +6,11 @@
 
   <div class="legal-notice">
     <p>
-      <strong>À compléter avant mise en ligne.</strong> Les mentions encadrées en rouge dépendent de
-      votre situation juridique (identité de l'exploitant, durées de conservation, coordonnées de
-      contact). Elles n'ont pas été inventées : à vous de les renseigner. Le reste du document
-      décrit le fonctionnement réel de l'application, vérifié dans le code.
+      <strong>Projet académique.</strong> ImmoPro est une application réalisée dans un cadre
+      pédagogique. La société, ses coordonnées et son numéro d'identification ci-dessous sont
+      <strong>fictifs</strong> et ne désignent aucune entreprise existante. En revanche, la
+      description des traitements, de l'hébergement et des mesures de sécurité correspond au
+      fonctionnement réel de l'application.
     </p>
   </div>
 
@@ -17,12 +18,19 @@
     <h2>1. Responsable du traitement</h2>
     <p>
       Le responsable du traitement des données collectées via ImmoPro est
-      <span class="legal-todo">[raison sociale, forme juridique, SIREN]</span>, dont le siège est
-      situé <span class="legal-todo">[adresse postale]</span>.
+      <strong>ImmoPro SAS</strong>, société par actions simplifiée au capital de 10 000 €,
+      immatriculée sous le numéro SIREN 123 456 789, dont le siège social est situé au 14 rue de la
+      Fontaine-au-Roi, 75011 Paris, France.
+    </p>
+    <p>Directeur de la publication : le représentant légal d'ImmoPro SAS.</p>
+    <p>
+      Pour toute question relative à vos données personnelles :
+      <a href="mailto:donnees@immopro.example">donnees&#64;immopro.example</a>.
     </p>
     <p>
-      Pour toute question relative à vos données :
-      <span class="legal-todo">[adresse e-mail de contact]</span>.
+      ImmoPro SAS n'a pas désigné de délégué à la protection des données, sa taille et la nature de
+      ses traitements ne l'imposant pas. Les demandes sont traitées directement à l'adresse
+      ci-dessus.
     </p>
   </section>
 
@@ -76,6 +84,11 @@
         le bandeau et révocable à tout moment depuis la
         <a routerLink="/cookies">politique de cookies</a>.
       </li>
+      <li>
+        <strong>Mesure d'audience</strong> : votre consentement, recueilli séparément via le bandeau
+        et révocable dans les mêmes conditions. Refuser n'affecte en rien le fonctionnement de
+        l'application.
+      </li>
     </ul>
     <p>
       Aucune donnée n'est utilisée à des fins publicitaires, revendue ou cédée à des tiers à des
@@ -87,32 +100,61 @@
     <h2>4. Hébergement et sous-traitants</h2>
     <p>
       Les données sont stockées dans une base PostgreSQL managée par
-      <strong>Supabase</strong>, qui agit en qualité de sous-traitant. La région d'hébergement
-      retenue est <span class="legal-todo">[région, ex. eu-west-1 — Irlande]</span>.
+      <strong>Supabase</strong>, qui agit en qualité de sous-traitant au sens de l'article 28 du
+      RGPD. La région d'hébergement retenue est <strong>eu-west-1 (Irlande)</strong>.
+    </p>
+    <p>
+      Les données de gestion locative que vous saisissez — biens, baux, locataires, paiements — ne
+      quittent donc pas l'Union européenne.
     </p>
     <p>
       Les échanges entre votre navigateur, l'application et la base sont chiffrés en transit (TLS).
     </p>
+    <p>
+      <strong>Google Analytics</strong> intervient comme second sous-traitant, uniquement si vous
+      avez autorisé la mesure d'audience. Dans ce cas seulement, des données de navigation (pages
+      consultées, adresse IP tronquée) sont traitées par Google, susceptible de les transférer aux
+      États-Unis dans le cadre du <em>EU-US Data Privacy Framework</em>. Tant que ce consentement
+      n'est pas donné, aucun script de Google n'est chargé et aucune donnée ne lui est transmise.
+    </p>
+    <p>Aucune régie publicitaire et aucun autre outil de suivi tiers n'intervient.</p>
   </section>
 
   <section class="legal-section">
     <h2>5. Durées de conservation</h2>
+    <p>
+      Chaque durée répond à une raison précise : soit le service en a besoin, soit la loi l'impose.
+      Au-delà, les données sont supprimées.
+    </p>
     <ul>
       <li>
-        Données de compte : conservées tant que le compte est actif, puis
-        <span class="legal-todo">[durée après clôture]</span>.
+        <strong>Compte bailleur</strong> : conservé tant que le compte est actif, puis
+        <strong>3 ans</strong> après la dernière connexion, conformément à la recommandation de la
+        CNIL sur les comptes inactifs. Un message vous est adressé avant suppression.
       </li>
       <li>
-        Données locatives et quittances :
-        <span class="legal-todo"
-          >[durée retenue au regard des obligations comptables et fiscales]</span
-        >.
+        <strong>Baux et données locatives</strong> : <strong>5 ans</strong> après la fin du bail,
+        durée de la prescription civile de droit commun (article 2224 du code civil), qui vous
+        permet de faire valoir vos droits en cas de litige.
       </li>
       <li>
-        Suppression d'une fiche : les locataires et les baux sont d'abord placés en suppression
-        douce (réversible), avant purge définitive.
+        <strong>Quittances et échéances de loyer</strong> : <strong>10 ans</strong>, au titre des
+        obligations comptables (article L123-22 du code de commerce).
+      </li>
+      <li>
+        <strong>Photos d'état des lieux</strong> : supprimées en même temps que le bail auquel elles
+        se rattachent.
+      </li>
+      <li>
+        <strong>Journaux techniques</strong> (erreurs, tentatives de connexion) :
+        <strong>12 mois</strong>.
       </li>
     </ul>
+    <p>
+      La suppression d'un locataire ou d'un bail depuis l'interface est d'abord réversible
+      (suppression douce), afin qu'une manipulation malheureuse ne détruise pas un dossier. La purge
+      définitive intervient à l'issue des durées ci-dessus.
+    </p>
   </section>
 
   <section class="legal-section">
@@ -136,13 +178,19 @@
       </li>
     </ul>
     <p>
-      Ces droits s'exercent auprès de
-      <span class="legal-todo">[adresse e-mail de contact]</span>. Une réponse vous sera apportée
-      dans un délai d'un mois.
+      Ces droits s'exercent par courriel à
+      <a href="mailto:donnees@immopro.example">donnees&#64;immopro.example</a>, ou par courrier à
+      ImmoPro SAS, 14 rue de la Fontaine-au-Roi, 75011 Paris. Une pièce d'identité pourra vous être
+      demandée en cas de doute raisonnable sur votre identité.
     </p>
     <p>
-      Si la réponse ne vous satisfait pas, vous pouvez saisir la Commission nationale de
-      l'informatique et des libertés (CNIL),
+      Une réponse vous est apportée dans un délai d'un mois à compter de la réception de votre
+      demande, porté à trois mois si celle-ci est complexe — vous en êtes alors informé.
+    </p>
+    <p>
+      Si la réponse ne vous satisfait pas, vous pouvez introduire une réclamation auprès de la
+      Commission nationale de l'informatique et des libertés (CNIL), 3 place de Fontenoy, 75007
+      Paris —
       <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>.
     </p>
   </section>

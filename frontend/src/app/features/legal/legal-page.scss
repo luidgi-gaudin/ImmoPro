@@ -96,25 +96,15 @@
   }
 }
 
-/* Champs que l'exploitant doit renseigner : volontairement très visibles,
-   pour qu'aucun ne parte en production tel quel. */
-.legal-todo {
-  display: inline-block;
-  padding: 1px 8px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--error) 12%, transparent);
-  border: 1px dashed var(--error);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--error);
-}
-
+/* Encadré de contexte en tête de page. Ton informatif plutôt qu'alarmant : il
+   signale un cadre pédagogique, pas une erreur. */
 .legal-notice {
   padding: 16px 18px;
   margin-bottom: 32px;
-  border: 1px dashed var(--error);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--error) 7%, transparent);
+  background: var(--overlay-soft);
 
   p {
     margin: 0;
@@ -204,4 +194,26 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+/* Action au fil du texte : un <button> pour l'accessibilité, l'allure d'un lien. */
+.legal-inline-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--primary);
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+
+  &:hover {
+    color: var(--primary-hover);
+    border-bottom-color: var(--primary-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
 }

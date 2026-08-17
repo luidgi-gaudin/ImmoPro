@@ -4,6 +4,7 @@
     <div class="app-body">
       <app-topbar />
       <main class="app-content">
+        <app-breadcrumb />
         <router-outlet />
       </main>
     </div>
@@ -17,3 +18,6 @@
      écrans de connexion que dans l'application, puisque le stockage local est
      utilisé dès la première visite. -->
 <app-cookie-banner />
+
+<!-- Décide seule de son affichage : mobile, pages vitrines, hors bandeau cookies. -->
+<app-sticky-cta />

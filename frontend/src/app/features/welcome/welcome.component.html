@@ -495,15 +495,103 @@
     </div>
   </section>
 
+  <!-- Aperçu des questions fréquentes -->
+  <section class="faq-section" aria-labelledby="faq-heading">
+    <div class="section-divider">
+      <span class="line"></span>
+      <span class="diamond"></span>
+      <span class="line"></span>
+    </div>
+
+    <h2 class="section-title" id="faq-heading">Les questions qu’on nous pose</h2>
+
+    <div class="faq-preview">
+      @for (entry of faqPreview; track entry.id) {
+        <details class="faq-preview-item">
+          <summary>
+            <span>{{ entry.question }}</span>
+            <svg
+              class="faq-preview-chevron"
+              aria-hidden="true"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </summary>
+          <p>{{ entry.answer }}</p>
+        </details>
+      }
+    </div>
+
+    <p class="faq-preview-more">
+      <a routerLink="/faq">Voir toutes les questions fréquentes</a>
+    </p>
+  </section>
+
+  <!-- Rappel en fin de page : ne pas obliger à remonter en haut pour agir. -->
+  @if (!auth.isAuthenticated()) {
+    <section class="landing-cta">
+      <h2>Prêt à reprendre la main sur votre parc ?</h2>
+      <p class="text-secondary">
+        Créez votre compte et enregistrez votre premier portefeuille en quelques minutes.
+      </p>
+      <div class="button-group landing-cta-actions">
+        <a routerLink="/register">
+          <immopro-button>Créer un compte</immopro-button>
+        </a>
+        <a routerLink="/login">
+          <immopro-button color="secondary">Se connecter</immopro-button>
+        </a>
+      </div>
+    </section>
+  }
+
   <!-- Footer -->
   <footer class="landing-footer">
-    <p class="text-muted">
+    <nav class="landing-footer-nav" aria-label="Navigation de bas de page">
+      <div class="footer-col">
+        <h2>Produit</h2>
+        <ul>
+          <li><a routerLink="/">Accueil</a></li>
+          <li><a routerLink="/faq">Questions fréquentes</a></li>
+          @if (auth.isAuthenticated()) {
+            <li><a routerLink="/dashboard">Tableau de bord</a></li>
+            <li><a routerLink="/portfolios">Mes portefeuilles</a></li>
+          } @else {
+            <li><a routerLink="/register">Créer un compte</a></li>
+            <li><a routerLink="/login">Se connecter</a></li>
+          }
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h2>Ce que couvre ImmoPro</h2>
+        <ul>
+          <li><a routerLink="/faq" fragment="baux">Baux nus, meublés, étudiants</a></li>
+          <li><a routerLink="/faq" fragment="quittances">Quittances de loyer</a></li>
+          <li><a routerLink="/faq" fragment="impayes">Suivi des impayés</a></li>
+          <li><a routerLink="/faq" fragment="dpe">Suivi du DPE</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h2>Informations légales</h2>
+        <ul>
+          <li><a routerLink="/confidentialite">Politique de confidentialité</a></li>
+          <li><a routerLink="/cookies">Politique de cookies</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <p class="text-muted landing-copyright">
       &copy; 2026 ImmoPro. Tous droits réservés. La gestion immobilière, en toute confiance.
     </p>
-    <nav class="landing-footer-links" aria-label="Informations légales">
-      <a routerLink="/confidentialite">Politique de confidentialité</a>
-      <span aria-hidden="true">·</span>
-      <a routerLink="/cookies">Cookies</a>
-    </nav>
   </footer>
 </div>

@@ -10,9 +10,9 @@
       <div class="ip-cookie-text">
         <h2 class="ip-cookie-title" id="cookie-banner-title">Votre vie privée</h2>
         <p id="cookie-banner-text">
-          ImmoPro n'utilise ni traceur publicitaire, ni outil de mesure d'audience. Seul le
-          strictement nécessaire à votre connexion est conservé. Vous pouvez en plus autoriser la
-          mémorisation de votre thème d'affichage.
+          ImmoPro n'utilise aucun traceur publicitaire. Seul le strictement nécessaire à votre
+          connexion est conservé. Vous pouvez en plus autoriser la mémorisation de votre thème
+          d'affichage et la mesure d'audience, qui nous aide à améliorer le service.
           <a routerLink="/cookies">Politique de cookies</a>
           ·
           <a routerLink="/confidentialite">Confidentialité</a>
@@ -58,6 +58,20 @@
           <p class="ip-cookie-category-desc">
             <code>theme</code> retient votre choix entre l'affichage clair et sombre. Sans cette
             autorisation, l'application repart du thème par défaut à chaque visite.
+          </p>
+        </div>
+
+        <div class="ip-cookie-category">
+          <div class="ip-cookie-category-head">
+            <label class="ip-cookie-switch">
+              <input type="checkbox" [checked]="statistics()" (change)="toggleStatistics($event)" />
+              <span class="ip-cookie-category-name">Mesure d'audience</span>
+            </label>
+          </div>
+          <p class="ip-cookie-category-desc">
+            Google Analytics dépose <code>_ga</code> et <code>_ga_*</code> pour compter les visites
+            et les pages consultées. Aucun script de Google n'est chargé tant que vous n'avez pas
+            coché cette case, et refuser plus tard supprime ces cookies.
           </p>
         </div>
 

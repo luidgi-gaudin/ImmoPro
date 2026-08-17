@@ -605,6 +605,11 @@ select {
   .no-print {
     display: none !important;
   }
+  /* Une barre d'action collante n'a rien à faire sur une quittance imprimée. */
+  app-sticky-cta,
+  app-cookie-banner {
+    display: none !important;
+  }
   .print-only {
     display: block !important;
   }
