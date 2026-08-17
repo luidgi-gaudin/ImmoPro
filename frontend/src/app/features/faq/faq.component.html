@@ -1,0 +1,61 @@
+<div class="faq-page">
+  <app-breadcrumb />
+
+  <header class="faq-head">
+    <h1>Questions fréquentes</h1>
+    <p class="faq-intro">
+      Ce que les gestionnaires nous demandent le plus souvent avant de confier leur parc à ImmoPro :
+      types de baux couverts, valeur des quittances, suivi des impayés et traitement des données.
+    </p>
+  </header>
+
+  <!-- <details> porte nativement l'ouverture, le clavier et l'annonce vocale. -->
+  <div class="faq-list">
+    @for (entry of entries; track entry.id) {
+      <details class="faq-item" [id]="entry.id">
+        <summary>
+          <span class="faq-question">{{ entry.question }}</span>
+          <svg
+            class="faq-chevron"
+            aria-hidden="true"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </summary>
+        <p class="faq-answer">{{ entry.answer }}</p>
+      </details>
+    }
+  </div>
+
+  <section class="faq-cta">
+    <h2>Une question qui n’est pas ici ?</h2>
+    <p class="text-secondary">
+      Créez un compte pour explorer l’application : portefeuilles, baux et quittances sont
+      accessibles dès la première connexion.
+    </p>
+    <div class="faq-cta-actions">
+      <a routerLink="/register">
+        <immopro-button>Créer un compte</immopro-button>
+      </a>
+      <a routerLink="/login">
+        <immopro-button color="secondary">Se connecter</immopro-button>
+      </a>
+    </div>
+  </section>
+
+  <nav class="faq-links" aria-label="Autres pages">
+    <a routerLink="/">Accueil</a>
+    <span aria-hidden="true">·</span>
+    <a routerLink="/confidentialite">Politique de confidentialité</a>
+    <span aria-hidden="true">·</span>
+    <a routerLink="/cookies">Cookies</a>
+  </nav>
+</div>

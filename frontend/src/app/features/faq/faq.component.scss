@@ -1,0 +1,150 @@
+.faq-page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 48px 24px 120px;
+}
+
+.faq-head {
+  margin-bottom: 40px;
+
+  h1 {
+    margin: 0 0 14px;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.15;
+  }
+}
+
+.faq-intro {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--text-secondary);
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq-item {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &:hover {
+    border-color: var(--border-hover);
+  }
+
+  &[open] {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-md);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    list-style: none;
+
+    /* Le triangle Safari doublonne avec le chevron. */
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+      border-radius: var(--radius-lg);
+    }
+  }
+
+  &[open] summary .faq-chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.faq-question {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.faq-chevron {
+  flex-shrink: 0;
+  color: var(--primary);
+  transition: transform var(--transition-fast);
+}
+
+.faq-answer {
+  margin: 0;
+  padding: 0 22px 22px;
+  max-width: 68ch;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+
+.faq-cta {
+  margin-top: 56px;
+  padding: 36px 32px;
+  text-align: center;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+  }
+
+  p {
+    margin: 0 auto 24px;
+    max-width: 52ch;
+    font-size: 0.95rem;
+  }
+}
+
+.faq-cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.faq-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 48px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+
+  a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+
+    &:hover {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+  }
+}

@@ -7,17 +7,15 @@
   <section class="legal-section">
     <h2>Ce que nous déposons, et ce que nous ne déposons pas</h2>
     <p>
-      ImmoPro n'utilise
-      <strong
-        >aucun traceur publicitaire, aucun outil de mesure d'audience et aucun service tiers</strong
-      >
-      déposant des données sur votre appareil. Il n'y a ni Google Analytics, ni pixel de réseau
-      social, ni régie.
+      ImmoPro n'utilise <strong>aucun traceur publicitaire</strong> : ni pixel de réseau social, ni
+      régie. La seule mesure d'audience possible est Google Analytics, et elle reste
+      <strong>facultative</strong> — aucun script de Google n'est chargé tant que vous ne l'avez pas
+      explicitement autorisée.
     </p>
     <p>
-      L'application n'écrit pas de cookies à proprement parler : elle utilise le
-      <em>stockage local</em> de votre navigateur, qui obéit aux mêmes règles de consentement. Le
-      tableau ci-dessous en donne la liste exhaustive.
+      En dehors de cette mesure d'audience, l'application n'écrit pas de cookies à proprement parler
+      : elle utilise le <em>stockage local</em> de votre navigateur, qui obéit aux mêmes règles de
+      consentement. Le tableau ci-dessous donne la liste exhaustive des deux.
     </p>
   </section>
 
@@ -63,6 +61,16 @@
             <td>Jusqu'à effacement</td>
             <td>Non requis (conserve la preuve de votre choix)</td>
           </tr>
+          <tr>
+            <td><code>_ga</code>, <code>_ga_*</code></td>
+            <td>
+              Google Analytics : distingue les visiteurs pour compter les visites et les pages
+              consultées. Déposés uniquement après votre accord, et supprimés dès que vous le
+              retirez.
+            </td>
+            <td>13 mois</td>
+            <td>Requis</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -99,13 +107,22 @@
             }
           </span>
         </div>
+        <div class="consent-state">
+          <span
+            class="consent-dot"
+            [class.is-on]="consent.allowsStatistics()"
+            aria-hidden="true"
+          ></span>
+          <span>
+            Mesure d'audience :
+            <strong>{{ consent.allowsStatistics() ? 'autorisée' : 'refusée' }}</strong>
+          </span>
+        </div>
       }
 
       <div class="consent-actions">
-        <immopro-button (onClick)="acceptAll()">Autoriser les préférences</immopro-button>
-        <immopro-button variant="outline" (onClick)="rejectAll()">
-          Refuser les préférences
-        </immopro-button>
+        <immopro-button (onClick)="acceptAll()">Tout autoriser</immopro-button>
+        <immopro-button variant="outline" (onClick)="rejectAll()">Tout refuser</immopro-button>
         <immopro-button variant="ghost" (onClick)="reopenBanner()">
           Revoir le bandeau
         </immopro-button>
@@ -113,8 +130,12 @@
     </div>
 
     <p style="margin-top: 16px">
-      Refuser efface immédiatement la préférence déjà enregistrée : le retrait du consentement a un
-      effet concret, il ne se contente pas d'être noté.
+      Refuser efface immédiatement ce qui était enregistré — préférence d'affichage comme cookies de
+      mesure d'audience : le retrait du consentement a un effet concret, il ne se contente pas
+      d'être noté. Pour n'autoriser qu'une catégorie sur les deux, passez par
+      <button type="button" class="legal-inline-link" (click)="reopenBanner()">
+        le bandeau détaillé</button
+      >.
     </p>
   </section>
 
@@ -130,7 +151,9 @@
     <h2>Pour aller plus loin</h2>
     <p>
       Le traitement de vos données personnelles est détaillé dans notre
-      <a routerLink="/confidentialite">politique de confidentialité</a>.
+      <a routerLink="/confidentialite">politique de confidentialité</a>. Les
+      <a routerLink="/faq">questions fréquentes</a> répondent aux interrogations les plus courantes
+      sur la sécurité et la conformité d'ImmoPro.
     </p>
   </section>
 </div>

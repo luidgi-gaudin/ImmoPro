@@ -25,6 +25,8 @@ export class CookieBannerComponent {
   protected readonly detailsOpen = signal(false);
   /** Case « Préférences » du panneau détaillé, avant validation. */
   protected readonly preferences = signal(false);
+  /** Case « Statistiques » du panneau détaillé, avant validation. */
+  protected readonly statistics = signal(false);
 
   toggleDetails(): void {
     this.detailsOpen.update((open) => !open);
@@ -32,6 +34,10 @@ export class CookieBannerComponent {
 
   togglePreferences(event: Event): void {
     this.preferences.set((event.target as HTMLInputElement).checked);
+  }
+
+  toggleStatistics(event: Event): void {
+    this.statistics.set((event.target as HTMLInputElement).checked);
   }
 
   acceptAll(): void {
@@ -43,6 +49,10 @@ export class CookieBannerComponent {
   }
 
   saveChoices(): void {
-    this.consent.save({ necessaires: true, preferences: this.preferences() });
+    this.consent.save({
+      necessaires: true,
+      preferences: this.preferences(),
+      statistiques: this.statistics(),
+    });
   }
 }

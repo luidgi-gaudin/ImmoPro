@@ -1,0 +1,33 @@
+# robots.txt — ImmoPro
+#
+# robots.txt bloque l'exploration, pas l'indexation d'une URL connue par
+# ailleurs : c'est la balise `noindex` posée par l'application qui joue ce rôle.
+
+User-agent: *
+
+# Espace applicatif
+Disallow: /dashboard
+Disallow: /portfolios
+Disallow: /tenants
+Disallow: /leases
+Disallow: /alerts
+Disallow: /reports
+Disallow: /profile
+
+# Tunnels d'authentification (les liens de réinitialisation portent un jeton)
+Disallow: /login
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# API
+Disallow: /api/
+
+# Pages publiques
+Allow: /$
+Allow: /faq
+Allow: /register
+Allow: /confidentialite
+Allow: /cookies
+Allow: /og-image.png
+
+Sitemap: https://immopro.fr/sitemap.xml

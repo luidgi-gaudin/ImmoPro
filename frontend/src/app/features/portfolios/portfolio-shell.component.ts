@@ -1,13 +1,34 @@
-import { Component, OnInit, OnDestroy, inject, effect, computed, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  effect,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+} from '@angular/router';
 import { ImmoproButtonComponent, ImmoproPageHeaderComponent } from 'ui-lib';
 import { PortfolioContextService } from './portfolio-context.service';
 import { NavContextService } from '../../core/services/nav-context.service';
+import { BreadcrumbService } from '../../core/seo/breadcrumb.service';
 
 @Component({
   selector: 'app-portfolio-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, ImmoproButtonComponent, ImmoproPageHeaderComponent],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    ImmoproButtonComponent,
+    ImmoproPageHeaderComponent,
+  ],
   providers: [PortfolioContextService],
   templateUrl: './portfolio-shell.component.html',
   styleUrl: './portfolio-shell.component.scss',
@@ -17,6 +38,7 @@ export class PortfolioShellComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private navContext = inject(NavContextService);
+  private breadcrumbs = inject(BreadcrumbService);
   protected ctx = inject(PortfolioContextService);
 
   protected tabLinks = computed(() => {
@@ -34,12 +56,19 @@ export class PortfolioShellComponent implements OnInit, OnDestroy {
       const id = this.ctx.portfolioId();
       if (!id) return;
 
+      const name = this.ctx.portfolio()?.name;
+
       this.navContext.set({
-        title: this.ctx.portfolio()?.name || 'Portefeuille',
+        title: name || 'Portefeuille',
         backLabel: 'Tous les portefeuilles',
         backLink: '/portfolios',
         links: this.tabLinks(),
       });
+
+      // « Portefeuille » pendant le chargement, puis le nom réel.
+      if (name) {
+        this.breadcrumbs.setLabel(`/portfolios/${id}`, name);
+      }
     });
   }
 
