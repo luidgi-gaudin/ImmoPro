@@ -1,0 +1,178 @@
+<div class="documents-container">
+  <immopro-page-header
+    title="Documents"
+    subtitle="Baux signés, états des lieux, diagnostics, attestations : toutes vos pièces au même endroit."
+  ></immopro-page-header>
+
+  <immopro-filter-bar
+    searchPlaceholder="Rechercher un libellé, un nom de fichier, une note…"
+    [searchValue]="list.search()"
+    [canReset]="list.isFiltered()"
+    [total]="pagination()?.total ?? null"
+    [activeChips]="activeChips()"
+    itemLabel="document"
+    [loading]="loading()"
+    (searchChange)="list.setSearch($event)"
+    (removeChip)="list.removeFilter($event)"
+    (reset)="list.reset()"
+  >
+    <immopro-select label="Catégorie" inputId="doc-filter-category">
+      <select
+        id="doc-filter-category"
+        [value]="list.filterValue('category')"
+        (change)="list.setFilter('category', $any($event.target).value)"
+      >
+        <option value="">Toutes</option>
+        @for (category of categories(); track category.value) {
+          <option [value]="category.value">{{ category.label }}</option>
+        }
+      </select>
+    </immopro-select>
+
+    <immopro-select label="Rattaché à" inputId="doc-filter-type">
+      <select
+        id="doc-filter-type"
+        [value]="list.filterValue('documentable_type')"
+        (change)="list.setFilter('documentable_type', $any($event.target).value)"
+      >
+        <option value="">Tout</option>
+        @for (attachment of attachments; track attachment.value) {
+          <option [value]="attachment.value">{{ attachment.label }}</option>
+        }
+      </select>
+    </immopro-select>
+
+    <immopro-select label="Validité" inputId="doc-filter-expiration">
+      <select
+        id="doc-filter-expiration"
+        [value]="list.filterValue('expiration')"
+        (change)="list.setFilter('expiration', $any($event.target).value)"
+      >
+        <option value="">Toutes</option>
+        @for (choice of expirationChoices; track choice.value) {
+          <option [value]="choice.value">{{ choice.label }}</option>
+        }
+      </select>
+    </immopro-select>
+  </immopro-filter-bar>
+
+  <immopro-table [loading]="loading()">
+    <thead>
+      <tr>
+        <th>
+          <button type="button" class="ip-sortable" (click)="list.toggleSort('name')">
+            Document
+            @if (list.sort() === 'name') {
+              <span class="ip-sort-arrow">{{ list.direction() === 'asc' ? '↑' : '↓' }}</span>
+            }
+          </button>
+        </th>
+        <th>Catégorie</th>
+        <th>Rattaché à</th>
+        <th>
+          <button type="button" class="ip-sortable" (click)="list.toggleSort('issued_on')">
+            Date
+            @if (list.sort() === 'issued_on') {
+              <span class="ip-sort-arrow">{{ list.direction() === 'asc' ? '↑' : '↓' }}</span>
+            }
+          </button>
+        </th>
+        <th>
+          <button type="button" class="ip-sortable" (click)="list.toggleSort('expires_on')">
+            Validité
+            @if (list.sort() === 'expires_on') {
+              <span class="ip-sort-arrow">{{ list.direction() === 'asc' ? '↑' : '↓' }}</span>
+            }
+          </button>
+        </th>
+        <th class="actions">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody [attr.aria-busy]="showSkeleton() ? 'true' : null">
+      @if (showSkeleton()) {
+        @for (row of skeletonRows; track $index) {
+          <tr>
+            <td><immopro-skeleton variant="line" width="60%" /></td>
+            <td><immopro-skeleton variant="badge" /></td>
+            <td><immopro-skeleton variant="line" width="70%" /></td>
+            <td><immopro-skeleton variant="line" width="50%" /></td>
+            <td><immopro-skeleton variant="badge" /></td>
+            <td><immopro-skeleton variant="line" width="40%" /></td>
+          </tr>
+        }
+      } @else {
+        @for (item of documents(); track item.id) {
+          <tr>
+            <td>
+              <span class="doc-name">{{ item.name }}</span>
+              <span class="doc-file">{{ item.original_name }} · {{ item.size_label }}</span>
+            </td>
+            <td>{{ item.category_label }}</td>
+            <td>
+              @if (linkFor(item); as link) {
+                <a [routerLink]="link" class="doc-link">{{
+                  item.attached_to.label || 'Élément supprimé'
+                }}</a>
+              } @else {
+                <span class="text-muted">—</span>
+              }
+            </td>
+            <td>{{ item.issued_on ? (item.issued_on | date: 'dd/MM/yyyy') : '—' }}</td>
+            <td>
+              @if (item.is_expired) {
+                <immopro-badge tone="danger"
+                  >Expiré le {{ item.expires_on | date: 'dd/MM/yyyy' }}</immopro-badge
+                >
+              } @else if (item.expires_soon) {
+                <immopro-badge tone="warning"
+                  >Jusqu'au {{ item.expires_on | date: 'dd/MM/yyyy' }}</immopro-badge
+                >
+              } @else if (item.expires_on) {
+                <immopro-badge tone="success"
+                  >Jusqu'au {{ item.expires_on | date: 'dd/MM/yyyy' }}</immopro-badge
+                >
+              } @else {
+                <span class="text-muted">Sans échéance</span>
+              }
+            </td>
+            <td class="actions">
+              <button type="button" class="row-action" (click)="download(item)">Télécharger</button>
+              <button type="button" class="row-action row-action--danger" (click)="remove(item)">
+                Supprimer
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6">
+              <immopro-empty-state
+                variant="dashed"
+                [title]="list.isFiltered() ? 'Aucun document ne correspond' : 'Aucun document'"
+                [message]="
+                  list.isFiltered()
+                    ? 'Élargissez les critères, ou réinitialisez les filtres.'
+                    : 'Les pièces se déposent depuis la fiche concernée : un bail, un bien, un locataire ou un portefeuille.'
+                "
+              ></immopro-empty-state>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </immopro-table>
+
+  @if (pagination(); as pag) {
+    <immopro-pagination
+      [currentPage]="pag.current_page"
+      [lastPage]="pag.last_page"
+      [from]="pag.from"
+      [to]="pag.to"
+      [total]="pag.total"
+      [perPage]="pag.per_page"
+      [perPageChoices]="list.perPageChoices"
+      (pageChange)="list.setPage($event)"
+      (perPageChange)="list.setPerPage($event)"
+    ></immopro-pagination>
+  }
+</div>

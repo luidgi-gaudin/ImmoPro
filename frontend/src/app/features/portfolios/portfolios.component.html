@@ -49,22 +49,35 @@
 
           <div class="properties-preview">
             <div class="preview-header">
-              <span class="count">{{ portfolio.properties_count || 0 }} actifs immobiliers</span>
+              <span class="count"
+                >{{ portfolio.properties_count || 0 }} bien{{
+                  (portfolio.properties_count || 0) > 1 ? 's' : ''
+                }}</span
+              >
+              @if (portfolio.properties_count) {
+                <span class="occupancy"
+                  >{{ portfolio.occupied_properties_count || 0 }} loué{{
+                    (portfolio.occupied_properties_count || 0) > 1 ? 's' : ''
+                  }}</span
+                >
+              }
             </div>
             <ul class="property-list">
-              @for (property of portfolio.properties?.slice(0, 3); track property.id) {
+              @for (property of portfolio.properties_preview ?? []; track property.id) {
                 <li>
                   <span class="prop-name">{{ property.title }}</span>
                   <span class="prop-city">{{ property.city }}</span>
                 </li>
               }
               @if ((portfolio.properties_count ?? 0) > 3) {
-                <li class="more-props text-gold">
-                  + {{ (portfolio.properties_count ?? 0) - 3 }} autres propriétés de prestige...
+                <li class="more-props">
+                  + {{ (portfolio.properties_count ?? 0) - 3 }} autre{{
+                    (portfolio.properties_count ?? 0) - 3 > 1 ? 's' : ''
+                  }}
                 </li>
               }
-              @if (!portfolio.properties || portfolio.properties.length === 0) {
-                <li class="empty-preview text-muted">Aucune propriété enregistrée.</li>
+              @if ((portfolio.properties_preview ?? []).length === 0) {
+                <li class="empty-preview text-muted">Aucun bien enregistré.</li>
               }
             </ul>
           </div>

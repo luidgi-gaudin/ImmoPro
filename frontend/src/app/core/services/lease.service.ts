@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { apiUrl } from '../config/api.config';
 import { Observable } from 'rxjs';
 import {
   ListParams,
@@ -24,6 +25,24 @@ export interface LeasePhoto {
   created_at: string;
 }
 
+/** Bien loué, tel que l'API le joint à chaque bail. */
+export interface LeaseProperty {
+  id: number;
+  title: string;
+  address: string | null;
+  city: string | null;
+  portfolio_id: number | null;
+  portfolio_name: string | null;
+}
+
+/** Locataire principal, joint au bail. */
+export interface LeaseTenant {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string | null;
+}
+
 export interface Lease {
   id: number;
   property_id: number;
@@ -37,6 +56,26 @@ export interface Lease {
   payment_day: number | null;
   statut: 'actif' | 'en_attente' | 'termine';
   last_rent_revision_at?: string | null;
+
+  /**
+   * Bien et locataire, joints par l'API.
+   *
+   * L'écran des baux les retrouvait auparavant côté client, ce qui l'obligeait
+   * à charger d'abord tous les portefeuilles, tous les locataires, puis les
+   * biens de chaque portefeuille — un appel HTTP par portefeuille avant même
+   * d'afficher la première ligne.
+   */
+  property?: LeaseProperty | null;
+  tenant?: LeaseTenant | null;
+
+  /** Plafond légal du dépôt, calculé côté serveur d'après le type de bail. */
+  deposit_cap?: number;
+
+  /** Éligibilité à la révision annuelle (art. 17-1, loi n° 89-462). */
+  can_revise_rent?: boolean;
+
+  documents_count?: number | null;
+
   co_tenants?: LeaseCoTenant[];
   photos?: LeasePhoto[];
 }
@@ -91,7 +130,7 @@ export interface QuittanceData {
 })
 export class LeaseService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://127.0.0.1:8000/api/leases';
+  private apiUrl = apiUrl('leases');
 
   getLeases(params: Partial<ListParams> = {}): Observable<PaginatedResponse<Lease>> {
     return this.http.get<PaginatedResponse<Lease>>(this.apiUrl, {

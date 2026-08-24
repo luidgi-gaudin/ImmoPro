@@ -1,6 +1,7 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ImmoproAuthCardComponent, ImmoproInputComponent, ImmoproButtonComponent } from 'ui-lib';
 
@@ -8,11 +9,11 @@ import { ImmoproAuthCardComponent, ImmoproInputComponent, ImmoproButtonComponent
   selector: 'app-login',
   standalone: true,
   imports: [
-    ReactiveFormsModule, 
-    RouterLink, 
-    ImmoproAuthCardComponent, 
-    ImmoproInputComponent, 
-    ImmoproButtonComponent
+    ReactiveFormsModule,
+    RouterLink,
+    ImmoproAuthCardComponent,
+    ImmoproInputComponent,
+    ImmoproButtonComponent,
   ],
   templateUrl: './login.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,10 +22,23 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  /**
+   * Page quittée au moment de la déconnexion.
+   *
+   * Renvoyer systématiquement au tableau de bord après une reconnexion fait
+   * perdre le fil : celui dont la session a expiré sur la fiche d'un bail veut
+   * y revenir, pas repartir de l'accueil.
+   */
+  private readonly returnUrl = signal<string | null>(null);
+
+  /** Vrai quand on arrive ici parce que la session a expiré, pas par choix. */
+  readonly sessionExpired = signal(false);
 
   form: FormGroup;
   twoFactorForm: FormGroup;
-  
+
   loading = signal(false);
   error = signal<string | null>(null);
   submitted = signal(false);
@@ -41,8 +55,24 @@ export class LoginComponent {
 
     this.twoFactorForm = this.fb.group({
       code: [''],
-      recovery_code: ['']
+      recovery_code: [''],
     });
+
+    const params = this.route.snapshot.queryParamMap;
+
+    this.sessionExpired.set(params.get('expired') === '1');
+
+    // On n'accepte qu'un chemin interne : une URL absolue placée là par un tiers
+    // transformerait l'écran de connexion en tremplin vers un site externe.
+    const requested = params.get('returnUrl');
+    this.returnUrl.set(
+      requested && requested.startsWith('/') && !requested.startsWith('//') ? requested : null,
+    );
+  }
+
+  /** Destination après connexion : la page quittée, sinon le tableau de bord. */
+  private afterLogin(): void {
+    this.router.navigateByUrl(this.returnUrl() ?? '/dashboard');
   }
 
   onSubmit() {
@@ -64,7 +94,7 @@ export class LoginComponent {
           this.submitted.set(false);
           this.toggle2FAFields();
         } else {
-          this.router.navigate(['/dashboard']);
+          this.afterLogin();
         }
       },
       error: (error) => {
@@ -93,7 +123,7 @@ export class LoginComponent {
     this.loading.set(true);
 
     const payload: any = {
-      challenge_token: this.challengeToken()
+      challenge_token: this.challengeToken(),
     };
 
     if (this.useRecoveryCode()) {
@@ -105,12 +135,16 @@ export class LoginComponent {
     this.authService.verify2FAChallenge(payload).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/dashboard']);
+        this.afterLogin();
       },
       error: (error) => {
         this.loading.set(false);
-        this.error.set(error.error?.errors?.code?.[0] || error.error?.message || 'Code double authentification incorrect');
-      }
+        this.error.set(
+          error.error?.errors?.code?.[0] ||
+            error.error?.message ||
+            'Code double authentification incorrect',
+        );
+      },
     });
   }
 
@@ -127,7 +161,9 @@ export class LoginComponent {
       this.twoFactorForm.get('recovery_code')?.setValidators([Validators.required]);
       this.twoFactorForm.get('code')?.clearValidators();
     } else {
-      this.twoFactorForm.get('code')?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6)]);
+      this.twoFactorForm
+        .get('code')
+        ?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(6)]);
       this.twoFactorForm.get('recovery_code')?.clearValidators();
     }
     this.twoFactorForm.get('code')?.updateValueAndValidity();

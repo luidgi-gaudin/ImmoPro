@@ -1,0 +1,36 @@
+@if (request(); as ask) {
+  <immopro-modal [title]="ask.title" (closed)="answer(false)">
+    <p class="confirm__message">{{ ask.message }}</p>
+
+    @if (ask.typeToConfirm; as word) {
+      <label class="confirm__field">
+        <span
+          >Pour confirmer, saisissez <strong>{{ word }}</strong></span
+        >
+        <input
+          type="text"
+          class="confirm__input"
+          autocomplete="off"
+          spellcheck="false"
+          [ngModel]="typed()"
+          (ngModelChange)="typed.set($event)"
+          [attr.aria-label]="'Saisissez ' + word + ' pour confirmer'"
+        />
+      </label>
+    }
+
+    <div modal-actions>
+      <immopro-button variant="ghost" (onClick)="answer(false)">
+        {{ ask.cancelLabel || 'Annuler' }}
+      </immopro-button>
+      <immopro-button
+        variant="solid"
+        [color]="ask.danger ? 'error' : 'primary'"
+        [disabled]="!canConfirm()"
+        (onClick)="answer(true)"
+      >
+        {{ ask.confirmLabel || 'Confirmer' }}
+      </immopro-button>
+    </div>
+  </immopro-modal>
+}

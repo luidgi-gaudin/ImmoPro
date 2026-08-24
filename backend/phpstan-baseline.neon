@@ -25,18 +25,6 @@ parameters:
 			path: app/Http/Controllers/Auth/PasswordResetController.php
 
 		-
-			message: '#^Cannot call method toDateString\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/LeaseController.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between ''actif''\|''en_attente''\|''termine'' and App\\Enums\\LeaseStatus\:\:Termine will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Http/Controllers/LeaseController.php
-
-		-
 			message: '#^Cannot call method copy\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -53,18 +41,6 @@ parameters:
 			identifier: method.nonObject
 			count: 2
 			path: app/Http/Controllers/RentPaymentController.php
-
-		-
-			message: '#^Cannot call method isSameMonth\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/ReportController.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>monthly_rent" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Controllers/ReportController.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
@@ -95,24 +71,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: app/Http/Resources/UserResource.php
-
-		-
-			message: '#^Cannot call method depositCapInMonths\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Lease.php
-
-		-
-			message: '#^Cannot call method lte\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/Lease.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between ''actif''\|''en_attente''\|''termine'' and App\\Enums\\LeaseStatus\:\:Actif will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Models/Lease.php
 
 		-
 			message: '#^Cannot access property \$daysInMonth on string\.$#'
@@ -147,23 +105,11 @@ parameters:
 		-
 			message: '#^Cannot call method copy\(\) on string\.$#'
 			identifier: method.nonObject
-			count: 3
-			path: app/Services/Alerts/AlertScanner.php
-
-		-
-			message: '#^Cannot call method format\(\) on string\.$#'
-			identifier: method.nonObject
 			count: 2
 			path: app/Services/Alerts/AlertScanner.php
 
 		-
-			message: '#^Cannot call method lt\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Services/Alerts/AlertScanner.php
-
-		-
-			message: '#^Cannot call method lte\(\) on string\.$#'
+			message: '#^Cannot call method format\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: app/Services/Alerts/AlertScanner.php
@@ -171,7 +117,7 @@ parameters:
 		-
 			message: '#^Cannot call method toDateString\(\) on string\.$#'
 			identifier: method.nonObject
-			count: 3
+			count: 2
 			path: app/Services/Alerts/AlertScanner.php
 
 		-

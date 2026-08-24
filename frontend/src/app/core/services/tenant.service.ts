@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { apiUrl } from '../config/api.config';
 import { Observable } from 'rxjs';
 import {
   ListParams,
@@ -40,7 +41,7 @@ export type { PaginatedResponse };
 })
 export class TenantService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://127.0.0.1:8000/api/tenants';
+  private apiUrl = apiUrl('tenants');
 
   getTenants(params: Partial<ListParams> = {}): Observable<PaginatedResponse<Tenant>> {
     return this.http.get<PaginatedResponse<Tenant>>(this.apiUrl, {

@@ -1,0 +1,38 @@
+.confirm__message {
+  margin: 0 0 0.25rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.confirm__field {
+  display: block;
+  margin-top: 1rem;
+
+  span {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+  }
+
+  strong {
+    color: var(--text-primary);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+}
+
+.confirm__input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  font: inherit;
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+}

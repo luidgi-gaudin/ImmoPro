@@ -1,0 +1,121 @@
+/*
+ * `<dialog>` natif : le voile vient de ::backdrop, pas d'un div superposé, et
+ * le navigateur gère seul l'empilement au-dessus du reste de la page.
+ */
+.ip-modal {
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: min(560px, calc(100vw - 2rem));
+  width: 100%;
+  max-height: calc(100dvh - 3rem);
+  color: var(--text-primary);
+
+  &.wide {
+    max-width: min(860px, calc(100vw - 2rem));
+  }
+
+  &.full {
+    max-width: min(1200px, calc(100vw - 2rem));
+    height: calc(100dvh - 4rem);
+  }
+
+  &::backdrop {
+    /* Le voile s'assombrit sans virer au gris sale sur l'ivoire du thème clair. */
+    background: rgba(var(--shadow-rgb), 0.55);
+    backdrop-filter: blur(3px);
+  }
+}
+
+.ip-modal__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+  height: 100%;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 60px rgba(var(--shadow-rgb), 0.35);
+  overflow: hidden;
+}
+
+.ip-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem 0.75rem;
+
+  h2 {
+    font-size: 1.25rem;
+    margin: 0;
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+}
+
+.ip-modal__titles {
+  min-width: 0;
+}
+
+.ip-modal__close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: var(--overlay-strong);
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
+}
+
+.ip-modal__body {
+  padding: 0.5rem 1.5rem 1.25rem;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+.ip-modal__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0 1.5rem 1.25rem;
+  flex-wrap: wrap;
+
+  /* Sans contenu projeté, la barre d'actions ne doit pas laisser d'espace. */
+  &:empty {
+    display: none;
+  }
+}
+
+/* Ouverture discrète, neutralisée pour qui préfère moins d'animation. */
+@media (prefers-reduced-motion: no-preference) {
+  .ip-modal[open] .ip-modal__panel {
+    animation: ip-modal-in var(--transition-smooth);
+  }
+}
+
+@keyframes ip-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -21,3 +21,10 @@
 
 <!-- Décide seule de son affichage : mobile, pages vitrines, hors bandeau cookies. -->
 <app-sticky-cta />
+
+<!-- Hôtes globaux, montés une seule fois : messages transitoires, demandes de
+     confirmation et préavis d'expiration de session. Chacun ne rend quelque
+     chose que lorsqu'il a de quoi afficher. -->
+<app-toast-host />
+<app-confirm-dialog />
+<app-session-expiry />

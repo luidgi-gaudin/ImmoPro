@@ -24,7 +24,7 @@ class RentPaymentController extends Controller
             $query->withStatus($status, (int) ($lease->payment_day ?? 1));
         }
 
-        $payments = $query->paginate($this->perPage($request))->withQueryString();
+        $payments = $this->paginate($query, $request);
 
         // Le calcul du statut relit le bail sur chaque ligne : on lui fournit
         // celui déjà chargé, sinon c'est une requête par échéance affichée.

@@ -29,7 +29,9 @@ svg[icon] {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: border-color var(--transition-fast), transform var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
 
   &:hover {
     border-color: var(--border-hover);
@@ -143,7 +145,12 @@ svg[icon] {
 .skeleton-card {
   height: 108px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(90deg, var(--surface-card) 25%, var(--border) 50%, var(--surface-card) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--surface-card) 25%,
+    var(--border) 50%,
+    var(--surface-card) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }
@@ -169,4 +176,16 @@ svg[icon] {
     flex-wrap: wrap;
     margin-top: 4px;
   }
+}
+
+/*
+ * Alerte atteinte depuis la recherche globale (`/alerts?alert=42`).
+ *
+ * Le liseré ne remplace pas la couleur de gravité, qui reste à gauche : il
+ * s'ajoute autour de la carte, pour dire « c'est celle-ci » sans effacer
+ * « voici son degré d'urgence ».
+ */
+.alert-card.is-highlighted {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
 }

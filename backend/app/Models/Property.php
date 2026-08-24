@@ -6,15 +6,17 @@ use App\Enums\Dpe;
 use App\Enums\LeaseStatus;
 use App\Enums\PropertyType;
 use App\Models\Concerns\Filterable;
+use App\Models\Concerns\RlsProtected;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Property extends Model
 {
-    use Filterable, HasFactory;
+    use Filterable, HasFactory, RlsProtected;
 
     /** @return list<string> */
     protected function searchable(): array
@@ -107,5 +109,15 @@ class Property extends Model
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
         ];
+    }
+
+    /**
+     * Pièces jointes rattachées à cet élément.
+     *
+     * @return MorphMany<Document, $this>
+     */
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
     }
 }

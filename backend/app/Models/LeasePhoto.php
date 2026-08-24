@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\RlsProtected;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
 class LeasePhoto extends Model
 {
+    use RlsProtected;
+
     protected $fillable = [
         'lease_id',
         'type',

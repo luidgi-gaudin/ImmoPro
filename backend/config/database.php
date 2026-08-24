@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
-use Pdo\Mysql;
+use PDO\Mysql;
 
 return [
 
@@ -95,9 +95,23 @@ return [
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
 
+            // `search_path` est volontairement absent.
+            //
+            // Dès qu'il est renseigné, le connecteur de Laravel envoie un
+            // `set search_path to ...` juste après l'ouverture de connexion.
+            // Sur une base locale, c'est invisible ; sur Supabase, c'est un
+            // aller-retour complet — mesuré à ~150 ms — payé sur *chaque*
+            // requête HTTP, y compris quand la connexion persistante est déjà
+            // ouverte. Et cet aller-retour n'apparaît dans aucun journal de
+            // requêtes, puisqu'il a lieu au niveau du connecteur.
+            //
+            // Le réglage est posé côté serveur, sur le rôle lui-même
+            // (`alter role ... set search_path`), ce que fait
+            // `php artisan immopro:rls-provision`. Le résultat est identique et
+            // ne coûte rien : PostgreSQL l'applique à l'ouverture de session.
+            //
             // Connexion persistante : le processus PHP réutilise la même
             // connexion d'une requête à l'autre, au lieu de refaire une
             // poignée de main TLS avec Supabase à chaque appel. Sur une base
@@ -111,6 +125,44 @@ return [
             'options' => array_filter([
                 PDO::ATTR_PERSISTENT => env('DB_PERSISTENT', false),
             ]),
+        ],
+
+        /*
+         * Même base, rôle privilégié.
+         *
+         * La connexion `pgsql` ci-dessus emprunte le rôle applicatif, soumis
+         * aux policies de Row Level Security : c'est ce qui rend l'isolation
+         * réelle plutôt que déclarative. Ce rôle ne peut donc, par
+         * construction, ni créer de table ni voir l'ensemble des bailleurs.
+         *
+         * Deux usages ont pourtant légitimement besoin des deux :
+         *
+         *   - les migrations, qui posent le schéma et les policies elles-mêmes ;
+         *   - le scan d'alertes, qui parcourt tous les bailleurs pour leur
+         *     compte à tous.
+         *
+         * D'où cette seconde connexion. Elle retombe sur les identifiants
+         * principaux quand aucun rôle applicatif n'a été mis en place, pour
+         * qu'une installation neuve fonctionne sans configuration
+         * supplémentaire.
+         */
+        'pgsql_admin' => [
+            'driver' => 'pgsql',
+            'url' => env('DB_ADMIN_URL', env('DB_URL')),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '5432'),
+            'database' => env('DB_DATABASE', 'laravel'),
+            'username' => env('DB_ADMIN_USERNAME', env('DB_USERNAME', 'root')),
+            'password' => env('DB_ADMIN_PASSWORD', env('DB_PASSWORD', '')),
+            'charset' => env('DB_CHARSET', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'sslmode' => env('DB_SSLMODE', 'prefer'),
+
+            // Pas de connexion persistante ici : cette connexion sert à des
+            // commandes ponctuelles, jamais au cycle des requêtes HTTP. La
+            // garder ouverte immobiliserait une place du pooler pour rien.
+            'options' => [],
         ],
 
         'sqlsrv' => [

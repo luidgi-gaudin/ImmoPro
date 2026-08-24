@@ -9,6 +9,8 @@ import {
 } from 'ui-lib';
 import { TenantService, Tenant } from '../../core/services/tenant.service';
 import { LeaseService, Lease } from '../../core/services/lease.service';
+import { DocumentsPanelComponent } from '../../shared/components/documents-panel/documents-panel.component';
+import { maskBankIdentifier } from '../../core/format/bank-identifier';
 
 @Component({
   selector: 'app-tenant-detail',
@@ -20,6 +22,7 @@ import { LeaseService, Lease } from '../../core/services/lease.service';
     ImmoproAvatarComponent,
     ImmoproBadgeComponent,
     ImmoproEmptyStateComponent,
+    DocumentsPanelComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -61,17 +64,26 @@ import { LeaseService, Lease } from '../../core/services/lease.service';
             <span class="label text-muted">Pays</span>
             <strong class="value">{{ t.country || '-' }}</strong>
           </div>
+          <!-- Coordonnées bancaires masquées par défaut.
+               Elles sont chiffrées au repos en base, mais restaient affichées en
+               clair à l'écran — donc lisibles par-dessus l'épaule, et capturées
+               par le moindre partage d'écran. Les révéler reste à un clic. -->
           <div class="detail-item">
             <span class="label text-muted">IBAN</span>
-            <strong class="value"
-              ><code>{{ t.iban || '-' }}</code></strong
-            >
+            <strong class="value">
+              <code>{{ bankVisible() ? t.iban || '-' : mask(t.iban) }}</code>
+            </strong>
           </div>
           <div class="detail-item">
             <span class="label text-muted">BIC</span>
-            <strong class="value"
-              ><code>{{ t.bic || '-' }}</code></strong
-            >
+            <strong class="value">
+              <code>{{ bankVisible() ? t.bic || '-' : mask(t.bic) }}</code>
+            </strong>
+            @if (t.iban || t.bic) {
+              <button type="button" class="reveal" (click)="bankVisible.set(!bankVisible())">
+                {{ bankVisible() ? 'Masquer' : 'Afficher les coordonnées' }}
+              </button>
+            }
           </div>
         </div>
       </immopro-card>
@@ -108,7 +120,7 @@ import { LeaseService, Lease } from '../../core/services/lease.service';
                   <immopro-badge [tone]="leaseTone(lease.statut)">{{ lease.statut }}</immopro-badge>
                 </div>
                 <div class="lease-card-meta">
-                  <span>Bien #{{ lease.property_id }}</span>
+                  <span>{{ lease.property?.title || 'Bien #' + lease.property_id }}</span>
                   <span
                     >{{ lease.start_date | date: 'dd/MM/yyyy' }}
                     @if (lease.end_date) {
@@ -121,6 +133,15 @@ import { LeaseService, Lease } from '../../core/services/lease.service';
             }
           </div>
         }
+      </div>
+
+      <!-- Pièce d'identité, justificatifs de revenus, acte de cautionnement. -->
+      <div class="documents-section">
+        <app-documents-panel
+          type="tenant"
+          [entityId]="t.id"
+          [entityLabel]="t.first_name + ' ' + t.last_name"
+        />
       </div>
     } @else {
       <immopro-empty-state
@@ -150,6 +171,24 @@ import { LeaseService, Lease } from '../../core/services/lease.service';
     `
       .tenant-detail-actions {
         margin-bottom: 16px;
+      }
+      .documents-section {
+        margin-top: 24px;
+      }
+      .reveal {
+        align-self: flex-start;
+        margin-top: 6px;
+        padding: 0;
+        border: none;
+        background: none;
+        color: var(--primary);
+        font: inherit;
+        font-size: 0.78rem;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
       .tenant-header {
         display: flex;
@@ -231,6 +270,13 @@ import { LeaseService, Lease } from '../../core/services/lease.service';
   ],
 })
 export class TenantDetailComponent implements OnInit {
+  /** Les coordonnées bancaires ne s'affichent qu'à la demande. */
+  protected readonly bankVisible = signal(false);
+
+  protected mask(value: string | null | undefined): string {
+    return maskBankIdentifier(value);
+  }
+
   private route = inject(ActivatedRoute);
   private tenantService = inject(TenantService);
   private leaseService = inject(LeaseService);

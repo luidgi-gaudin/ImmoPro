@@ -4,16 +4,18 @@ namespace App\Models;
 
 use App\Enums\LeaseStatus;
 use App\Models\Concerns\Filterable;
+use App\Models\Concerns\RlsProtected;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tenant extends Model
 {
-    use Filterable, HasFactory, SoftDeletes;
+    use Filterable, HasFactory, RlsProtected, SoftDeletes;
 
     /** @return list<string> */
     protected function searchable(): array
@@ -87,5 +89,15 @@ class Tenant extends Model
             'iban' => 'encrypted',
             'bic' => 'encrypted',
         ];
+    }
+
+    /**
+     * Pièces jointes rattachées à cet élément.
+     *
+     * @return MorphMany<Document, $this>
+     */
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
     }
 }

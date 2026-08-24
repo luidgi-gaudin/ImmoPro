@@ -219,6 +219,30 @@ import { AlertService, AppAlert } from '../../core/services/alert.service';
               </div>
             </div>
 
+            <!-- Baux récents. Les libellés du bien et du locataire viennent du
+                 serveur : afficher « Bail #12 » ne renseignait personne. -->
+            <div class="surface panel">
+              <div class="panel-head">
+                <h3>Baux récents</h3>
+                <a routerLink="/leases" class="btn btn--ghost btn--sm">Voir</a>
+              </div>
+              <ul class="mini-list">
+                @for (lease of d.recentLeases; track lease.id) {
+                  <li>
+                    <div>
+                      <strong>{{ lease.property_title || 'Bien #' + lease.property_id }}</strong>
+                      <span class="text-muted">
+                        {{ lease.tenant_name || 'Sans locataire' }} ·
+                        {{ formatEur(lease.monthly_rent) }} / mois
+                      </span>
+                    </div>
+                  </li>
+                } @empty {
+                  <li class="mini-empty text-muted">Aucun bail pour le moment.</li>
+                }
+              </ul>
+            </div>
+
             <!-- Locataires récents -->
             <div class="surface panel">
               <div class="panel-head">
@@ -279,11 +303,10 @@ export class DashboardComponent implements OnInit {
       },
     });
 
-    // L'aperçu ne montre que les quatre alertes les plus urgentes : on demande
-    // une page de quatre, triée par gravité côté serveur, plutôt que de charger
-    // toutes les alertes pour n'en afficher qu'une poignée.
-    this.alerts.load({ per_page: 4, sort: 'severity', direction: 'asc' });
-    this.alerts.loadUnreadCount();
+    // Les alertes de l'aperçu et le compteur de non-lues arrivent dans la même
+    // réponse que le reste de l'écran : DashboardService les remet à
+    // AlertService. Cet écran lançait auparavant trois appels HTTP là où un
+    // seul rapporte déjà tout.
   }
 
   formatEur(amount: number): string {

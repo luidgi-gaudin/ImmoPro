@@ -1,0 +1,56 @@
+.documents-container {
+  padding: 0 0 3rem;
+}
+
+.doc-name {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.doc-file {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.doc-link {
+  color: var(--primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.row-action {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.6rem;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+  }
+
+  &--danger:hover {
+    color: var(--error);
+    border-color: var(--error);
+  }
+
+  & + & {
+    margin-left: 0.35rem;
+  }
+}

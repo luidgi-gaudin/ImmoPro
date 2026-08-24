@@ -1,0 +1,305 @@
+<section class="docs" [class.docs--dragging]="dragging()">
+  <header class="docs__head">
+    <button
+      type="button"
+      class="docs__toggle"
+      [class.docs__toggle--static]="!collapsible()"
+      (click)="collapsible() ? toggle() : null"
+      [attr.aria-expanded]="collapsible() ? expanded() : null"
+    >
+      @if (collapsible()) {
+        <svg
+          class="docs__chevron"
+          [class.docs__chevron--open]="expanded()"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          aria-hidden="true"
+        >
+          <path
+            d="M9 6l6 6-6 6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      }
+      <h3>Documents</h3>
+      @if (items().length) {
+        <span class="docs__count">{{ items().length }}</span>
+      }
+      @if (attention()) {
+        <immopro-badge tone="warning">{{ attention() }} à renouveler</immopro-badge>
+      }
+    </button>
+
+    <label class="docs__add">
+      <input
+        type="file"
+        class="docs__file-input"
+        (change)="onFileChosen($event)"
+        [accept]="'application/pdf,image/*,.doc,.docx,.xls,.xlsx'"
+      />
+      <span>Ajouter</span>
+    </label>
+  </header>
+
+  @if (expanded()) {
+    <div
+      class="docs__dropzone"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+    >
+      @if (loading()) {
+        <div class="docs__list">
+          @for (row of skeletons; track row) {
+            <immopro-skeleton height="56px" />
+          }
+        </div>
+      } @else if (items().length === 0) {
+        <immopro-empty-state
+          variant="dashed"
+          title="Aucun document"
+          [message]="
+            'Glissez un fichier ici, ou utilisez « Ajouter ». PDF, images et documents bureautiques, jusqu\'à ' +
+            maxSizeLabel() +
+            '.'
+          "
+        />
+      } @else {
+        <ul class="docs__list">
+          @for (item of items(); track item.id) {
+            <li class="doc" [class.doc--expired]="item.is_expired">
+              <span class="doc__icon" aria-hidden="true">
+                @if (isImage(item)) {
+                  <svg viewBox="0 0 24 24" width="20" height="20">
+                    <rect
+                      x="3"
+                      y="4"
+                      width="18"
+                      height="16"
+                      rx="2"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    />
+                    <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" />
+                    <path
+                      d="M4 17l5-5 4 4 3-2 4 4"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                } @else {
+                  <svg viewBox="0 0 24 24" width="20" height="20">
+                    <path
+                      d="M14 3v5h5M6 3h8l5 5v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                }
+              </span>
+
+              <div class="doc__main">
+                <p class="doc__name">{{ item.name }}</p>
+                <p class="doc__meta">
+                  <span>{{ item.category_label }}</span>
+                  <span aria-hidden="true">•</span>
+                  <span>{{ item.size_label }}</span>
+                  @if (item.issued_on) {
+                    <span aria-hidden="true">•</span>
+                    <span>du {{ item.issued_on | date: 'dd/MM/yyyy' }}</span>
+                  }
+                </p>
+              </div>
+
+              @if (item.is_expired) {
+                <immopro-badge tone="danger"
+                  >Expiré le {{ item.expires_on | date: 'dd/MM/yyyy' }}</immopro-badge
+                >
+              } @else if (item.expires_soon) {
+                <immopro-badge tone="warning"
+                  >Expire le {{ item.expires_on | date: 'dd/MM/yyyy' }}</immopro-badge
+                >
+              }
+
+              <div class="doc__actions">
+                @if (item.preview_url) {
+                  <button
+                    type="button"
+                    class="doc__action"
+                    (click)="openPreview(item)"
+                    [attr.aria-label]="'Aperçu de ' + item.name"
+                    title="Aperçu"
+                  >
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                      <path
+                        d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="2.6"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                      />
+                    </svg>
+                  </button>
+                }
+                <button
+                  type="button"
+                  class="doc__action"
+                  (click)="download(item)"
+                  [attr.aria-label]="'Télécharger ' + item.name"
+                  title="Télécharger"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                    <path
+                      d="M12 4v11m0 0l-4-4m4 4l4-4M4 19h16"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="doc__action doc__action--danger"
+                  (click)="remove(item)"
+                  [attr.aria-label]="'Supprimer ' + item.name"
+                  title="Supprimer"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                    <path
+                      d="M5 7h14M10 11v6m4-6v6M6 7l1 12a1 1 0 001 1h8a1 1 0 001-1l1-12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</section>
+
+@if (uploadOpen()) {
+  <immopro-modal
+    title="Ajouter un document"
+    [subtitle]="entityLabel()"
+    [persistent]="uploading()"
+    (closed)="cancelUpload()"
+  >
+    <p class="upload__file">
+      <strong>{{ pendingFile()?.name }}</strong>
+    </p>
+
+    <label class="upload__field">
+      <span>Catégorie</span>
+      <select
+        class="upload__control"
+        [ngModel]="form().category"
+        (ngModelChange)="form.set({ ...form(), category: $event })"
+      >
+        @for (category of categories(); track category.value) {
+          <option [value]="category.value">{{ category.label }}</option>
+        }
+      </select>
+      @if (categories().length === 0) {
+        <small class="upload__hint">Chargement des catégories…</small>
+      }
+    </label>
+
+    <label class="upload__field">
+      <span>Libellé</span>
+      <input
+        type="text"
+        class="upload__control"
+        [ngModel]="form().name"
+        (ngModelChange)="form.set({ ...form(), name: $event })"
+      />
+    </label>
+
+    <label class="upload__field">
+      <span>Date du document</span>
+      <input
+        type="date"
+        class="upload__control"
+        [ngModel]="form().issued_on"
+        (ngModelChange)="form.set({ ...form(), issued_on: $event })"
+      />
+      <small class="upload__hint">
+        La fin de validité est calculée automatiquement lorsque la loi en fixe une — dix ans pour un
+        DPE, un an pour une attestation d'assurance.
+      </small>
+    </label>
+
+    <label class="upload__field">
+      <span>Note (facultatif)</span>
+      <textarea
+        rows="2"
+        class="upload__control"
+        [ngModel]="form().notes"
+        (ngModelChange)="form.set({ ...form(), notes: $event })"
+      ></textarea>
+    </label>
+
+    <div modal-actions>
+      <immopro-button variant="ghost" [disabled]="uploading()" (onClick)="cancelUpload()">
+        Annuler
+      </immopro-button>
+      <immopro-button
+        variant="solid"
+        [loading]="uploading()"
+        [disabled]="!form().category"
+        (onClick)="submitUpload()"
+      >
+        Déposer
+      </immopro-button>
+    </div>
+  </immopro-modal>
+}
+
+@if (preview(); as item) {
+  <immopro-modal
+    size="full"
+    [title]="item.name"
+    [subtitle]="item.category_label"
+    (closed)="closePreview()"
+  >
+    <div class="preview">
+      @if (isImage(item)) {
+        <img [src]="item.preview_url" [alt]="item.name" />
+      } @else {
+        <!-- Le document est servi par une URL signée à durée limitée : le cadre
+             ne peut donc pas être laissé ouvert indéfiniment, ce qui est le
+             comportement voulu pour une pièce confidentielle. -->
+        <iframe [src]="previewUrl()" [title]="item.name"></iframe>
+      }
+    </div>
+
+    <div modal-actions>
+      <immopro-button variant="outline" (onClick)="download(item)">Télécharger</immopro-button>
+    </div>
+  </immopro-modal>
+}

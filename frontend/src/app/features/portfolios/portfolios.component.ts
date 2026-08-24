@@ -6,6 +6,8 @@ import { EMPTY, catchError, switchMap, tap } from 'rxjs';
 import { PortfolioService, Portfolio } from '../../core/services/portfolio.service';
 import { PaginatedResponse } from '../../core/list/pagination.model';
 import { createListQuery } from '../../core/list/list-query';
+import { ConfirmService } from '../../core/services/confirm.service';
+import { NotificationService } from '../../core/services/notification.service';
 import {
   ImmoproCardComponent,
   ImmoproButtonComponent,
@@ -39,6 +41,8 @@ export class PortfoliosComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private portfolioService = inject(PortfolioService);
+  private confirm = inject(ConfirmService);
+  private notifications = inject(NotificationService);
 
   protected readonly list = createListQuery({ defaultSort: 'name', defaultDirection: 'asc' });
 
@@ -115,12 +119,27 @@ export class PortfoliosComponent {
     this.createModalOpen.set(true);
   }
 
-  deletePortfolio(portfolio: Portfolio, event: MouseEvent) {
+  async deletePortfolio(portfolio: Portfolio, event: MouseEvent) {
     event.stopPropagation();
-    const confirmed = window.confirm(
-      `Supprimer définitivement le portefeuille "${portfolio.name}" et tous ses actifs ?`,
-    );
-    if (!confirmed) return;
+
+    const count = portfolio.properties_count ?? 0;
+
+    const confirmed = await this.confirm.ask({
+      title: `Supprimer « ${portfolio.name} » ?`,
+      message:
+        count > 0
+          ? `Ce portefeuille contient ${count} bien${count > 1 ? 's' : ''}. Les supprimer emporte aussi leurs baux, leurs échéances et leurs quittances.`
+          : 'Ce portefeuille ne contient aucun bien. La suppression est sans effet sur le reste de votre parc.',
+      confirmLabel: 'Supprimer le portefeuille',
+      danger: true,
+      // Un portefeuille peuplé emporte trop de choses pour se supprimer d'un
+      // clic distrait : on demande de recopier son nom.
+      typeToConfirm: count > 0 ? portfolio.name : undefined,
+    });
+
+    if (!confirmed) {
+      return;
+    }
 
     const previousPortfolios = this.portfolios();
     this.portfolios.set(previousPortfolios.filter((p) => p.id !== portfolio.id));
@@ -129,9 +148,11 @@ export class PortfoliosComponent {
     this.portfolioService.deletePortfolio(portfolio.id).subscribe({
       next: () => {
         this.deletingId.set(null);
+        this.notifications.success(`« ${portfolio.name} » a été supprimé.`);
       },
-      error: () => {
+      error: (error: unknown) => {
         this.deletingId.set(null);
+        this.notifications.fromHttp(error, 'La suppression du portefeuille a échoué.');
         this.portfolios.set(previousPortfolios);
         this.error.set('Impossible de supprimer ce portefeuille');
       },

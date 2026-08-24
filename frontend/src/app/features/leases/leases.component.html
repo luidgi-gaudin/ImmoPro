@@ -75,10 +75,8 @@
             <span class="lease-id">Bail #{{ lease.id }}</span>
             <immopro-badge [tone]="leaseStatusTone(lease.statut)">{{ lease.statut }}</immopro-badge>
           </div>
-          <h3 class="property-title">{{ resolvePropertyLabel(lease.property_id) }}</h3>
-          <p class="tenant-name text-secondary">
-            Locataire : {{ resolveTenantLabel(lease.tenant_id) }}
-          </p>
+          <h3 class="property-title">{{ resolvePropertyLabel(lease) }}</h3>
+          <p class="tenant-name text-secondary">Locataire : {{ resolveTenantLabel(lease) }}</p>
           <div class="rent-info">
             <span class="label text-muted">Loyer HC :</span>
             <strong class="value text-gold">{{ lease.monthly_rent }} €</strong>
@@ -169,11 +167,11 @@
           <div class="lease-details-info-grid">
             <div class="info-item">
               <span class="label text-muted">Locataire</span>
-              <strong class="value">{{ resolveTenantLabel(leaseVal.tenant_id) }}</strong>
+              <strong class="value">{{ resolveTenantLabel(leaseVal) }}</strong>
             </div>
             <div class="info-item">
               <span class="label text-muted">Bien Immobilier</span>
-              <strong class="value">{{ resolvePropertyLabel(leaseVal.property_id) }}</strong>
+              <strong class="value">{{ resolvePropertyLabel(leaseVal) }}</strong>
             </div>
             <div class="info-item">
               <span class="label text-muted">Date de Début</span>
@@ -221,6 +219,16 @@
             </div>
           }
         </immopro-card>
+
+        <!-- Pièces du dossier : bail signé, état des lieux daté, attestation
+             d'assurance, acte de cautionnement. Le panneau se charge seul. -->
+        <div class="lease-documents" style="margin-top: 30px">
+          <app-documents-panel
+            type="lease"
+            [entityId]="leaseVal.id"
+            [entityLabel]="'Bail — ' + resolvePropertyLabel(leaseVal)"
+          />
+        </div>
 
         <!-- État des lieux (photos d'entrée / de sortie) -->
         <div class="inspection-section" style="margin-top: 30px">

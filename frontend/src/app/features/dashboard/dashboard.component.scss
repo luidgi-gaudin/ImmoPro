@@ -17,7 +17,12 @@ svg[icon] {
 .skeleton-kpi {
   height: 116px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(90deg, var(--surface-card) 25%, var(--border) 50%, var(--surface-card) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--surface-card) 25%,
+    var(--border) 50%,
+    var(--surface-card) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
 }

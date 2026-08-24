@@ -8,11 +8,11 @@ import { ImmoproAuthCardComponent, ImmoproInputComponent, ImmoproButtonComponent
   selector: 'app-forgot-password',
   standalone: true,
   imports: [
-    ReactiveFormsModule, 
-    RouterLink, 
-    ImmoproAuthCardComponent, 
-    ImmoproInputComponent, 
-    ImmoproButtonComponent
+    ReactiveFormsModule,
+    RouterLink,
+    ImmoproAuthCardComponent,
+    ImmoproInputComponent,
+    ImmoproButtonComponent,
   ],
   templateUrl: './forgot-password.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,7 +53,9 @@ export class ForgotPasswordComponent {
       },
       error: (error) => {
         this.loading.set(false);
-        this.error.set(error.error?.message || 'Une erreur est survenue lors de l\'envoi de l\'email');
+        this.error.set(
+          error.error?.message || "Une erreur est survenue lors de l'envoi de l'email",
+        );
       },
     });
   }

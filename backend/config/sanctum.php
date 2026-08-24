@@ -44,13 +44,16 @@ return [
     | Expiration Minutes
     |--------------------------------------------------------------------------
     |
-    | This value controls the number of minutes until an issued token will be
-    | considered expired. This will override any values set in the token's
-    | "expires_at" attribute, but first-party sessions are not affected.
+    | Durée de vie absolue d'un jeton, en minutes. Elle est pilotée depuis
+    | config/immopro.php, aux côtés du seuil d'inactivité : les deux plafonds
+    | forment une seule politique de session et se lisent ensemble.
+    |
+    | `null` rendrait les jetons éternels — un jeton dérobé resterait valable
+    | indéfiniment.
     |
     */
 
-    'expiration' => null,
+    'expiration' => (int) env('SESSION_TOKEN_TTL', 720),
 
     /*
     |--------------------------------------------------------------------------

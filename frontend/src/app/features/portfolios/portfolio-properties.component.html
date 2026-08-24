@@ -1,7 +1,9 @@
 <div class="section-header">
   <h2 class="luxury-title">Biens Immobiliers Associés</h2>
   <div class="section-actions">
-    <span class="badge-count">{{ ctx.properties().length }} actif(s)</span>
+    <span class="badge-count"
+      >{{ ctx.stats().total }} bien{{ ctx.stats().total > 1 ? 's' : '' }}</span
+    >
     <immopro-button (onClick)="addProperty()">+ Nouvel Actif</immopro-button>
   </div>
 </div>
@@ -184,7 +186,6 @@
             </div>
           </td>
         </tr>
-
       } @empty {
         <tr>
           <td colspan="8" class="ip-table-empty">

@@ -16,3 +16,4 @@ export * from './lib/components/immoproDpeBadge/immopro-dpe-badge.component';
 export * from './lib/components/immoproSelect/immopro-select.component';
 export * from './lib/components/immoproThemeToggle/immopro-theme-toggle.component';
 export * from './lib/services/theme.service';
+export * from './lib/components/immoproModal/immopro-modal.component';

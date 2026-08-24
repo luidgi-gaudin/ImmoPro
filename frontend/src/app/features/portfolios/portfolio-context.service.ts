@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import {
   CreatePropertyPayload,
   Portfolio,
@@ -8,8 +8,18 @@ import {
 
 /**
  * État partagé par le shell d'un portefeuille et ses sous-pages (Vue d'ensemble,
- * Actifs, détail d'un actif). Fourni au niveau du composant shell : une instance
- * fraîche est créée à chaque entrée dans /portfolios/:id et détruite en sortant.
+ * Actifs, détail d'un actif). Fourni au niveau du shell : une instance fraîche
+ * naît à chaque entrée dans /portfolios/:id et meurt en sortant.
+ *
+ * Le portefeuille n'est **jamais** chargé pour lui-même quand une sous-page le
+ * ramène déjà. La liste de ses biens, comme la fiche d'un bien, le rapportent
+ * avec ses compteurs — le serveur a dû le charger de toute façon pour vérifier
+ * le droit d'accès. Ces écrans appellent donc `adopt()`, et seuls ceux qui
+ * n'ont rien d'autre à demander appellent `ensureLoaded()`.
+ *
+ * C'est ce qui fait tenir l'écran des actifs en un seul appel HTTP là où il en
+ * demandait trois : la fiche du portefeuille, l'intégralité de ses biens pour
+ * en calculer les statistiques, puis la page à afficher.
  */
 @Injectable()
 export class PortfolioContextService {
@@ -17,132 +27,103 @@ export class PortfolioContextService {
 
   portfolioId = signal<number | null>(null);
   portfolio = signal<Portfolio | null>(null);
-  properties = computed(() => this.portfolio()?.properties ?? []);
 
   loading = signal(false);
-  propertiesLoading = signal(false);
   error = signal<string | null>(null);
   deletingId = signal<number | null>(null);
 
+  /**
+   * Compteurs calculés par la base, sur l'ensemble du portefeuille.
+   *
+   * Ils l'étaient auparavant en mémoire, à partir de la liste complète des
+   * biens : cela obligeait à tout rapatrier pour afficher trois chiffres, et le
+   * total devenait faux dès que le parc dépassait la taille d'une page.
+   */
   readonly stats = computed(() => {
-    const props = this.properties();
-    const rented = props.filter((p) => p.is_rented).length;
+    const portfolio = this.portfolio();
+
     return {
-      total: props.length,
-      rented,
-      available: props.length - rented,
-      monthlyRent: props.reduce((sum, p) => sum + (p.monthly_rent ?? 0), 0),
+      total: portfolio?.properties_count ?? 0,
+      rented: portfolio?.occupied_properties_count ?? 0,
+      available: portfolio?.vacant_properties_count ?? 0,
+      monthlyRent: portfolio?.expected_rent ?? 0,
     };
   });
 
-  load(id: number): void {
-    this.portfolioId.set(id);
-    this.portfolio.set(null);
-    this.error.set(null);
-    this.loading.set(true);
+  /** Prend en compte le portefeuille rapporté par une autre requête. */
+  adopt(portfolio: Portfolio | null | undefined): void {
+    if (!portfolio) {
+      return;
+    }
 
-    this.portfolioService.getPortfolio(id).subscribe({
-      next: (portfolio) => {
-        this.portfolio.set({ ...portfolio, properties: [], properties_count: 0 });
-        this.loading.set(false);
-        this.loadProperties(id);
-      },
-      error: () => {
-        this.error.set('Impossible de charger ce portfolio');
-        this.loading.set(false);
-      },
-    });
+    this.portfolio.set(portfolio);
+    this.portfolioId.set(portfolio.id);
+    this.loading.set(false);
   }
 
-  private loadProperties(id: number): void {
-    this.propertiesLoading.set(true);
-    // Le contexte a besoin de TOUS les biens du portefeuille : les statistiques
-    // (occupés, disponibles, loyer cumulé) portent sur l'ensemble, et la fiche
-    // détaillée d'un bien y cherche le sien par identifiant, quelle que soit la
-    // page où il se trouverait. La liste affichée à l'écran, elle, reste paginée
-    // et interroge le serveur de son côté.
-    this.portfolioService.getAllPortfolioProperties(id).subscribe({
-      next: (properties) => {
-        this.portfolio.update((current) =>
-          current ? { ...current, properties, properties_count: properties.length } : current,
-        );
-        this.propertiesLoading.set(false);
-      },
-      error: () => {
-        this.error.set('Impossible de charger la liste des actifs');
-        this.propertiesLoading.set(false);
-      },
-    });
-  }
-
-  reloadBackground(): void {
+  /** Charge le portefeuille seul, pour les écrans qui n'ont rien d'autre à demander. */
+  ensureLoaded(): void {
     const id = this.portfolioId();
-    if (!id) return;
 
-    this.portfolioService.getPortfolio(id).subscribe({
+    if (id === null || this.portfolio()?.id === id || this.loading()) {
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.portfolioService.getPortfolioSummary(id).subscribe({
       next: (portfolio) => {
-        // Le contexte a besoin de TOUS les biens du portefeuille : les statistiques
-        // (occupés, disponibles, loyer cumulé) portent sur l'ensemble, et la fiche
-        // détaillée d'un bien y cherche le sien par identifiant, quelle que soit la
-        // page où il se trouverait. La liste affichée à l'écran, elle, reste paginée
-        // et interroge le serveur de son côté.
-        this.portfolioService.getAllPortfolioProperties(id).subscribe({
-          next: (properties) => {
-            this.portfolio.set({ ...portfolio, properties, properties_count: properties.length });
-          },
-        });
+        this.portfolio.set(portfolio);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Impossible de charger ce portefeuille');
+        this.loading.set(false);
       },
     });
   }
 
-  findProperty(propertyId: number): Property | undefined {
-    return this.properties().find((p) => p.id === propertyId);
+  /** Recharge les compteurs après une création ou une suppression de bien. */
+  refreshStats(): void {
+    const id = this.portfolioId();
+
+    if (id === null) {
+      return;
+    }
+
+    this.portfolioService.getPortfolioSummary(id).subscribe({
+      next: (portfolio) => this.portfolio.set(portfolio),
+    });
+  }
+
+  setPortfolioId(id: number): void {
+    if (this.portfolioId() !== id) {
+      this.portfolio.set(null);
+    }
+
+    this.portfolioId.set(id);
   }
 
   createProperty(payload: CreatePropertyPayload) {
     const id = this.portfolioId();
-    if (!id) throw new Error('Aucun portfolio actif');
+    if (!id) throw new Error('Aucun portefeuille actif');
     return this.portfolioService.createProperty(id, payload);
   }
 
   updateProperty(propertyId: number, payload: CreatePropertyPayload) {
     const id = this.portfolioId();
-    if (!id) throw new Error('Aucun portfolio actif');
+    if (!id) throw new Error('Aucun portefeuille actif');
     return this.portfolioService.updateProperty(id, propertyId, payload);
   }
 
-  setProperties(properties: Property[]): void {
-    this.portfolio.update((current) =>
-      current ? { ...current, properties, properties_count: properties.length } : current,
-    );
-  }
-
-  deleteProperty(property: Property): void {
-    const currentPortfolio = this.portfolio();
+  deleteProperty(property: Property) {
     const id = this.portfolioId();
-    if (!currentPortfolio || !id) return;
+    if (!id) throw new Error('Aucun portefeuille actif');
 
-    const previousProperties = currentPortfolio.properties ?? [];
-    const updatedProperties = previousProperties.filter((p) => p.id !== property.id);
-
-    this.portfolio.set({
-      ...currentPortfolio,
-      properties: updatedProperties,
-      properties_count: updatedProperties.length,
-    });
     this.deletingId.set(property.id);
     this.error.set(null);
 
-    this.portfolioService.deleteProperty(id, property.id).subscribe({
-      next: () => {
-        this.deletingId.set(null);
-        this.reloadBackground();
-      },
-      error: () => {
-        this.deletingId.set(null);
-        this.portfolio.set(currentPortfolio);
-        this.error.set('Impossible de supprimer cet actif');
-      },
-    });
+    return this.portfolioService.deleteProperty(id, property.id);
   }
 }

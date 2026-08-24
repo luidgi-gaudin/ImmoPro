@@ -8,11 +8,11 @@ import { ImmoproAuthCardComponent, ImmoproInputComponent, ImmoproButtonComponent
   selector: 'app-reset-password',
   standalone: true,
   imports: [
-    ReactiveFormsModule, 
-    RouterLink, 
-    ImmoproAuthCardComponent, 
-    ImmoproInputComponent, 
-    ImmoproButtonComponent
+    ReactiveFormsModule,
+    RouterLink,
+    ImmoproAuthCardComponent,
+    ImmoproInputComponent,
+    ImmoproButtonComponent,
   ],
   templateUrl: './reset-password.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,32 +31,38 @@ export class ResetPasswordComponent implements OnInit {
   token = signal('');
 
   constructor() {
-    this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      password_confirmation: ['', [Validators.required]],
-    }, {
-      validators: this.passwordMatchValidator
-    });
+    this.form = this.fb.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(8)]],
+        password_confirmation: ['', [Validators.required]],
+      },
+      {
+        validators: this.passwordMatchValidator,
+      },
+    );
   }
 
   ngOnInit() {
     const tokenVal = this.route.snapshot.queryParamMap.get('token') || '';
     this.token.set(tokenVal);
-    
+
     const emailParam = this.route.snapshot.queryParamMap.get('email') || '';
     if (emailParam) {
       this.form.patchValue({ email: emailParam });
     }
 
     if (!tokenVal) {
-      this.error.set('Jeton de réinitialisation manquant. Veuillez utiliser le lien reçu par e-mail.');
+      this.error.set(
+        'Jeton de réinitialisation manquant. Veuillez utiliser le lien reçu par e-mail.',
+      );
     }
   }
 
   passwordMatchValidator(g: FormGroup) {
     return g.get('password')?.value === g.get('password_confirmation')?.value
-      ? null : { mismatch: true };
+      ? null
+      : { mismatch: true };
   }
 
   onSubmit() {
@@ -80,7 +86,9 @@ export class ResetPasswordComponent implements OnInit {
     this.authService.resetPassword(payload).subscribe({
       next: (res) => {
         this.loading.set(false);
-        this.successMessage.set(res.message || 'Votre mot de passe a été réinitialisé avec succès.');
+        this.successMessage.set(
+          res.message || 'Votre mot de passe a été réinitialisé avec succès.',
+        );
         this.submitted.set(false);
         setTimeout(() => {
           this.router.navigate(['/login']);
@@ -91,7 +99,9 @@ export class ResetPasswordComponent implements OnInit {
         if (error.error?.errors) {
           this.error.set(Object.values(error.error.errors).flat().join(', '));
         } else {
-          this.error.set(error.error?.message || 'Erreur lors de la réinitialisation de votre mot de passe');
+          this.error.set(
+            error.error?.message || 'Erreur lors de la réinitialisation de votre mot de passe',
+          );
         }
       },
     });

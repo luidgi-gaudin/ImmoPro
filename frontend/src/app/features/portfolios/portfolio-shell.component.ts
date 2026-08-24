@@ -72,14 +72,25 @@ export class PortfolioShellComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Le shell enregistre le portefeuille courant, mais ne le charge pas.
+   *
+   * Il le faisait, et c'était un appel HTTP de trop : la sous-page affichée
+   * ramène déjà le portefeuille et ses compteurs dans sa propre réponse — le
+   * serveur a dû le charger de toute façon pour vérifier le droit d'accès. Les
+   * écrans qui n'ont rien d'autre à demander (la vue d'ensemble) appellent
+   * `ensureLoaded()` de leur côté.
+   */
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       const id = Number(params.get('id'));
+
       if (!id) {
-        this.ctx.error.set('Portfolio introuvable');
+        this.ctx.error.set('Portefeuille introuvable');
         return;
       }
-      this.ctx.load(id);
+
+      this.ctx.setPortfolioId(id);
     });
   }
 

@@ -14,8 +14,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Notre modèle n'écrit `last_used_at` que toutes les cinq minutes, au
-        // lieu d'une écriture distante à chaque requête authentifiée.
+        // Notre modèle résout le jeton, son porteur et l'identité RLS en une
+        // seule requête, et n'écrit `last_used_at` que toutes les cinq minutes.
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
         Password::defaults(fn () => Password::min(8)->letters()->numbers());

@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { apiUrl } from '../config/api.config';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
@@ -30,7 +31,7 @@ export interface GlobalSearchResponse {
 })
 export class GlobalSearchService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://127.0.0.1:8000/api/search';
+  private apiUrl = apiUrl('search');
 
   readonly isOpen = signal(false);
 

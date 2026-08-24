@@ -7,6 +7,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { EMPTY, catchError, forkJoin, switchMap, tap } from 'rxjs';
@@ -34,6 +35,9 @@ import {
 } from '../../core/services/lease.service';
 import { PortfolioService } from '../../core/services/portfolio.service';
 import { TenantService } from '../../core/services/tenant.service';
+import { ConfirmService } from '../../core/services/confirm.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { DocumentsPanelComponent } from '../../shared/components/documents-panel/documents-panel.component';
 import { PaginatedResponse } from '../../core/list/pagination.model';
 import { createListQuery } from '../../core/list/list-query';
 
@@ -58,6 +62,7 @@ interface Option {
     ImmoproSelectComponent,
     ImmoproFilterBarComponent,
     ImmoproPaginationComponent,
+    DocumentsPanelComponent,
     DatePipe,
   ],
   templateUrl: './leases.component.html',
@@ -69,6 +74,15 @@ export class LeasesComponent implements OnInit {
   private leaseService = inject(LeaseService);
   private tenantService = inject(TenantService);
   private portfolioService = inject(PortfolioService);
+  private confirm = inject(ConfirmService);
+  private notifications = inject(NotificationService);
+  private route = inject(ActivatedRoute);
+
+  /**
+   * Les listes déroulantes du formulaire ne sont chargées qu'à la première
+   * ouverture d'une modale, et une seule fois par visite.
+   */
+  private supportDataLoaded = false;
 
   /** Recherche, filtres et page de la liste des baux, mémorisés dans l'URL. */
   protected readonly list = createListQuery({
@@ -278,7 +292,41 @@ export class LeasesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadSupportData();
+    // Les listes déroulantes du formulaire ne servent qu'aux modales de
+    // création et d'édition. Les charger ici imposait deux appels HTTP, plus un
+    // par portefeuille, à *toute* ouverture de l'écran — y compris pour un
+    // utilisateur venu simplement consulter ses baux.
+
+    this.openLeaseFromUrl();
+  }
+
+  /**
+   * Ouvre directement le bail désigné par `?lease=`.
+   *
+   * La recherche globale renvoyait auparavant vers `/leases?search=Dupont`, ce
+   * qui n'ouvrait rien : il fallait retrouver la bonne ligne parmi les
+   * homonymes. Le bail est maintenant désigné par son identifiant, et le
+   * dossier s'ouvre à l'arrivée.
+   *
+   * Le bail visé n'est pas forcément dans la première page de la liste : on le
+   * demande donc directement, plutôt que de le chercher dans ce qui est déjà
+   * chargé.
+   */
+  private openLeaseFromUrl(): void {
+    const raw = this.route.snapshot.queryParamMap.get('lease');
+    const id = raw !== null && /^\d+$/.test(raw) ? Number(raw) : null;
+
+    if (id === null) {
+      return;
+    }
+
+    this.leaseService.getLease(id).subscribe({
+      next: (lease) => {
+        this.selectedLease.set(lease);
+        this.paymentsList.setPage(1);
+      },
+      error: () => this.notifications.error("Ce bail n'existe plus ou ne vous appartient pas."),
+    });
   }
 
   adjustFormForType(type: string) {
@@ -310,6 +358,14 @@ export class LeasesComponent implements OnInit {
    * au-delà du dixième.
    */
   loadSupportData() {
+    // Une seule fois par visite : ces listes ne changent pas entre deux
+    // ouvertures de la modale, et les recharger ferait clignoter les menus.
+    if (this.supportDataLoaded) {
+      return;
+    }
+
+    this.supportDataLoaded = true;
+
     forkJoin({
       portfolios: this.portfolioService.getAllPortfolios(),
       tenants: this.tenantService.getAllTenants(),
@@ -341,12 +397,15 @@ export class LeasesComponent implements OnInit {
             );
           },
           error: () => {
-            this.error.set('Impossible de charger la liste des biens');
+            this.supportDataLoaded = false;
+            this.notifications.error('Impossible de charger la liste des biens.');
           },
         });
       },
       error: () => {
-        this.error.set('Impossible de charger les données de formulaire');
+        // Une erreur ici doit pouvoir être retentée à la réouverture.
+        this.supportDataLoaded = false;
+        this.notifications.error('Impossible de charger la liste des biens et des locataires.');
       },
     });
   }
@@ -393,10 +452,19 @@ export class LeasesComponent implements OnInit {
     input.value = '';
   }
 
-  deletePhoto(photo: LeasePhoto): void {
+  async deletePhoto(photo: LeasePhoto): Promise<void> {
     const selected = this.selectedLease();
     if (!selected) return;
-    const confirmed = window.confirm('Supprimer cette photo ?');
+
+    const confirmed = await this.confirm.ask({
+      title: 'Supprimer cette photo ?',
+      message:
+        "Les photos de l'état des lieux font foi en cas de litige sur le dépôt de garantie. " +
+        'Cette suppression est définitive.',
+      confirmLabel: 'Supprimer',
+      danger: true,
+    });
+
     if (!confirmed) return;
 
     this.leaseService.deleteLeasePhoto(selected.id, photo.id).subscribe({
@@ -423,9 +491,20 @@ export class LeasesComponent implements OnInit {
     this.openLeaseModal(lease);
   }
 
-  deleteLease(lease: Lease) {
-    const confirmed = window.confirm(`Supprimer définitivement le bail #${lease.id} ?`);
-    if (!confirmed) return;
+  async deleteLease(lease: Lease) {
+    const confirmed = await this.confirm.ask({
+      title: 'Supprimer ce bail ?',
+      message:
+        `Le bail de ${this.resolveTenantLabel(lease)} sur ${this.resolvePropertyLabel(lease)} ` +
+        'sera supprimé, avec ses échéances et ses quittances. La suppression est réversible en base, ' +
+        'mais le bail disparaîtra de la gestion courante.',
+      confirmLabel: 'Supprimer le bail',
+      danger: true,
+    });
+
+    if (!confirmed) {
+      return;
+    }
 
     const previousLeases = this.leases();
     // Optimistic delete
@@ -440,16 +519,20 @@ export class LeasesComponent implements OnInit {
       next: () => {
         this.deletingId.set(null);
         this.list.refresh();
+        this.notifications.success('Bail supprimé.');
       },
-      error: () => {
+      error: (error) => {
         this.deletingId.set(null);
         this.leases.set(previousLeases); // rollback
-        this.error.set('Erreur lors de la suppression du bail');
+        this.notifications.fromHttp(error, 'La suppression du bail a échoué.');
       },
     });
   }
 
   openLeaseModal(lease: Lease | null = null) {
+    // Les menus déroulants sont nécessaires à partir d'ici, et pas avant.
+    this.loadSupportData();
+
     this.error.set(null);
     this.submitted.set(false);
     this.editingLease.set(lease);
@@ -712,8 +795,8 @@ export class LeasesComponent implements OnInit {
       next: (res) => {
         this.saving.set(false);
         this.revisionModalOpen.set(false);
-        alert(
-          `Le loyer a été révisé avec succès. Nouveau loyer : ${res.new_rent} € (ancien : ${res.old_rent} €)`,
+        this.notifications.success(
+          `Loyer révisé : ${res.new_rent} € par mois (auparavant ${res.old_rent} €).`,
         );
         this.list.refresh();
       },
@@ -898,10 +981,17 @@ export class LeasesComponent implements OnInit {
     }
   }
 
-  deletePayment(payment: RentPayment) {
+  async deletePayment(payment: RentPayment) {
     const leaseVal = this.selectedLease();
     if (!leaseVal) return;
-    const confirmed = window.confirm(`Supprimer cette échéance de loyer pour ${payment.period} ?`);
+
+    const confirmed = await this.confirm.ask({
+      title: 'Supprimer cette échéance ?',
+      message: `L'échéance de ${payment.period} sera retirée du suivi. Si une quittance a été remise au locataire, elle restera valable.`,
+      confirmLabel: "Supprimer l'échéance",
+      danger: true,
+    });
+
     if (!confirmed) return;
 
     const previousPayments = this.payments();
@@ -914,10 +1004,10 @@ export class LeasesComponent implements OnInit {
         this.deletingId.set(null);
         this.paymentsList.refresh();
       },
-      error: () => {
+      error: (error: unknown) => {
         this.deletingId.set(null);
         this.payments.set(previousPayments); // rollback
-        alert('Impossible de supprimer cette échéance.');
+        this.notifications.fromHttp(error, 'Impossible de supprimer cette échéance.');
       },
     });
   }
@@ -931,8 +1021,8 @@ export class LeasesComponent implements OnInit {
         this.quittanceDetails.set(res);
         this.quittanceModalOpen.set(true);
       },
-      error: (err) => {
-        alert(err.error?.message || 'Erreur lors du chargement de la quittance.');
+      error: (err: unknown) => {
+        this.notifications.fromHttp(err, 'Impossible de charger la quittance.');
       },
     });
   }
@@ -946,16 +1036,39 @@ export class LeasesComponent implements OnInit {
     window.print();
   }
 
-  resolvePropertyLabel(propertyId: number): string {
+  /**
+   * Libellé du bien, lu sur le bail lui-même.
+   *
+   * L'API joint désormais le bien et le locataire à chaque bail. Avant, cet
+   * écran devait charger l'intégralité du patrimoine pour afficher un nom :
+   * tous les portefeuilles, tous les locataires, puis les biens de chaque
+   * portefeuille — sept appels HTTP sur un parc de cinq portefeuilles, tous
+   * effectués avant le premier affichage.
+   *
+   * Le repli sur la liste chargée pour le formulaire couvre le cas d'un bail
+   * créé à l'instant, pas encore rechargé depuis le serveur.
+   */
+  resolvePropertyLabel(lease: Lease): string {
+    if (lease.property) {
+      return lease.property.city
+        ? `${lease.property.title} — ${lease.property.city}`
+        : lease.property.title;
+    }
+
     return (
-      this.properties().find((property) => property.id === propertyId)?.label ||
-      `Bien #${propertyId}`
+      this.properties().find((property) => property.id === lease.property_id)?.label ||
+      `Bien #${lease.property_id}`
     );
   }
 
-  resolveTenantLabel(tenantId: number): string {
+  resolveTenantLabel(lease: Lease): string {
+    if (lease.tenant) {
+      return `${lease.tenant.first_name} ${lease.tenant.last_name}`.trim();
+    }
+
     return (
-      this.tenants().find((tenant) => tenant.id === tenantId)?.label || `Locataire #${tenantId}`
+      this.tenants().find((tenant) => tenant.id === lease.tenant_id)?.label ||
+      `Locataire #${lease.tenant_id}`
     );
   }
 

@@ -2,20 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\LeaseStatus;
 use App\Http\Requests\TenantRequest;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 
 class TenantController extends Controller
 {
+    /**
+     * Annuaire des locataires, en une seule requête SQL.
+     *
+     * `withCount` et `paginateInOnePass` sont deux sous-requêtes corrélées et
+     * une fonction de fenêtrage : elles voyagent dans la requête des lignes au
+     * lieu d'en ajouter deux.
+     */
     public function index(Request $request)
     {
-        return auth()->user()->tenants()
-            ->filtered($request)
-            ->paginate($this->perPage($request))
-            // Sans cela, les liens de pagination perdent la recherche et les
-            // filtres, et la page 2 réaffiche la liste complète.
-            ->withQueryString();
+        $query = auth()->user()->tenants()
+            // Permet d'afficher « en cours de location » sans recharger les
+            // baux côté client, ce qui demandait un appel HTTP de plus.
+            ->withCount(['leases as active_leases_count' => fn ($query) => $query->where('statut', LeaseStatus::Actif->value)])
+            ->withCount('documents')
+            ->filtered($request);
+
+        return $this->paginate($query, $request);
     }
 
     public function store(TenantRequest $request)
