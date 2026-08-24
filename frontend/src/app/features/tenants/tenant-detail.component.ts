@@ -26,149 +26,156 @@ import { maskBankIdentifier } from '../../core/format/bank-identifier';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="tenant-detail-actions">
-      <a routerLink="/tenants" class="btn btn--ghost btn--sm">← Retour aux locataires</a>
-    </div>
-
-    @if (loading()) {
-      <div class="surface" style="text-align: center; padding: 40px;">
-        <p class="text-secondary">Chargement du locataire...</p>
+    <div class="detail-tenant-global">
+      <div class="tenant-detail-actions">
+        <a routerLink="/tenants" class="btn btn--ghost btn--sm">← Retour aux locataires</a>
       </div>
-    } @else if (tenant(); as t) {
-      <immopro-card>
-        <div card-header class="tenant-header">
-          <immopro-avatar
-            size="lg"
-            [initials]="t.first_name.charAt(0) + t.last_name.charAt(0)"
-          ></immopro-avatar>
-          <div>
-            <h2 class="luxury-title" style="margin: 0; font-size: 1.6rem;">
-              {{ t.first_name }} {{ t.last_name }}
-            </h2>
-            <p class="text-secondary" style="margin-top: 4px;">
-              {{ t.email || 'Aucun email renseigné' }}
-            </p>
-          </div>
-        </div>
 
-        <div class="detail-grid">
-          <div class="detail-item">
-            <span class="label text-muted">Téléphone</span>
-            <strong class="value">{{ t.phone || '-' }}</strong>
+      @if (loading()) {
+        <div class="surface" style="text-align: center; padding: 40px;">
+          <p class="text-secondary">Chargement du locataire...</p>
+        </div>
+      } @else if (tenant(); as t) {
+        <immopro-card>
+          <div card-header class="tenant-header">
+            <immopro-avatar
+              size="lg"
+              [initials]="t.first_name.charAt(0) + t.last_name.charAt(0)"
+            ></immopro-avatar>
+            <div>
+              <h2 class="luxury-title" style="margin: 0; font-size: 1.6rem;">
+                {{ t.first_name }} {{ t.last_name }}
+              </h2>
+              <p class="text-secondary" style="margin-top: 4px;">
+                {{ t.email || 'Aucun email renseigné' }}
+              </p>
+            </div>
           </div>
-          <div class="detail-item">
-            <span class="label text-muted">Adresse</span>
-            <strong class="value">{{ t.address || '-' }}</strong>
-          </div>
-          <div class="detail-item">
-            <span class="label text-muted">Pays</span>
-            <strong class="value">{{ t.country || '-' }}</strong>
-          </div>
-          <!-- Coordonnées bancaires masquées par défaut.
+
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="label text-muted">Téléphone</span>
+              <strong class="value">{{ t.phone || '-' }}</strong>
+            </div>
+            <div class="detail-item">
+              <span class="label text-muted">Adresse</span>
+              <strong class="value">{{ t.address || '-' }}</strong>
+            </div>
+            <div class="detail-item">
+              <span class="label text-muted">Pays</span>
+              <strong class="value">{{ t.country || '-' }}</strong>
+            </div>
+            <!-- Coordonnées bancaires masquées par défaut.
                Elles sont chiffrées au repos en base, mais restaient affichées en
                clair à l'écran — donc lisibles par-dessus l'épaule, et capturées
                par le moindre partage d'écran. Les révéler reste à un clic. -->
-          <div class="detail-item">
-            <span class="label text-muted">IBAN</span>
-            <strong class="value">
-              <code>{{ bankVisible() ? t.iban || '-' : mask(t.iban) }}</code>
-            </strong>
+            <div class="detail-item">
+              <span class="label text-muted">IBAN</span>
+              <strong class="value">
+                <code>{{ bankVisible() ? t.iban || '-' : mask(t.iban) }}</code>
+              </strong>
+            </div>
+            <div class="detail-item">
+              <span class="label text-muted">BIC</span>
+              <strong class="value">
+                <code>{{ bankVisible() ? t.bic || '-' : mask(t.bic) }}</code>
+              </strong>
+              @if (t.iban || t.bic) {
+                <button type="button" class="reveal" (click)="bankVisible.set(!bankVisible())">
+                  {{ bankVisible() ? 'Masquer' : 'Afficher les coordonnées' }}
+                </button>
+              }
+            </div>
           </div>
-          <div class="detail-item">
-            <span class="label text-muted">BIC</span>
-            <strong class="value">
-              <code>{{ bankVisible() ? t.bic || '-' : mask(t.bic) }}</code>
-            </strong>
-            @if (t.iban || t.bic) {
-              <button type="button" class="reveal" (click)="bankVisible.set(!bankVisible())">
-                {{ bankVisible() ? 'Masquer' : 'Afficher les coordonnées' }}
-              </button>
-            }
-          </div>
+        </immopro-card>
+
+        <div class="leases-section">
+          <h3 class="luxury-title" style="font-size: 1.25rem;">Baux associés</h3>
+
+          @if (leasesLoading()) {
+            <p class="text-secondary">Chargement des baux...</p>
+          } @else if (tenantLeases().length === 0) {
+            <immopro-empty-state message="Aucun bail n'est associé à ce locataire pour le moment.">
+              <svg
+                icon
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+            </immopro-empty-state>
+          } @else {
+            <div class="lease-cards">
+              @for (lease of tenantLeases(); track lease.id) {
+                <a routerLink="/leases" class="lease-card">
+                  <div class="lease-card-top">
+                    <span class="lease-id">Bail #{{ lease.id }}</span>
+                    <immopro-badge [tone]="leaseTone(lease.statut)">{{
+                      lease.statut
+                    }}</immopro-badge>
+                  </div>
+                  <div class="lease-card-meta">
+                    <span>{{ lease.property?.title || 'Bien #' + lease.property_id }}</span>
+                    <span
+                      >{{ lease.start_date | date: 'dd/MM/yyyy' }}
+                      @if (lease.end_date) {
+                        → {{ lease.end_date | date: 'dd/MM/yyyy' }}
+                      }
+                    </span>
+                  </div>
+                  <strong class="lease-rent">{{ lease.monthly_rent }} € / mois</strong>
+                </a>
+              }
+            </div>
+          }
         </div>
-      </immopro-card>
 
-      <div class="leases-section">
-        <h3 class="luxury-title" style="font-size: 1.25rem;">Baux associés</h3>
-
-        @if (leasesLoading()) {
-          <p class="text-secondary">Chargement des baux...</p>
-        } @else if (tenantLeases().length === 0) {
-          <immopro-empty-state message="Aucun bail n'est associé à ce locataire pour le moment.">
-            <svg
-              icon
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg>
-          </immopro-empty-state>
-        } @else {
-          <div class="lease-cards">
-            @for (lease of tenantLeases(); track lease.id) {
-              <a routerLink="/leases" class="lease-card">
-                <div class="lease-card-top">
-                  <span class="lease-id">Bail #{{ lease.id }}</span>
-                  <immopro-badge [tone]="leaseTone(lease.statut)">{{ lease.statut }}</immopro-badge>
-                </div>
-                <div class="lease-card-meta">
-                  <span>{{ lease.property?.title || 'Bien #' + lease.property_id }}</span>
-                  <span
-                    >{{ lease.start_date | date: 'dd/MM/yyyy' }}
-                    @if (lease.end_date) {
-                      → {{ lease.end_date | date: 'dd/MM/yyyy' }}
-                    }
-                  </span>
-                </div>
-                <strong class="lease-rent">{{ lease.monthly_rent }} € / mois</strong>
-              </a>
-            }
-          </div>
-        }
-      </div>
-
-      <!-- Pièce d'identité, justificatifs de revenus, acte de cautionnement. -->
-      <div class="documents-section">
-        <app-documents-panel
-          type="tenant"
-          [entityId]="t.id"
-          [entityLabel]="t.first_name + ' ' + t.last_name"
-        />
-      </div>
-    } @else {
-      <immopro-empty-state
-        title="Locataire introuvable"
-        message="Ce locataire n'existe plus ou a été supprimé."
-      >
-        <svg
-          icon
-          xmlns="http://www.w3.org/2000/svg"
-          width="34"
-          height="34"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+        <!-- Pièce d'identité, justificatifs de revenus, acte de cautionnement. -->
+        <div class="documents-section">
+          <app-documents-panel
+            type="tenant"
+            [entityId]="t.id"
+            [entityLabel]="t.first_name + ' ' + t.last_name"
+          />
+        </div>
+      } @else {
+        <immopro-empty-state
+          title="Locataire introuvable"
+          message="Ce locataire n'existe plus ou a été supprimé."
         >
-          <circle cx="12" cy="12" r="9" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-      </immopro-empty-state>
-    }
+          <svg
+            icon
+            xmlns="http://www.w3.org/2000/svg"
+            width="34"
+            height="34"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </immopro-empty-state>
+      }
+    </div>
   `,
   styles: [
     `
+      .detail-tenant-global {
+        padding: 1.5rem;
+      }
       .tenant-detail-actions {
         margin-bottom: 16px;
       }

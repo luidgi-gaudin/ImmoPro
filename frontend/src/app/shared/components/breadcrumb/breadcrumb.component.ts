@@ -44,7 +44,7 @@ import { BreadcrumbService } from '../../../core/seo/breadcrumb.service';
   `,
   styles: `
     .ip-breadcrumb {
-      margin-bottom: 18px;
+      padding: 1.5rem;
       font-size: 0.82rem;
       line-height: 1.4;
     }

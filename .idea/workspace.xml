@@ -8,129 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling.">
-      <change afterPath="$PROJECT_DIR$/backend/app/Console/Commands/ProvisionRlsRole.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Enums/DocumentCategory.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/DocumentController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Middleware/MeasureQueryBudget.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Requests/DocumentRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Resources/DocumentResource.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Resources/LeaseResource.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Http/Resources/SessionResource.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Models/Concerns/RlsProtected.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Models/Document.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Policies/DocumentPolicy.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Queries/DashboardQuery.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Queries/GlobalSearchQuery.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Queries/ReportQuery.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Support/Database/JsonAggregate.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Support/Database/SinglePassPaginator.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/app/Support/Rls.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/config/immopro.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/database/factories/DocumentFactory.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/database/migrations/2026_08_24_100000_add_missing_foreign_key_indexes.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/database/migrations/2026_08_24_100100_create_documents_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/database/migrations/2026_08_24_100200_enable_row_level_security.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/tests/Feature/Auth/SessionExpirationTest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/tests/Feature/DocumentControllerTest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/tests/Feature/QueryBudgetTest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/tests/Feature/ReportControllerTest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproModal/immopro-modal.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproModal/immopro-modal.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproModal/immopro-modal.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/config/api.config.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/format/bank-identifier.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/confirm.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/document.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/notification.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/core/services/session.service.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/confirm-dialog/confirm-dialog.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/confirm-dialog/confirm-dialog.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/confirm-dialog/confirm-dialog.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/documents-panel/documents-panel.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/documents-panel/documents-panel.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/documents-panel/documents-panel.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/session-expiry/session-expiry.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/session-expiry/session-expiry.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/session-expiry/session-expiry.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/toast-host/toast-host.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/toast-host/toast-host.component.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/toast-host/toast-host.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Console/Commands/ScanAlerts.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Console/Commands/ScanAlerts.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/AlertController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/AlertController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/AuthController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/AuthController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/TwoFactorController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/TwoFactorController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/DashboardController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/DashboardController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/GlobalSearchController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/GlobalSearchController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/PortfolioController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/PortfolioController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/PropertyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/PropertyController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/RentPaymentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/RentPaymentController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/ReportController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/ReportController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/TenantController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/TenantController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Alert.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Alert.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Lease.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Lease.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/LeasePhoto.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/LeasePhoto.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/PersonalAccessToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/PersonalAccessToken.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Portfolio.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Portfolio.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Property.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Property.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/RentPayment.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/RentPayment.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Tenant.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Tenant.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Policies/LeasePolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Policies/LeasePolicy.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Providers/AppServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/bootstrap/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/bootstrap/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/config/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/database.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/config/filesystems.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/filesystems.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/config/sanctum.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/sanctum.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/phpstan-baseline.neon" beforeDir="false" afterPath="$PROJECT_DIR$/backend/phpstan-baseline.neon" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/public-api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/public-api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.routes.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/interceptors/auth.interceptor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/interceptors/auth.interceptor.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/alert.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/alert.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/auth.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/dashboard.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/dashboard.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/global-search.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/global-search.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/lease.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/lease.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/portfolio.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/portfolio.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/report.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/report.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/tenant.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/tenant.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/alerts/alerts.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/alerts/alerts.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/alerts/alerts.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/alerts/alerts.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/login/forgot-password.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/forgot-password.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/login/forgot-password.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/forgot-password.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/login/reset-password.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/reset-password.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/login/reset-password.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/reset-password.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/register/register.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/register/register.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/register/register.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/register/register.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-context.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-context.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-overview.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-overview.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-property-detail.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-property-detail.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-shell.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-shell.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-shell.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-shell.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolios.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolios.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolios.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolios.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/reports/reports.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/reports/reports.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenant-detail.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenant-detail.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/sidebar/sidebar.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/sidebar/sidebar.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/breadcrumb/breadcrumb.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/breadcrumb/breadcrumb.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,7 +42,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="192" />
+    <option name="cachedIndexableFilesCount" value="8963" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -184,12 +67,12 @@
     &quot;assignee&quot;: &quot;luidgi-gaudin&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/luidgi-gaudin/ImmoPro.git&quot;,
-    &quot;accountId&quot;: &quot;ab3f5b9c-bd9e-44d1-bbf4-2bb54e30b5fa&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/luidgi-gaudin/ImmoPro.git",
+    "accountId": "5ead342a-d1a2-47be-81b2-e8a3e4a80a5a"
   }
-}</component>
+}]]></component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -208,61 +91,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0015672756109513" />
-      <entry key="MS500" value="1.4780739739727484" />
-      <entry key="S2" value="3.3556969044575378" />
-      <entry key="S5" value="8.152669082503115" />
-      <entry key="S10" value="12.899926596679485" />
-      <entry key="S30" value="18.435337351248887" />
-      <entry key="S60" value="20.600688583304795" />
-      <entry key="M2" value="22.05451848274996" />
-      <entry key="M5" value="23.143488259886322" />
-      <entry key="M10" value="23.556604224265445" />
-      <entry key="M15" value="23.70228035196085" />
-      <entry key="M30" value="24.03698873640905" />
-      <entry key="H1" value="26.092233502557086" />
-      <entry key="H2" value="31.323053342104213" />
-      <entry key="H4" value="37.546002655509675" />
-      <entry key="D1" value="46.57474770684402" />
-      <entry key="W1" value="48.63823835043319" />
+      <entry key="MS100" value="1.0084599445049032" />
+      <entry key="MS500" value="1.5080511351579005" />
+      <entry key="S2" value="2.5432415210228134" />
+      <entry key="S5" value="3.8703561790756384" />
+      <entry key="S10" value="5.289152149202435" />
+      <entry key="S30" value="8.579372735134278" />
+      <entry key="S60" value="11.222463199691514" />
+      <entry key="M2" value="15.016809798935382" />
+      <entry key="M5" value="25.614894435421586" />
+      <entry key="M10" value="35.08781988047334" />
+      <entry key="M15" value="39.6659496540987" />
+      <entry key="M30" value="45.38063266097512" />
+      <entry key="H1" value="50.39991968749588" />
+      <entry key="H2" value="57.165697988642776" />
+      <entry key="H4" value="64.29353111825287" />
+      <entry key="D1" value="74.3245900569712" />
+      <entry key="W1" value="76.6011537115884" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="0.0" />
-      <entry key="S60" value="0.0" />
-      <entry key="M2" value="0.0" />
-      <entry key="M5" value="0.0" />
-      <entry key="M10" value="0.0" />
-      <entry key="M15" value="0.0" />
-      <entry key="M30" value="0.0" />
-      <entry key="H1" value="0.0" />
-      <entry key="H2" value="0.0" />
-      <entry key="H4" value="0.0" />
-      <entry key="D1" value="0.0" />
-      <entry key="W1" value="0.0" />
+      <entry key="MS100" value="1.5814073595190088E-11" />
+      <entry key="MS500" value="0.006915263785777697" />
+      <entry key="S2" value="0.2883714012650057" />
+      <entry key="S5" value="0.6081082216200308" />
+      <entry key="S10" value="0.7798129401467685" />
+      <entry key="S30" value="0.9205745138288248" />
+      <entry key="S60" value="0.9817733472198197" />
+      <entry key="M2" value="1.276435674047654" />
+      <entry key="M5" value="2.4025441683351354" />
+      <entry key="M10" value="3.370608960873677" />
+      <entry key="M15" value="3.8225451066684943" />
+      <entry key="M30" value="4.3602202941662735" />
+      <entry key="H1" value="4.666208360607588" />
+      <entry key="H2" value="4.829475244211874" />
+      <entry key="H4" value="4.913810458313574" />
+      <entry key="D1" value="4.985504576302948" />
+      <entry key="W1" value="4.997926006496631" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.26759071823013286" />
-      <entry key="MS500" value="1.2408928613783512" />
-      <entry key="S2" value="3.2839893021337176" />
-      <entry key="S5" value="8.116220350510364" />
-      <entry key="S10" value="12.878268939442513" />
-      <entry key="S30" value="18.42339798686147" />
-      <entry key="S60" value="20.589963841097973" />
-      <entry key="M2" value="22.046283767511188" />
-      <entry key="M5" value="23.13906697342943" />
-      <entry key="M10" value="23.554153059116434" />
-      <entry key="M15" value="23.70058807900426" />
-      <entry key="M30" value="24.036108518485698" />
-      <entry key="H1" value="26.09176482203629" />
-      <entry key="H2" value="31.322789244208174" />
-      <entry key="H4" value="37.545853333709275" />
-      <entry key="D1" value="46.57471865947947" />
-      <entry key="W1" value="48.638234064997135" />
+      <entry key="MS100" value="0.00978597762485422" />
+      <entry key="MS500" value="0.5313081160321338" />
+      <entry key="S2" value="1.9712809872664774" />
+      <entry key="S5" value="3.7985657669080104" />
+      <entry key="S10" value="5.5538768215655026" />
+      <entry key="S30" value="9.208400668234923" />
+      <entry key="S60" value="12.014327272587895" />
+      <entry key="M2" value="16.172204384789875" />
+      <entry key="M5" value="27.94901955701645" />
+      <entry key="M10" value="38.41681930426169" />
+      <entry key="M15" value="43.45851885634712" />
+      <entry key="M30" value="49.72454629878714" />
+      <entry key="H1" value="55.05758394808433" />
+      <entry key="H2" value="61.99077533312804" />
+      <entry key="H4" value="69.2051002729379" />
+      <entry key="D1" value="79.30971326646262" />
+      <entry key="W1" value="81.59902500829403" />
     </decayedShown>
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/opt/homebrew/Cellar/php/8.5.9/bin/php">
@@ -408,7 +291,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.laravel_idea.move_run_console_settings": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "feat/update",
     "ignore.virus.scanning.warn.message": "true",
@@ -432,7 +317,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\prettier",
+    "prettierjs.PrettierConfiguration.Package": "/Users/luidgigaudin/PhpstormProjects/ImmoPro/frontend/node_modules/prettier",
     "settings.editor.selected.configurable": "reference.webide.settings.project.settings.php",
     "to.speed.mode.migration.done": "true",
     "ts.external.directory.path": "/Users/luidgigaudin/PhpstormProjects/ImmoPro/frontend/node_modules/typescript/lib",
@@ -476,7 +361,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-WS-261.23567.141" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-PS-262.9437.196" />
+        <option value="bundled-php-predefined-a98d8de5180a-9522f28f0b20-com.jetbrains.php.sharedIndexes-PS-262.9437.196" />
       </set>
     </attachedChunks>
   </component>
@@ -499,6 +385,7 @@
       <workItem from="1774943601459" duration="6331000" />
       <workItem from="1775545582346" duration="1294000" />
       <workItem from="1780298277271" duration="741000" />
+      <workItem from="1787581865889" duration="557000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -572,7 +459,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773757443825</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling.">
+      <option name="closed" value="true" />
+      <created>1787570915634</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1787570915634</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
