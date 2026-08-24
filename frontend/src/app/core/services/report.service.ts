@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { apiUrl } from '../config/api.config';
 import { Observable } from 'rxjs';
 
 export interface BailleurReport {
@@ -7,6 +8,8 @@ export interface BailleurReport {
   total_properties: number;
   occupied_properties: number;
   vacant_properties: number;
+  total_tenants: number;
+  total_leases: number;
   active_leases: number;
   monthly_rent_expected: number;
   this_month: {
@@ -22,9 +25,14 @@ export interface BailleurReport {
 export interface PropertyReportRow {
   id: number;
   title: string;
+  city: string | null;
+  portfolio_id: number | null;
   portfolio_name: string | null;
   is_rented: boolean;
   monthly_rent: number;
+  /** Bail actif du bien, pour ouvrir le dossier directement depuis le rapport. */
+  lease_id: number | null;
+  tenant_id: number | null;
   tenant_name: string | null;
 }
 
@@ -46,7 +54,7 @@ export interface ReportOverview {
 @Injectable({ providedIn: 'root' })
 export class ReportService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://127.0.0.1:8000/api/reports';
+  private apiUrl = apiUrl('reports');
 
   getOverview(): Observable<ReportOverview> {
     return this.http.get<ReportOverview>(`${this.apiUrl}/overview`);

@@ -1,0 +1,75 @@
+<div class="toast-host" aria-live="polite" aria-atomic="false">
+  @for (item of notifications.items(); track item.id) {
+    <div class="toast" [class]="'toast--' + item.tone" role="status">
+      <span class="toast__icon" aria-hidden="true">
+        @switch (item.tone) {
+          @case ('success') {
+            <svg viewBox="0 0 24 24" width="18" height="18">
+              <path
+                d="M5 13l4 4L19 7"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          }
+          @case ('error') {
+            <svg viewBox="0 0 24 24" width="18" height="18">
+              <path
+                d="M12 8v5m0 3.5h.01M10.3 3.9L2.4 17.4A2 2 0 004.1 20.4h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          }
+          @default {
+            <svg viewBox="0 0 24 24" width="18" height="18">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+              <path
+                d="M12 11v5m0-8.5h.01"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          }
+        }
+      </span>
+
+      <p class="toast__message">{{ item.message }}</p>
+
+      @if (item.action; as action) {
+        <button
+          type="button"
+          class="toast__action"
+          (click)="action.run(); notifications.dismiss(item.id)"
+        >
+          {{ action.label }}
+        </button>
+      }
+
+      <button
+        type="button"
+        class="toast__close"
+        (click)="notifications.dismiss(item.id)"
+        aria-label="Masquer ce message"
+      >
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+          <path
+            d="M6 6l12 12M18 6L6 18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
+    </div>
+  }
+</div>

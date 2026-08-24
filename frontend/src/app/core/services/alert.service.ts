@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { apiUrl } from '../config/api.config';
 import { Observable, tap } from 'rxjs';
 import { ListParams, PaginatedResponse, toHttpParams } from '../list/pagination.model';
 
@@ -30,7 +31,7 @@ export interface AppAlert {
 @Injectable({ providedIn: 'root' })
 export class AlertService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://127.0.0.1:8000/api/alerts';
+  private apiUrl = apiUrl('alerts');
 
   private readonly _alerts = signal<AppAlert[]>([]);
   readonly alerts = this._alerts.asReadonly();
@@ -52,15 +53,49 @@ export class AlertService {
    * pastille indiquerait « 3 » alors que dix alertes attendent. On demande donc
    * une page d'un seul élément et on ne lit que le total.
    */
+  /** Vrai dès que le compteur a été obtenu au moins une fois. */
+  private unreadCountKnown = false;
+
   loadUnreadCount(): void {
     this.http
       .get<PaginatedResponse<AppAlert>>(this.apiUrl, {
         params: toHttpParams({ per_page: 1, filters: { unread: '1' } }),
       })
       .subscribe({
-        next: (response) => this._unreadCount.set(response.total),
+        next: (response) => {
+          this._unreadCount.set(response.total);
+          this.unreadCountKnown = true;
+        },
         error: () => this._unreadCount.set(0),
       });
+  }
+
+  /**
+   * Reprend les alertes déjà reçues dans une autre réponse.
+   *
+   * `/api/dashboard` renvoie l'aperçu des alertes et le compteur de non-lues
+   * en même temps que le reste de l'écran. Les redemander serait payer deux
+   * allers-retours pour des données déjà en mémoire.
+   */
+  adopt(items: AppAlert[], unreadCount: number): void {
+    this._alerts.set(items);
+    this._unreadCount.set(unreadCount);
+    this.unreadCountKnown = true;
+  }
+
+  /**
+   * Reprend le compteur transmis par la réponse d'authentification.
+   *
+   * C'est ce qui permet à la pastille d'être juste dès le premier écran, quel
+   * qu'il soit, sans un appel HTTP dédié.
+   */
+  adoptUnreadCount(count: number | undefined): void {
+    if (typeof count !== 'number') {
+      return;
+    }
+
+    this._unreadCount.set(count);
+    this.unreadCountKnown = true;
   }
 
   /** Charge une page d'alertes selon les critères courants. */

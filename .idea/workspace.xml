@@ -7,19 +7,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: add Tenant model, controller, request, and migration">
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling.">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.routes.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/cookie-consent.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/cookie-consent.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/legal/legal-page.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/legal/legal-page.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/legal/privacy.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/legal/privacy.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/cookie-banner/cookie-banner.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/cookie-banner/cookie-banner.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/cookie-banner/cookie-banner.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/cookie-banner/cookie-banner.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenant-detail.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenant-detail.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/breadcrumb/breadcrumb.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/breadcrumb/breadcrumb.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +42,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="8906" />
+    <option name="cachedIndexableFilesCount" value="8963" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -73,12 +67,12 @@
     &quot;assignee&quot;: &quot;luidgi-gaudin&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/luidgi-gaudin/ImmoPro.git&quot;,
-    &quot;accountId&quot;: &quot;5ead342a-d1a2-47be-81b2-e8a3e4a80a5a&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/luidgi-gaudin/ImmoPro.git",
+    "accountId": "5ead342a-d1a2-47be-81b2-e8a3e4a80a5a"
   }
-}</component>
+}]]></component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -89,11 +83,70 @@
         <option name="allowedToolsNames" />
         <option name="enabled" value="false" />
         <option name="name" value="angular-cli" />
-        <option name="source" value="PLUGIN" />
+        <option name="source" value="USER" />
         <option name="userOverride" value="false" />
       </McpServerConfigurationProperties>
     </commands>
     <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0084599445049032" />
+      <entry key="MS500" value="1.5080511351579005" />
+      <entry key="S2" value="2.5432415210228134" />
+      <entry key="S5" value="3.8703561790756384" />
+      <entry key="S10" value="5.289152149202435" />
+      <entry key="S30" value="8.579372735134278" />
+      <entry key="S60" value="11.222463199691514" />
+      <entry key="M2" value="15.016809798935382" />
+      <entry key="M5" value="25.614894435421586" />
+      <entry key="M10" value="35.08781988047334" />
+      <entry key="M15" value="39.6659496540987" />
+      <entry key="M30" value="45.38063266097512" />
+      <entry key="H1" value="50.39991968749588" />
+      <entry key="H2" value="57.165697988642776" />
+      <entry key="H4" value="64.29353111825287" />
+      <entry key="D1" value="74.3245900569712" />
+      <entry key="W1" value="76.6011537115884" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="1.5814073595190088E-11" />
+      <entry key="MS500" value="0.006915263785777697" />
+      <entry key="S2" value="0.2883714012650057" />
+      <entry key="S5" value="0.6081082216200308" />
+      <entry key="S10" value="0.7798129401467685" />
+      <entry key="S30" value="0.9205745138288248" />
+      <entry key="S60" value="0.9817733472198197" />
+      <entry key="M2" value="1.276435674047654" />
+      <entry key="M5" value="2.4025441683351354" />
+      <entry key="M10" value="3.370608960873677" />
+      <entry key="M15" value="3.8225451066684943" />
+      <entry key="M30" value="4.3602202941662735" />
+      <entry key="H1" value="4.666208360607588" />
+      <entry key="H2" value="4.829475244211874" />
+      <entry key="H4" value="4.913810458313574" />
+      <entry key="D1" value="4.985504576302948" />
+      <entry key="W1" value="4.997926006496631" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.00978597762485422" />
+      <entry key="MS500" value="0.5313081160321338" />
+      <entry key="S2" value="1.9712809872664774" />
+      <entry key="S5" value="3.7985657669080104" />
+      <entry key="S10" value="5.5538768215655026" />
+      <entry key="S30" value="9.208400668234923" />
+      <entry key="S60" value="12.014327272587895" />
+      <entry key="M2" value="16.172204384789875" />
+      <entry key="M5" value="27.94901955701645" />
+      <entry key="M10" value="38.41681930426169" />
+      <entry key="M15" value="43.45851885634712" />
+      <entry key="M30" value="49.72454629878714" />
+      <entry key="H1" value="55.05758394808433" />
+      <entry key="H2" value="61.99077533312804" />
+      <entry key="H4" value="69.2051002729379" />
+      <entry key="D1" value="79.30971326646262" />
+      <entry key="W1" value="81.59902500829403" />
+    </decayedShown>
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/opt/homebrew/Cellar/php/8.5.9/bin/php">
     <include_path>
@@ -226,52 +279,51 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;HTTP Request.All in laravel.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.laravel | auth.register.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.laravel | auth.user.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;PHPUnit.AuthControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.laravel_idea.move_run_console_settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;update-confidentialitée&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.width&quot;: &quot;414&quot;,
-    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.x&quot;: &quot;646&quot;,
-    &quot;laravel_idea.dialogs.codeGeneration.window.createClass.y&quot;: &quot;309&quot;,
-    &quot;laravel_idea.dialogs.code_generation:createClass.width&quot;: &quot;414&quot;,
-    &quot;laravel_idea.dialogs.code_generation:createClass.x&quot;: &quot;646&quot;,
-    &quot;laravel_idea.dialogs.code_generation:createClass.y&quot;: &quot;340&quot;,
-    &quot;laravel_idea.dialogs.route_server_address_settings.width&quot;: &quot;575&quot;,
-    &quot;laravel_idea.dialogs.route_server_address_settings.x&quot;: &quot;2592&quot;,
-    &quot;laravel_idea.dialogs.route_server_address_settings.y&quot;: &quot;420&quot;,
-    &quot;laravel_idea.dialogs.stringEdit.Class suffix.width&quot;: &quot;314&quot;,
-    &quot;laravel_idea.dialogs.stringEdit.Class suffix.x&quot;: &quot;696&quot;,
-    &quot;laravel_idea.dialogs.stringEdit.Class suffix.y&quot;: &quot;349&quot;,
-    &quot;laravel_routing.server_address&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/luidg/PhpstormProjects/ImmoPro&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\prettier&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "HTTP Request.All in laravel.executor": "Run",
+    "HTTP Request.laravel | auth.register.executor": "Run",
+    "HTTP Request.laravel | auth.user.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "PHPUnit.AuthControllerTest.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.laravel_idea.move_run_console_settings": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "feat/update",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "laravel_idea.dialogs.codeGeneration.window.createClass.width": "414",
+    "laravel_idea.dialogs.codeGeneration.window.createClass.x": "646",
+    "laravel_idea.dialogs.codeGeneration.window.createClass.y": "309",
+    "laravel_idea.dialogs.code_generation:createClass.width": "414",
+    "laravel_idea.dialogs.code_generation:createClass.x": "646",
+    "laravel_idea.dialogs.code_generation:createClass.y": "340",
+    "laravel_idea.dialogs.route_server_address_settings.width": "575",
+    "laravel_idea.dialogs.route_server_address_settings.x": "2592",
+    "laravel_idea.dialogs.route_server_address_settings.y": "420",
+    "laravel_idea.dialogs.stringEdit.Class suffix.width": "314",
+    "laravel_idea.dialogs.stringEdit.Class suffix.x": "696",
+    "laravel_idea.dialogs.stringEdit.Class suffix.y": "349",
+    "laravel_routing.server_address": "true",
+    "last_opened_file_path": "C:/Users/luidg/PhpstormProjects/ImmoPro",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "/Users/luidgigaudin/PhpstormProjects/ImmoPro/frontend/node_modules/prettier",
+    "settings.editor.selected.configurable": "reference.webide.settings.project.settings.php",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "/Users/luidgigaudin/PhpstormProjects/ImmoPro/frontend/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecapSpentCounter">
     <option name="endsOfQuotaMs" value="1775044817654" />
     <option name="spentUsd" value="0.02275165" />
@@ -299,18 +351,18 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="HTTP Request.All in laravel" />
         <item itemvalue="HTTP Request.laravel | auth.user" />
         <item itemvalue="HTTP Request.laravel | auth.register" />
-        <item itemvalue="HTTP Request.All in laravel" />
-        <item itemvalue="HTTP Request.All in laravel" />
+        <item itemvalue="PHPUnit.AuthControllerTest" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-34e2839f716b-intellij.indexing.shared.core-IU-262.9437.185" />
-        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.9437.185" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-PS-262.9437.196" />
+        <option value="bundled-php-predefined-a98d8de5180a-9522f28f0b20-com.jetbrains.php.sharedIndexes-PS-262.9437.196" />
       </set>
     </attachedChunks>
   </component>
@@ -333,10 +385,7 @@
       <workItem from="1774943601459" duration="6331000" />
       <workItem from="1775545582346" duration="1294000" />
       <workItem from="1780298277271" duration="741000" />
-      <workItem from="1786721450191" duration="5094000" />
-      <workItem from="1786747038120" duration="4222000" />
-      <workItem from="1786754446124" duration="2733000" />
-      <workItem from="1786877730675" duration="983000" />
+      <workItem from="1787581865889" duration="557000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -410,7 +459,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773757443825</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling.">
+      <option name="closed" value="true" />
+      <created>1787570915634</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1787570915634</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -425,7 +482,9 @@
     <MESSAGE value="feat: implement authentication with login and registration components" />
     <MESSAGE value="chore: remove authentication functionality and related components" />
     <MESSAGE value="feat: update authentication to use API tokens and improve response structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: update authentication to use API tokens and improve response structure" />
+    <MESSAGE value="fix: escape email address in privacy component for HTML compliance" />
+    <MESSAGE value="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

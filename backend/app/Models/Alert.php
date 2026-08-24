@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Alert extends Model
 {
-    use Concerns\Filterable, HasFactory;
+    use Concerns\Filterable, Concerns\RlsProtected, HasFactory;
 
     /** @return list<string> */
     protected function searchable(): array

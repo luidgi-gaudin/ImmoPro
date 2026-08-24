@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RentPaymentStatus;
 use App\Models\Concerns\Filterable;
+use App\Models\Concerns\RlsProtected;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RentPayment extends Model
 {
-    use Filterable, HasFactory, SoftDeletes;
+    use Filterable, HasFactory, RlsProtected, SoftDeletes;
 
     /** @return list<string> */
     protected function sortable(): array

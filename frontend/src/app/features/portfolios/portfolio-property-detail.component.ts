@@ -1,13 +1,26 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ImmoproCardComponent, ImmoproBadgeComponent, ImmoproDpeBadgeComponent, ImmoproEmptyStateComponent } from 'ui-lib';
+import {
+  ImmoproCardComponent,
+  ImmoproBadgeComponent,
+  ImmoproDpeBadgeComponent,
+  ImmoproEmptyStateComponent,
+} from 'ui-lib';
 import { PortfolioService, Property } from '../../core/services/portfolio.service';
 import { PortfolioContextService } from './portfolio-context.service';
+import { DocumentsPanelComponent } from '../../shared/components/documents-panel/documents-panel.component';
 
 @Component({
   selector: 'app-portfolio-property-detail',
   standalone: true,
-  imports: [RouterLink, ImmoproCardComponent, ImmoproBadgeComponent, ImmoproDpeBadgeComponent, ImmoproEmptyStateComponent],
+  imports: [
+    RouterLink,
+    ImmoproCardComponent,
+    ImmoproBadgeComponent,
+    ImmoproDpeBadgeComponent,
+    ImmoproEmptyStateComponent,
+    DocumentsPanelComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (loading()) {
@@ -16,18 +29,26 @@ import { PortfolioContextService } from './portfolio-context.service';
       </div>
     } @else if (property(); as prop) {
       <div class="property-detail-actions">
-        <a [routerLink]="['/portfolios', ctx.portfolioId(), 'properties']" class="btn btn--ghost btn--sm">← Retour aux actifs</a>
+        <a
+          [routerLink]="['/portfolios', ctx.portfolioId(), 'properties']"
+          class="btn btn--ghost btn--sm"
+          >← Retour aux actifs</a
+        >
       </div>
 
       <immopro-card>
         <div card-header class="detail-header">
           <div>
             <h2 class="luxury-title" style="margin: 0; font-size: 1.7rem;">{{ prop.title }}</h2>
-            <p class="text-secondary" style="margin-top: 6px;">{{ prop.address }}, {{ prop.postal_code }} {{ prop.city }}</p>
+            <p class="text-secondary" style="margin-top: 6px;">
+              {{ prop.address }}, {{ prop.postal_code }} {{ prop.city }}
+            </p>
           </div>
           <div class="detail-header-badges">
             <immopro-dpe-badge [value]="prop.dpe"></immopro-dpe-badge>
-            <immopro-badge [tone]="prop.is_rented ? 'info' : 'success'">{{ prop.is_rented ? 'Loué' : 'Disponible' }}</immopro-badge>
+            <immopro-badge [tone]="prop.is_rented ? 'info' : 'success'">{{
+              prop.is_rented ? 'Loué' : 'Disponible'
+            }}</immopro-badge>
           </div>
         </div>
 
@@ -38,11 +59,13 @@ import { PortfolioContextService } from './portfolio-context.service';
           </div>
           <div class="detail-item">
             <span class="label text-muted">Loyer mensuel prévu</span>
-            <strong class="value text-gold">{{ prop.monthly_rent ? (prop.monthly_rent + ' €') : '-' }}</strong>
+            <strong class="value text-gold">{{
+              prop.monthly_rent ? prop.monthly_rent + ' €' : '-'
+            }}</strong>
           </div>
           <div class="detail-item">
             <span class="label text-muted">Surface habitable</span>
-            <strong class="value">{{ prop.area_sqm ? (prop.area_sqm + ' m²') : '-' }}</strong>
+            <strong class="value">{{ prop.area_sqm ? prop.area_sqm + ' m²' : '-' }}</strong>
           </div>
           <div class="detail-item">
             <span class="label text-muted">Nombre de pièces</span>
@@ -53,10 +76,18 @@ import { PortfolioContextService } from './portfolio-context.service';
         <div class="amenities-row">
           <span class="label text-muted">Équipements</span>
           <div class="amenities-badges">
-            @if (prop.has_balcony) { <immopro-badge tone="neutral">Balcon</immopro-badge> }
-            @if (prop.has_garden) { <immopro-badge tone="neutral">Jardin</immopro-badge> }
-            @if (prop.has_parking) { <immopro-badge tone="neutral">Parking</immopro-badge> }
-            @if (prop.has_cave) { <immopro-badge tone="neutral">Cave</immopro-badge> }
+            @if (prop.has_balcony) {
+              <immopro-badge tone="neutral">Balcon</immopro-badge>
+            }
+            @if (prop.has_garden) {
+              <immopro-badge tone="neutral">Jardin</immopro-badge>
+            }
+            @if (prop.has_parking) {
+              <immopro-badge tone="neutral">Parking</immopro-badge>
+            }
+            @if (prop.has_cave) {
+              <immopro-badge tone="neutral">Cave</immopro-badge>
+            }
             @if (!prop.has_balcony && !prop.has_garden && !prop.has_parking && !prop.has_cave) {
               <span class="text-muted">Aucun équipement renseigné</span>
             }
@@ -65,79 +96,111 @@ import { PortfolioContextService } from './portfolio-context.service';
 
         @if (prop.description) {
           <div card-footer>
-            <span class="label text-muted" style="display: block; margin-bottom: 6px;">Description</span>
+            <span class="label text-muted" style="display: block; margin-bottom: 6px;"
+              >Description</span
+            >
             <p class="text-secondary" style="margin: 0;">{{ prop.description }}</p>
           </div>
         }
       </immopro-card>
+
+      <!-- DPE, diagnostics techniques, règlement de copropriété, taxe foncière.
+           Le DPE porte une date de fin de validité : le panneau la signale
+           avant l'expiration, ce qui évite de louer sur un diagnostic périmé. -->
+      <div class="documents-section">
+        <app-documents-panel type="property" [entityId]="prop.id" [entityLabel]="prop.title" />
+      </div>
     } @else {
-      <immopro-empty-state title="Actif introuvable" message="Cet actif n'existe plus ou a été supprimé de ce portefeuille.">
-        <svg icon xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <immopro-empty-state
+        title="Actif introuvable"
+        message="Cet actif n'existe plus ou a été supprimé de ce portefeuille."
+      >
+        <svg
+          icon
+          xmlns="http://www.w3.org/2000/svg"
+          width="34"
+          height="34"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
       </immopro-empty-state>
     }
   `,
-  styles: [`
-    .property-detail-actions {
-      margin-bottom: 16px;
-    }
-    .detail-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .detail-header-badges {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin-bottom: 24px;
+  styles: [
+    `
+      .documents-section {
+        margin-top: 24px;
+      }
+      .property-detail-actions {
+        margin-bottom: 16px;
+      }
+      .detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .detail-header-badges {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 24px;
 
-      @media (max-width: 700px) {
-        grid-template-columns: 1fr 1fr;
+        @media (max-width: 700px) {
+          grid-template-columns: 1fr 1fr;
+        }
       }
-    }
-    .detail-item {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
 
-      .label {
-        font-size: 0.7rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
+        .label {
+          font-size: 0.7rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+        .value {
+          font-size: 0.95rem;
+          color: var(--text-primary);
+        }
       }
-      .value {
-        font-size: 0.95rem;
-        color: var(--text-primary);
+      .amenities-row {
+        .label {
+          font-size: 0.7rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          display: block;
+          margin-bottom: 8px;
+        }
       }
-    }
-    .amenities-row {
-      .label {
-        font-size: 0.7rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        display: block;
-        margin-bottom: 8px;
+      .amenities-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
       }
-    }
-    .amenities-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .capitalize {
-      text-transform: capitalize;
-    }
-  `],
+      .capitalize {
+        text-transform: capitalize;
+      }
+    `,
+  ],
 })
 export class PortfolioPropertyDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -148,7 +211,8 @@ export class PortfolioPropertyDetailComponent implements OnInit {
   protected property = signal<Property | undefined>(undefined);
 
   ngOnInit(): void {
-    const portfolioId = this.ctx.portfolioId() ?? Number(this.route.snapshot.parent?.paramMap.get('id'));
+    const portfolioId =
+      this.ctx.portfolioId() ?? Number(this.route.snapshot.parent?.paramMap.get('id'));
     const propertyId = Number(this.route.snapshot.paramMap.get('propertyId'));
 
     this.loading.set(true);
@@ -156,6 +220,10 @@ export class PortfolioPropertyDetailComponent implements OnInit {
       next: (property) => {
         this.property.set(property);
         this.loading.set(false);
+
+        // La réponse porte le portefeuille et ses compteurs : le bandeau parent
+        // n'a donc pas à les redemander dans un second appel.
+        this.ctx.adopt(property.portfolio);
       },
       error: () => {
         this.property.set(undefined);

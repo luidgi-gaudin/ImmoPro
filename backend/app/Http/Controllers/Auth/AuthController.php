@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\SessionResource;
 use App\Http\Resources\UserResource;
+use App\Models\Alert;
+use App\Models\PersonalAccessToken;
 use App\Models\User;
 use App\Services\TwoFactorAuthService;
 use Illuminate\Http\JsonResponse;
@@ -22,13 +25,7 @@ class AuthController extends Controller
             'password' => $request->validated('password'),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'data' => new UserResource($user),
-            'token' => $token,
-            'token_type' => 'Bearer',
-        ], 201);
+        return response()->json($this->issueToken($user), 201);
     }
 
     public function login(LoginRequest $request, TwoFactorAuthService $twoFactor): JsonResponse
@@ -47,13 +44,31 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        return response()->json($this->issueToken($user));
+    }
 
-        return response()->json([
+    /**
+     * Émet un jeton et annonce d'emblée quand la session se fermera.
+     *
+     * Communiquer l'échéance dès la connexion permet au front de programmer son
+     * préavis sans avoir à interroger l'API en boucle pour savoir où il en est.
+     *
+     * @return array<string, mixed>
+     */
+    public function issueToken(User $user): array
+    {
+        $token = $user->createToken('auth_token');
+
+        /** @var PersonalAccessToken $accessToken */
+        $accessToken = $token->accessToken;
+
+        return [
             'data' => new UserResource($user),
-            'token' => $token,
+            'token' => $token->plainTextToken,
             'token_type' => 'Bearer',
-        ]);
+            'session' => new SessionResource($accessToken),
+            'alerts_unread' => $this->unreadAlerts($user),
+        ];
     }
 
     public function logout(Request $request): JsonResponse
@@ -69,6 +84,50 @@ class AuthController extends Controller
 
     public function user(Request $request): JsonResponse
     {
-        return (new UserResource($request->user()))->response();
+        $token = $request->user()->currentAccessToken();
+
+        return response()->json([
+            'data' => new UserResource($request->user()),
+            'session' => $token instanceof PersonalAccessToken ? new SessionResource($token) : null,
+            'alerts_unread' => $this->unreadAlerts($request->user()),
+        ]);
+    }
+
+    /**
+     * Nombre d'alertes actives non lues, joint à la réponse d'authentification.
+     *
+     * La pastille de la barre latérale est visible sur tous les écrans, mais ce
+     * compteur n'était connu que du tableau de bord et de la page des alertes :
+     * arriver ailleurs affichait « 0 » quelle que soit la réalité. Le faire
+     * voyager ici évite d'ajouter un appel HTTP au démarrage de l'application —
+     * une requête SQL de plus coûte 150 ms, un aller-retour HTTP complet en
+     * coûte le double.
+     */
+    private function unreadAlerts(User $user): int
+    {
+        return Alert::forUser($user)->active()->unread()->count();
+    }
+
+    /**
+     * « Rester connecté » : repousse l'échéance d'inactivité.
+     *
+     * L'horodatage d'usage n'est réécrit qu'au-delà de cinq minutes (voir
+     * PersonalAccessToken) — ce qui tombe bien, puisque cet appel n'a de sens
+     * qu'après une longue inactivité. Aucune écriture inutile n'est donc
+     * déclenchée par un clic répété.
+     *
+     * L'échéance absolue, elle, ne bouge pas : c'est ce qui la rend absolue.
+     */
+    public function extendSession(Request $request): JsonResponse
+    {
+        $token = $request->user()->currentAccessToken();
+
+        if (! $token instanceof PersonalAccessToken) {
+            return response()->json(['message' => 'Session introuvable.'], 409);
+        }
+
+        $token->forceFill(['last_used_at' => now()])->save();
+
+        return response()->json(['session' => new SessionResource($token->refresh())]);
     }
 }

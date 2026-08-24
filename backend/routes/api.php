@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\LeasePhotoController;
@@ -30,6 +31,9 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/user', [AuthController::class, 'user'])->name('user');
+
+        // « Rester connecté » depuis l'avertissement d'expiration.
+        Route::post('/session/extend', [AuthController::class, 'extendSession'])->name('session.extend');
         Route::put('/password', [PasswordResetController::class, 'update'])->name('password.update');
 
         Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
@@ -38,6 +42,22 @@ Route::prefix('auth')->name('auth.')->group(function () {
         Route::post('/2fa/recovery-codes', [TwoFactorController::class, 'regenerateRecoveryCodes'])->name('2fa.recovery-codes');
     });
 });
+
+/*
+ * Aperçu d'une pièce jointe, hors authentification par jeton.
+ *
+ * Une balise <img> ou <iframe> ne peut pas porter d'en-tête d'autorisation :
+ * c'est la signature de l'URL qui fait office d'autorisation. Elle couvre
+ * l'identifiant du document, celui du bailleur et l'horodatage d'expiration —
+ * modifier l'un d'eux invalide le lien.
+ *
+ * Le débit est plafonné : ces URL circulent hors du jeton, et rien n'empêche
+ * d'en rejouer une pendant sa fenêtre de validité.
+ */
+Route::get('/documents/{documentId}/preview', [DocumentController::class, 'preview'])
+    ->where('documentId', '[0-9]+')
+    ->middleware(['signed', 'throttle:60,1'])
+    ->name('documents.preview');
 
 Route::middleware('auth:sanctum')->group(function () {
     // Recherche globale. Le throttle n'est pas décoratif : chaque appel balaie
@@ -66,6 +86,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/leases/{lease}/photos/{photo}', [LeasePhotoController::class, 'destroy'])
         ->scopeBindings()
         ->name('leases.photos.destroy');
+
+    /*
+     * Pièces jointes : bail signé, état des lieux, DPE, assurance, pièce
+     * d'identité. Le catalogue des catégories est déclaré avant la ressource,
+     * pour qu'il ne soit pas capté comme un identifiant de document.
+     */
+    Route::get('/documents/categories', [DocumentController::class, 'categories'])->name('documents.categories');
+    Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+    Route::apiResource('documents', DocumentController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // Tout le tableau de bord en un appel, plutôt que cinq.
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

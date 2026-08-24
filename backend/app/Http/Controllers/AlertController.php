@@ -18,9 +18,10 @@ class AlertController extends Controller
      */
     public function index(Request $request): LengthAwarePaginator
     {
-        $query = Alert::forUser($request->user())
-            ->with('alertable')
-            ->filtered($request);
+        // Pas de `with('alertable')` : la relation polymorphe déclenche une
+        // requête par type d'entité concerné, et AlertResource n'expose que le
+        // type et l'identifiant — que la ligne porte déjà.
+        $query = Alert::forUser($request->user())->filtered($request);
 
         if (! $request->boolean('resolved')) {
             $query->active();
@@ -30,8 +31,7 @@ class AlertController extends Controller
         // l'enveloppe plate du paginateur (data, current_page, total…).
         // AlertResource::collection() aurait produit une enveloppe meta/links,
         // différente de celle des autres listes de l'API.
-        return $query->paginate($this->perPage($request))
-            ->withQueryString()
+        return $this->paginate($query, $request)
             ->through(fn (Alert $alert) => new AlertResource($alert));
     }
 

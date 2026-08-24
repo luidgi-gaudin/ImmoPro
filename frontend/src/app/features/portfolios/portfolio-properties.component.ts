@@ -24,6 +24,8 @@ import {
 } from '../../core/services/portfolio.service';
 import { PaginatedResponse } from '../../core/list/pagination.model';
 import { createListQuery } from '../../core/list/list-query';
+import { ConfirmService } from '../../core/services/confirm.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { PortfolioContextService } from './portfolio-context.service';
 
 @Component({
@@ -50,6 +52,8 @@ import { PortfolioContextService } from './portfolio-context.service';
 })
 export class PortfolioPropertiesComponent {
   private fb = inject(FormBuilder);
+  private confirm = inject(ConfirmService);
+  private notifications = inject(NotificationService);
   private portfolioService = inject(PortfolioService);
   protected ctx = inject(PortfolioContextService);
 
@@ -147,6 +151,11 @@ export class PortfolioPropertiesComponent {
         this.listLoading.set(false);
         this.firstLoadDone.set(true);
         this.listError.set(null);
+
+        // Le portefeuille et ses compteurs voyagent avec ses biens : le bandeau
+        // parent n'a donc rien à demander de son côté. C'est ce qui fait tenir
+        // cet écran en un seul appel HTTP au lieu de trois.
+        this.ctx.adopt(response.portfolio);
       });
 
     this.propertyForm = this.fb.group({
@@ -176,16 +185,38 @@ export class PortfolioPropertiesComponent {
     this.openPropertyModal(property);
   }
 
-  deleteProperty(property: Property) {
-    const confirmed = window.confirm(`Supprimer l'actif "${property.title}" ?`);
-    if (!confirmed) return;
+  async deleteProperty(property: Property) {
+    const confirmed = await this.confirm.ask({
+      title: `Supprimer « ${property.title} » ?`,
+      message: property.is_rented
+        ? 'Ce bien est actuellement loué. Le supprimer emporte son bail en cours, ses échéances et ses quittances.'
+        : "Ce bien sera retiré du portefeuille, avec l'historique des baux qui s'y rattachent.",
+      confirmLabel: 'Supprimer le bien',
+      danger: true,
+    });
+
+    if (!confirmed) {
+      return;
+    }
 
     // Retrait immédiat de la page affichée, puis rechargement : la ligne
     // disparaît sans attendre l'aller-retour, et la page se recomplète ensuite
     // avec l'élément suivant.
-    this.properties.update((list) => list.filter((p) => p.id !== property.id));
-    this.ctx.deleteProperty(property);
-    this.list.refresh();
+    const previous = this.properties();
+    this.properties.update((list) => list.filter((candidate) => candidate.id !== property.id));
+
+    this.ctx.deleteProperty(property).subscribe({
+      next: () => {
+        this.ctx.deletingId.set(null);
+        this.list.refresh();
+        this.notifications.success(`« ${property.title} » a été supprimé.`);
+      },
+      error: (error: unknown) => {
+        this.ctx.deletingId.set(null);
+        this.properties.set(previous);
+        this.notifications.fromHttp(error, 'La suppression du bien a échoué.');
+      },
+    });
   }
 
   openPropertyModal(property: Property | null = null) {
@@ -229,7 +260,7 @@ export class PortfolioPropertiesComponent {
     this.saving.set(true);
     const payload = this.propertyForm.value as CreatePropertyPayload;
     const isEdit = !!this.editingProperty();
-    const previousProperties = this.ctx.properties();
+    const previousProperties = this.properties();
 
     if (isEdit) {
       const editId = this.editingProperty()!.id;
@@ -247,23 +278,25 @@ export class PortfolioPropertiesComponent {
         description: payload.description || null,
       };
 
-      this.ctx.setProperties(previousProperties.map((p) => (p.id === editId ? updatedProp : p)));
+      this.properties.set(
+        previousProperties.map((candidate) => (candidate.id === editId ? updatedProp : candidate)),
+      );
       this.createModalOpen.set(false);
 
       this.ctx.updateProperty(editId, payload).subscribe({
         next: (savedProp) => {
           this.saving.set(false);
-          this.ctx.setProperties(
-            this.ctx.properties().map((p) => (p.id === editId ? savedProp : p)),
+          this.properties.update((list) =>
+            list.map((candidate) => (candidate.id === editId ? savedProp : candidate)),
           );
           this.editingProperty.set(null);
-          this.ctx.reloadBackground();
           this.list.refresh();
+          this.notifications.success('Bien mis à jour.');
         },
         error: (err) => {
           this.saving.set(false);
           this.createModalOpen.set(true);
-          this.ctx.setProperties(previousProperties);
+          this.properties.set(previousProperties);
           this.ctx.error.set(err.error?.message || 'Impossible de sauvegarder cet actif');
         },
       });
@@ -283,24 +316,24 @@ export class PortfolioPropertiesComponent {
         description: payload.description || null,
       };
 
-      this.ctx.setProperties([tempProp, ...previousProperties]);
+      this.properties.set([tempProp, ...previousProperties]);
       this.createModalOpen.set(false);
 
       this.ctx.createProperty(payload).subscribe({
         next: (savedProp) => {
           this.saving.set(false);
-          this.ctx.setProperties(
-            this.ctx.properties().map((p) => (p.id === tempId ? savedProp : p)),
+          this.properties.update((list) =>
+            list.map((candidate) => (candidate.id === tempId ? savedProp : candidate)),
           );
           this.propertyForm.reset();
           this.submitted.set(false);
-          this.ctx.reloadBackground();
           this.list.refresh();
+          this.notifications.success(`« ${savedProp.title} » a été ajouté au portefeuille.`);
         },
         error: (err) => {
           this.saving.set(false);
           this.createModalOpen.set(true);
-          this.ctx.setProperties(previousProperties);
+          this.properties.set(previousProperties);
           this.ctx.error.set(err.error?.message || 'Impossible de sauvegarder cet actif');
         },
       });

@@ -1,0 +1,18 @@
+.session-expiry__lead {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-primary);
+
+  strong {
+    /* Chiffres à largeur fixe : sans cela le compte à rebours fait sautiller
+       la phrase à chaque seconde. */
+    font-variant-numeric: tabular-nums;
+    color: var(--primary);
+  }
+}
+
+.session-expiry__why {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}

@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { API_BASE_URL } from '../config/api.config';
+import { Observable, map, tap } from 'rxjs';
+import { AlertService, AppAlert } from './alert.service';
 
 export interface PortfolioSummary {
   id: number;
@@ -21,6 +23,9 @@ export interface LeaseSummary {
   id: number;
   property_id: number;
   tenant_id: number;
+  /** Libellés joints par l'API : « Bail #12 » ne dit rien à un gestionnaire. */
+  property_title: string | null;
+  tenant_name: string | null;
   start_date: string;
   end_date: string | null;
   monthly_rent: number;
@@ -34,10 +39,12 @@ interface DashboardResponse {
     portfolios: number;
     properties: number;
     occupied_properties: number;
+    vacant_properties: number;
     tenants: number;
     leases: number;
     active_leases: number;
     monthly_rent_expected: number;
+    documents: number;
   };
   recent: {
     portfolios: PortfolioSummary[];
@@ -45,7 +52,7 @@ interface DashboardResponse {
     leases: LeaseSummary[];
   };
   alerts: {
-    items: unknown[];
+    items: AppAlert[];
     unread_count: number;
   };
 }
@@ -57,6 +64,9 @@ export interface DashboardData {
   leasesCount: number;
   activeLeasesCount: number;
   monthlyRentExpected: number;
+  occupiedPropertiesCount: number;
+  vacantPropertiesCount: number;
+  documentsCount: number;
   recentPortfolios: PortfolioSummary[];
   recentTenants: TenantSummary[];
   recentLeases: LeaseSummary[];
@@ -65,7 +75,8 @@ export interface DashboardData {
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
   private http = inject(HttpClient);
-  private apiBase = 'http://127.0.0.1:8000/api';
+  private alerts = inject(AlertService);
+  private apiBase = API_BASE_URL;
 
   /**
    * Un seul appel pour tout l'écran.
@@ -77,13 +88,21 @@ export class DashboardService {
    */
   getDashboard(): Observable<DashboardData> {
     return this.http.get<DashboardResponse>(`${this.apiBase}/dashboard`).pipe(
+      // Les alertes de l'aperçu et le compteur de non-lues sont déjà dans cette
+      // réponse. L'écran les redemandait pourtant par deux appels HTTP séparés,
+      // qui repayaient chacun l'authentification et l'ouverture de connexion
+      // pour des données déjà arrivées. Trois appels devenaient un.
+      tap((response) => this.alerts.adopt(response.alerts.items, response.alerts.unread_count)),
       map((response) => ({
         portfoliosCount: response.counts.portfolios,
         propertiesCount: response.counts.properties,
+        occupiedPropertiesCount: response.counts.occupied_properties,
+        vacantPropertiesCount: response.counts.vacant_properties,
         tenantsCount: response.counts.tenants,
         leasesCount: response.counts.leases,
         activeLeasesCount: response.counts.active_leases,
         monthlyRentExpected: response.counts.monthly_rent_expected,
+        documentsCount: response.counts.documents,
         recentPortfolios: response.recent.portfolios,
         recentTenants: response.recent.tenants,
         recentLeases: response.recent.leases,

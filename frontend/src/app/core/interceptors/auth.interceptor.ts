@@ -1,48 +1,74 @@
 import { inject } from '@angular/core';
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpEventType, HttpInterceptorFn } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { catchError, throwError, timer } from 'rxjs';
+import { catchError, tap, throwError, timer } from 'rxjs';
 import { retry } from 'rxjs/operators';
+import { AuthService } from '../services/auth.service';
+import { NotificationService } from '../services/notification.service';
+import { SessionService } from '../services/session.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const session = inject(SessionService);
+  const notifications = inject(NotificationService);
   const router = inject(Router);
   const token = authService.getAuthHeader();
 
-  let modifiedReq = req;
-  if (token) {
-    modifiedReq = req.clone({
-      setHeaders: {
-        Authorization: token,
-      },
-    });
-  }
+  const request = token ? req.clone({ setHeaders: { Authorization: token } }) : req;
 
-  let requestPipeline = next(modifiedReq);
+  let pipeline = next(request);
 
-  // Apply a light retry on transient network issues for GET requests ONLY to preserve idempotency
+  // Réessai limité aux GET : ils sont sans effet de bord, donc rejouables. Un
+  // POST rejoué créerait un doublon — une seconde quittance, un second bail.
   if (req.method === 'GET') {
-    requestPipeline = requestPipeline.pipe(
+    pipeline = pipeline.pipe(
       retry({
         count: 1,
-        delay: (error: any) => {
-          if (error instanceof HttpErrorResponse && (error.status === 0 || error.status >= 500)) {
-            return timer(1000); // Wait 1 second before retrying
-          }
-          return throwError(() => error);
-        }
-      })
+        delay: (error: unknown) => {
+          const status = error instanceof HttpErrorResponse ? error.status : null;
+
+          // 0 = réseau coupé, 5xx = incident serveur : les deux peuvent passer.
+          // Un 4xx est une réponse définitive, insister n'y changerait rien.
+          return status === 0 || (status !== null && status >= 500)
+            ? timer(1000)
+            : throwError(() => error);
+        },
+      }),
     );
   }
 
-  return requestPipeline.pipe(
+  return pipeline.pipe(
+    tap((event) => {
+      // Toute réponse aboutie prouve que le jeton était encore valable, et
+      // repousse d'autant l'échéance d'inactivité côté serveur. La vue locale
+      // du compte à rebours doit suivre, sinon elle avertirait à tort.
+      if (event.type === HttpEventType.Response && token) {
+        session.noteActivity();
+      }
+    }),
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
+        // Le serveur distingue « session expirée » de « jeton invalide ». Le
+        // premier appelle un message rassurant et un retour sur la page
+        // quittée ; le second est anormal et ne doit pas être maquillé.
+        const expired = error.error?.reason === 'session_expired';
+
         authService.clearSession();
-        router.navigate(['/login']);
+
+        if (expired) {
+          notifications.info('Votre session a expiré. Reconnectez-vous pour continuer.');
+        }
+
+        // On ne redirige pas si l'on est déjà sur un écran public : cela
+        // effacerait le message d'erreur d'une tentative de connexion ratée.
+        if (!router.url.startsWith('/login')) {
+          router.navigate(['/login'], {
+            queryParams: expired ? { expired: 1, returnUrl: router.url } : {},
+          });
+        }
       }
+
       return throwError(() => error);
-    })
+    }),
   );
 };

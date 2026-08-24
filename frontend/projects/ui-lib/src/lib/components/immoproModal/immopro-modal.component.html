@@ -1,0 +1,44 @@
+<dialog
+  #dialog
+  class="ip-modal"
+  [class.wide]="size() === 'wide'"
+  [class.full]="size() === 'full'"
+  (cancel)="onCancel($event)"
+  (click)="onBackdropClick($event)"
+>
+  <div class="ip-modal__panel">
+    <header class="ip-modal__head">
+      <div class="ip-modal__titles">
+        @if (title()) {
+          <h2>{{ title() }}</h2>
+        }
+        @if (subtitle()) {
+          <p>{{ subtitle() }}</p>
+        }
+        <ng-content select="[modal-title]"></ng-content>
+      </div>
+
+      @if (!persistent()) {
+        <button type="button" class="ip-modal__close" (click)="close()" aria-label="Fermer">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path
+              d="M6 6l12 12M18 6L6 18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      }
+    </header>
+
+    <div class="ip-modal__body">
+      <ng-content></ng-content>
+    </div>
+
+    <footer class="ip-modal__foot">
+      <ng-content select="[modal-actions]"></ng-content>
+    </footer>
+  </div>
+</dialog>

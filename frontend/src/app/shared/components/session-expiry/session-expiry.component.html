@@ -1,0 +1,30 @@
+@if (session.isWarning()) {
+  <immopro-modal
+    [title]="session.canExtend() ? 'Votre session va expirer' : 'Fin de session imminente'"
+    [persistent]="true"
+  >
+    <p class="session-expiry__lead">
+      @if (session.canExtend()) {
+        Faute d'activité, vous serez déconnecté dans
+        <strong>{{ session.countdownLabel() }}</strong
+        >.
+      } @else {
+        Votre session atteint sa durée maximale dans
+        <strong>{{ session.countdownLabel() }}</strong
+        >. Elle ne peut pas être prolongée : enregistrez votre travail en cours, puis
+        reconnectez-vous.
+      }
+    </p>
+
+    <p class="session-expiry__why">
+      Cette limite protège votre compte si vous laissez un poste ouvert.
+    </p>
+
+    <div modal-actions>
+      <immopro-button variant="ghost" (onClick)="signOutNow()">Se déconnecter</immopro-button>
+      @if (session.canExtend()) {
+        <immopro-button variant="solid" (onClick)="stayConnected()">Rester connecté</immopro-button>
+      }
+    </div>
+  </immopro-modal>
+}

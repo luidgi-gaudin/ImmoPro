@@ -150,6 +150,18 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'documents',
+        loadComponent: () =>
+          import('./features/documents/documents.component').then((m) => m.DocumentsComponent),
+        title: 'Documents',
+        data: {
+          description:
+            'Baux signés, états des lieux, diagnostics et attestations, classés et consultables au même endroit.',
+          breadcrumb: 'Documents',
+          noindex: true,
+        },
+      },
+      {
         path: 'reports',
         loadComponent: () =>
           import('./features/reports/reports.component').then((m) => m.ReportsComponent),

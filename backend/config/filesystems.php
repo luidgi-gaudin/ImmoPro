@@ -47,6 +47,24 @@ return [
             'report' => false,
         ],
 
+        /*
+         * Pièces jointes de la gestion locative.
+         *
+         * Disque privé, sans URL publique : un bail signé, une pièce d'identité
+         * ou un RIB déposés là ne doivent jamais être atteignables en devinant
+         * une adresse. L'accès se fait exclusivement par une URL signée, à
+         * durée limitée, délivrée après vérification du droit d'accès — voir
+         * DocumentController::download.
+         */
+        'documents' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/documents'),
+            'serve' => false,
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

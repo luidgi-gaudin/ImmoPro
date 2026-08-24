@@ -20,11 +20,11 @@ export function passwordMatchValidator(form: FormGroup) {
   selector: 'app-register',
   standalone: true,
   imports: [
-    ReactiveFormsModule, 
-    RouterLink, 
-    ImmoproAuthCardComponent, 
-    ImmoproInputComponent, 
-    ImmoproButtonComponent
+    ReactiveFormsModule,
+    RouterLink,
+    ImmoproAuthCardComponent,
+    ImmoproInputComponent,
+    ImmoproButtonComponent,
   ],
   templateUrl: './register.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,7 +47,7 @@ export class RegisterComponent {
         password: ['', [Validators.required, Validators.minLength(8)]],
         password_confirmation: ['', [Validators.required]],
       },
-      { validators: passwordMatchValidator }
+      { validators: passwordMatchValidator },
     );
   }
 
@@ -70,7 +70,7 @@ export class RegisterComponent {
         if (error.error?.errors) {
           this.error.set(Object.values(error.error.errors).flat().join(', '));
         } else {
-          this.error.set(error.error?.message || 'Erreur lors de l\'inscription');
+          this.error.set(error.error?.message || "Erreur lors de l'inscription");
         }
       },
     });

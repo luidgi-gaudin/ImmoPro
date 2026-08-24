@@ -98,11 +98,17 @@
             </td>
             <td>{{ tenant.email || '-' }}</td>
             <td>{{ tenant.phone || '-' }}</td>
+            <!-- Un IBAN complet dans un tableau se lit par-dessus l'épaule et
+                 se retrouve dans la moindre capture d'écran. Les quatre derniers
+                 caractères suffisent à reconnaître un compte ; le détail reste
+                 sur la fiche du locataire. -->
             <td>
-              <code class="bank-code">{{ tenant.iban || '-' }}</code>
+              <code class="bank-code" [title]="'Détail sur la fiche locataire'">{{
+                mask(tenant.iban)
+              }}</code>
             </td>
             <td>
-              <code class="bank-code">{{ tenant.bic || '-' }}</code>
+              <code class="bank-code">{{ mask(tenant.bic) }}</code>
             </td>
             <td>
               <span>{{ tenant.address || '-' }}</span>

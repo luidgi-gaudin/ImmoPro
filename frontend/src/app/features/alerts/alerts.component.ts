@@ -1,5 +1,6 @@
-import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, computed, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import {
   ImmoproPageHeaderComponent,
@@ -120,6 +121,7 @@ import { createListQuery } from '../../core/list/list-query';
           @for (alert of svc.alerts(); track alert.id) {
             <li
               class="alert-card"
+              [class.is-highlighted]="alert.id === highlightedId()"
               [class]="'severity-' + alert.severity"
               [class.is-unread]="!alert.is_read"
             >
@@ -305,12 +307,31 @@ export class AlertsComponent {
     return chips;
   });
 
+  /**
+   * Alerte désignée par `?alert=`, mise en évidence à l'arrivée.
+   *
+   * La recherche globale mène ici. Sans repère visuel, on atterrit sur une
+   * liste de vingt lignes sans savoir laquelle on cherchait. Si l'alerte n'est
+   * pas dans la page affichée, rien n'est mis en évidence — mieux vaut aucun
+   * repère qu'un faux.
+   */
+  protected readonly highlightedId = signal<number | null>(null);
+
   constructor() {
     toObservable(this.list.trigger)
       .pipe(takeUntilDestroyed())
       .subscribe(({ params }) => this.svc.load(params));
 
-    this.svc.loadUnreadCount();
+    // Le compteur de non-lues n'est pas redemandé ici : il arrive avec la
+    // réponse d'authentification, au démarrage de l'application. Il est en
+    // revanche rechargé après chaque action qui le fait varier (lecture,
+    // résolution, relance).
+
+    const requested = inject(ActivatedRoute).snapshot.queryParamMap.get('alert');
+
+    if (requested !== null && /^\d+$/.test(requested)) {
+      this.highlightedId.set(Number(requested));
+    }
   }
 
   protected readonly hasUnread = computed(() => this.svc.unreadCount() > 0);

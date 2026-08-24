@@ -6,6 +6,9 @@ import { EMPTY, catchError, switchMap, tap } from 'rxjs';
 import { TenantService, Tenant } from '../../core/services/tenant.service';
 import { PaginatedResponse } from '../../core/list/pagination.model';
 import { createListQuery } from '../../core/list/list-query';
+import { ConfirmService } from '../../core/services/confirm.service';
+import { maskBankIdentifier } from '../../core/format/bank-identifier';
+import { NotificationService } from '../../core/services/notification.service';
 import {
   ImmoproButtonComponent,
   ImmoproInputComponent,
@@ -42,8 +45,15 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TenantsComponent {
+  /** IBAN et BIC ne s'affichent qu'en partie dans la liste. */
+  protected mask(value: string | null | undefined): string {
+    return maskBankIdentifier(value);
+  }
+
   private fb = inject(FormBuilder);
   private tenantService = inject(TenantService);
+  private confirm = inject(ConfirmService);
+  private notifications = inject(NotificationService);
 
   /** Page, recherche et tri, mémorisés dans l'URL. */
   protected readonly list = createListQuery({
@@ -140,10 +150,16 @@ export class TenantsComponent {
     this.openTenantModal(tenant);
   }
 
-  deleteTenant(tenant: Tenant) {
-    const confirmed = window.confirm(
-      `Supprimer le locataire ${tenant.first_name} ${tenant.last_name} ?`,
-    );
+  async deleteTenant(tenant: Tenant) {
+    const confirmed = await this.confirm.ask({
+      title: `Supprimer ${tenant.first_name} ${tenant.last_name} ?`,
+      message:
+        "Le dossier locataire sera retiré de l'annuaire. Ses baux et ses quittances restent " +
+        'consultables : la loi impose de pouvoir justifier des loyers perçus.',
+      confirmLabel: 'Supprimer le dossier',
+      danger: true,
+    });
+
     if (!confirmed) {
       return;
     }
@@ -158,14 +174,14 @@ export class TenantsComponent {
     this.tenantService.deleteTenant(tenant.id).subscribe({
       next: () => {
         this.deletingId.set(null);
-        // Sync layout data quietly
         this.list.refresh();
+        this.notifications.success('Dossier locataire supprimé.');
       },
-      error: () => {
+      error: (error: unknown) => {
         this.deletingId.set(null);
         // Rollback on error
         this.tenants.set(previousTenants);
-        this.error.set('Erreur lors de la suppression du locataire');
+        this.notifications.fromHttp(error, 'La suppression du locataire a échoué.');
       },
     });
   }

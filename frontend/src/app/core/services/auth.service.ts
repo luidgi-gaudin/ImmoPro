@@ -1,6 +1,9 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { apiUrl } from '../config/api.config';
 import { Observable, tap } from 'rxjs';
+import { SessionService, SessionState } from './session.service';
+import { AlertService } from './alert.service';
 
 export interface LoginRequest {
   email: string;
@@ -29,6 +32,22 @@ export interface AuthResponse {
   two_factor_required?: boolean;
   challenge_token?: string;
   message?: string;
+
+  /**
+   * Échéances de la session, annoncées dès la connexion pour que le préavis
+   * d'expiration puisse être programmé sans interroger l'API en boucle.
+   */
+  session?: SessionState;
+
+  /**
+   * Alertes actives non lues, pour la pastille de la barre latérale.
+   *
+   * Elle est visible sur tous les écrans, mais le compteur n'était demandé que
+   * par le tableau de bord et la page des alertes : partout ailleurs, la
+   * pastille affichait « 0 ». Le faire voyager avec l'authentification évite
+   * d'ajouter un appel HTTP au démarrage.
+   */
+  alerts_unread?: number;
 }
 
 @Injectable({
@@ -36,7 +55,9 @@ export interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://127.0.0.1:8000/api/auth';
+  private session = inject(SessionService);
+  private alerts = inject(AlertService);
+  private apiUrl = apiUrl('auth');
 
   // Global authentication state signals
   readonly currentUser = signal<User | null>(this.getStoredUser());
@@ -53,6 +74,8 @@ export class AuthService {
           this.setStoredUser(response.data);
           this.currentUser.set(response.data);
         }
+        this.session.adopt(response.session);
+        this.alerts.adoptUnreadCount(response.alerts_unread);
       }),
     );
   }
@@ -65,6 +88,8 @@ export class AuthService {
           this.setStoredUser(response.data);
           this.currentUser.set(response.data);
         }
+        this.session.adopt(response.session);
+        this.alerts.adoptUnreadCount(response.alerts_unread);
       }),
     );
   }
@@ -81,6 +106,8 @@ export class AuthService {
           this.setStoredUser(response.data);
           this.currentUser.set(response.data);
         }
+        this.session.adopt(response.session);
+        this.alerts.adoptUnreadCount(response.alerts_unread);
       }),
     );
   }
@@ -93,6 +120,8 @@ export class AuthService {
           this.setStoredUser(response.data);
           this.currentUser.set(response.data);
         }
+        this.session.adopt(response.session);
+        this.alerts.adoptUnreadCount(response.alerts_unread);
       }),
     );
   }
@@ -109,6 +138,7 @@ export class AuthService {
     this.clearToken();
     this.clearStoredUser();
     this.currentUser.set(null);
+    this.session.clear();
   }
 
   getCurrentUser(): User | null {

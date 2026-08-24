@@ -7,6 +7,9 @@ import { GlobalSearchComponent } from './shared/components/global-search/global-
 import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner.component';
 import { BreadcrumbComponent } from './shared/components/breadcrumb/breadcrumb.component';
 import { StickyCtaComponent } from './shared/components/sticky-cta/sticky-cta.component';
+import { ToastHostComponent } from './shared/components/toast-host/toast-host.component';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
+import { SessionExpiryComponent } from './shared/components/session-expiry/session-expiry.component';
 import { AuthService } from './core/services/auth.service';
 import { AnalyticsService } from './core/services/analytics.service';
 import { BreadcrumbService } from './core/seo/breadcrumb.service';
@@ -23,6 +26,9 @@ import { SeoService, buildLocalBusinessJsonLd } from './core/seo/seo.service';
     CookieBannerComponent,
     BreadcrumbComponent,
     StickyCtaComponent,
+    ToastHostComponent,
+    ConfirmDialogComponent,
+    SessionExpiryComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

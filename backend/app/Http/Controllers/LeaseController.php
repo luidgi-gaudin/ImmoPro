@@ -4,26 +4,69 @@ namespace App\Http\Controllers;
 
 use App\Enums\LeaseStatus;
 use App\Http\Requests\LeaseRequest;
+use App\Http\Resources\LeaseResource;
 use App\Models\Lease;
+use App\Support\Database\JsonAggregate;
 use Illuminate\Http\Request;
 
 class LeaseController extends Controller
 {
+    /**
+     * Liste des baux : bien, locataire, colocataires et portefeuille compris,
+     * en une seule requête SQL.
+     *
+     * L'écran des baux affiche pour chaque ligne le nom du bien et celui du
+     * locataire. Le front les retrouvait auparavant côté client, en chargeant
+     * d'abord tous les portefeuilles, puis tous les locataires, puis les biens
+     * de *chaque* portefeuille — un appel HTTP par portefeuille. Sur un parc de
+     * cinq portefeuilles, ouvrir l'écran demandait sept allers-retours avant
+     * d'afficher quoi que ce soit.
+     *
+     * Les jointures ramènent ces libellés avec les baux, et l'agrégat JSON les
+     * colocataires. Ni `with()` ni requête supplémentaire : `with('coTenants')`
+     * aurait coûté un aller-retour de plus.
+     */
     public function index(Request $request)
     {
-        // La version précédente chargeait en mémoire tous les portefeuilles et
-        // tous leurs biens pour n'en extraire que des identifiants, puis les
-        // réinjectait dans un whereIn. whereHas fait le même filtrage en une
-        // seule requête, sans hydrater d'objets, et surtout sans construire un
-        // whereIn qui grandit avec le patrimoine.
-        return Lease::whereHas(
-            'property.portfolio',
-            fn ($portfolio) => $portfolio->where('user_id', auth()->id())
-        )
-            ->with('coTenants')
-            ->filtered($request)
-            ->paginate($this->perPage($request))
-            ->withQueryString();
+        $coTenants = JsonAggregate::arrayOf(
+            [
+                'id' => 'ct.id',
+                'first_name' => 'ct.first_name',
+                'last_name' => 'ct.last_name',
+                'rent_share' => 'lt.rent_share',
+            ],
+            'from lease_tenant lt
+               join tenants ct on ct.id = lt.tenant_id and ct.deleted_at is null
+              where lt.lease_id = leases.id'
+        );
+
+        $query = Lease::query()
+            ->join('properties as pr', 'pr.id', '=', 'leases.property_id')
+            ->join('portfolios as po', 'po.id', '=', 'pr.portfolio_id')
+            // Jointure externe : un bail dont le locataire a été supprimé doit
+            // rester visible, sinon il disparaît de la gestion sans trace.
+            ->leftJoin('tenants as te', function ($join) {
+                $join->on('te.id', '=', 'leases.tenant_id')->whereNull('te.deleted_at');
+            })
+            ->where('po.user_id', auth()->id())
+            ->select('leases.*')
+            ->addSelect([
+                'pr.title as property_title',
+                'pr.address as property_address',
+                'pr.city as property_city',
+                'pr.portfolio_id as property_portfolio_id',
+                'po.name as portfolio_name',
+                'te.first_name as tenant_first_name',
+                'te.last_name as tenant_last_name',
+                'te.email as tenant_email',
+            ])
+            ->selectRaw($coTenants.' as co_tenants_json')
+            ->withOwner()
+            ->withCount('documents')
+            ->filtered($request);
+
+        return $this->paginate($query, $request)
+            ->through(fn (Lease $lease) => new LeaseResource($lease));
     }
 
     public function store(LeaseRequest $request)
@@ -32,14 +75,16 @@ class LeaseController extends Controller
 
         $this->syncCoTenants($lease, $request->validated('co_tenants', []));
 
-        return $lease->load('coTenants');
+        return new LeaseResource($lease->load('coTenants', 'tenant', 'property.portfolio'));
     }
 
     public function show(Lease $lease)
     {
         $this->authorize('view', $lease);
 
-        return $lease->load('coTenants', 'photos');
+        return new LeaseResource(
+            $lease->load('coTenants', 'photos', 'tenant', 'property.portfolio')
+        );
     }
 
     public function update(LeaseRequest $request, Lease $lease)
@@ -52,7 +97,9 @@ class LeaseController extends Controller
             $this->syncCoTenants($lease, $request->validated('co_tenants', []));
         }
 
-        return $lease->load('coTenants', 'photos');
+        return new LeaseResource(
+            $lease->load('coTenants', 'photos', 'tenant', 'property.portfolio')
+        );
     }
 
     /**
@@ -99,7 +146,7 @@ class LeaseController extends Controller
             'end_date' => $data['end_date'],
         ]);
 
-        return $lease->refresh();
+        return new LeaseResource($lease->refresh());
     }
 
     /**
@@ -139,7 +186,7 @@ class LeaseController extends Controller
             'message' => 'Loyer révisé selon la variation de l\'IRL.',
             'old_rent' => $oldRent,
             'new_rent' => $newRent,
-            'data' => $lease->refresh(),
+            'data' => new LeaseResource($lease->refresh()),
         ]);
     }
 }

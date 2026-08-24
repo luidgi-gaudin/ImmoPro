@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
 use App\Services\TwoFactorAuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -151,12 +150,8 @@ class TwoFactorController extends Controller
 
         $this->twoFactor->forgetChallenge($request->input('challenge_token'));
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'data' => new UserResource($user),
-            'token' => $token,
-            'token_type' => 'Bearer',
-        ]);
+        // Même enveloppe que la connexion simple, échéances de session
+        // comprises : le front n'a qu'un seul cas à traiter.
+        return response()->json(app(AuthController::class)->issueToken($user));
     }
 }

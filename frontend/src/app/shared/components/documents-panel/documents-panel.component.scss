@@ -1,0 +1,269 @@
+.docs {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+/* Le survol d'un fichier tiré doit se voir sans ambiguïté : c'est le seul
+   retour dont dispose l'utilisateur avant de lâcher. */
+.docs--dragging {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.docs__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.docs__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  &--static {
+    cursor: default;
+  }
+}
+
+.docs__chevron {
+  color: var(--text-muted);
+  transition: transform var(--transition-fast);
+
+  &--open {
+    transform: rotate(90deg);
+  }
+}
+
+.docs__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 0.4rem;
+  border-radius: 11px;
+  background: var(--overlay-strong);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Le champ de fichier natif est illisible et impossible à styler : on le masque
+   sans le retirer du flux d'accessibilité, le label devient le bouton. */
+.docs__add {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.87rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  &:focus-within {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+}
+
+.docs__file-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.docs__dropzone {
+  padding: 0.85rem 1.1rem 1.1rem;
+}
+
+.docs__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.doc {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--overlay-softer);
+  transition: border-color var(--transition-fast);
+
+  &:hover {
+    border-color: var(--border-hover);
+  }
+
+  &--expired {
+    border-left: 3px solid var(--error);
+  }
+}
+
+.doc__icon {
+  flex: none;
+  display: inline-flex;
+  color: var(--text-muted);
+}
+
+.doc__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.doc__name {
+  margin: 0;
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.doc__meta {
+  margin: 0.15rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.doc__actions {
+  flex: none;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.doc__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: var(--overlay-strong);
+    border-color: var(--border);
+    color: var(--text-primary);
+  }
+
+  &--danger:hover {
+    color: var(--error);
+    border-color: var(--error);
+  }
+}
+
+/* ── Dépôt ────────────────────────────────────────────────────────────── */
+
+.upload__file {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--overlay-soft);
+  border: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+
+.upload__field {
+  display: block;
+  margin-bottom: 0.9rem;
+
+  > span {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+  }
+}
+
+.upload__control {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  font: inherit;
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+}
+
+.upload__hint {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Aperçu ───────────────────────────────────────────────────────────── */
+
+.preview {
+  height: 100%;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--overlay-soft);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 60vh;
+    border: none;
+  }
+}
