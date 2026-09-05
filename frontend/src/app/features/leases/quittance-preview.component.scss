@@ -1,0 +1,184 @@
+/* Quittance de loyer : mise en page destinée au papier.
+
+   Les couleurs sont figées et non tirées des variables de thème : une
+   quittance doit être noire sur blanc, à l'écran comme à l'impression, quel
+   que soit le thème choisi dans l'application. */
+.quittance-print-area {
+  padding: 30px;
+  background: #ffffff;
+  color: #1a1a1a;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.receipt-box {
+  background: #ffffff;
+  color: #1a1a1a;
+  font-family: 'Inter', sans-serif;
+
+  h2,
+  h3,
+  h4 {
+    color: #1a1a1a;
+  }
+}
+
+.receipt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #1a1a1a;
+  padding-bottom: 20px;
+  margin-bottom: 25px;
+
+  h2 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 1.7rem;
+    font-weight: 600;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .receipt-number {
+    font-size: 0.85rem;
+    color: #555;
+    font-weight: 500;
+  }
+
+  .logo-txt-quittance {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--primary);
+  }
+}
+
+.receipt-parties {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  gap: 20px;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+  }
+}
+
+.party-box {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: var(--radius-sm);
+  background: #fafafa;
+  font-size: 0.9rem;
+
+  .section-label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: #666;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  strong {
+    font-size: 1rem;
+    color: #111;
+  }
+}
+
+.receipt-description {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 25px;
+  line-height: 1.5;
+
+  p {
+    margin: 0 0 10px;
+  }
+
+  .receipt-period-desc {
+    margin-top: 15px;
+    border-left: 2px solid var(--primary);
+    padding-left: 12px;
+  }
+}
+
+.receipt-breakdown {
+  margin-bottom: 25px;
+
+  h4 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 10px;
+    color: #444;
+  }
+}
+
+.breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  th {
+    background: #f0f0f0;
+    color: #444;
+    font-weight: 600;
+    border: 1px solid #ccc;
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  td {
+    border: 1px solid #ccc;
+    padding: 10px 14px;
+    color: #1a1a1a;
+  }
+}
+
+.receipt-meta {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  margin-bottom: 25px;
+  font-size: 0.875rem;
+
+  .label {
+    color: #555;
+    margin-right: 5px;
+  }
+}
+
+.receipt-legal {
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+  font-size: 0.75rem;
+  color: #666;
+  text-align: justify;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Hide background elements during print */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-only,
+  .print-only * {
+    visibility: visible;
+  }
+  .print-only {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}

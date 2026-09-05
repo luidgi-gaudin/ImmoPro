@@ -26,9 +26,17 @@
   opacity: 0.4;
 }
 
+/* Une carte sans en-tête ni pied ne doit pas réserver leur place.
+   `:empty` fait le tri : Angular ne laisse pas de nœud de texte dans un
+   emplacement de projection resté vide, seulement un commentaire, que
+   `:empty` ignore. */
 .card-header {
   padding: 24px 28px 16px;
   border-bottom: 1px solid var(--border);
+
+  &:empty {
+    display: none;
+  }
 }
 
 .card-content {
@@ -40,4 +48,22 @@
   padding: 20px 28px;
   border-top: 1px solid var(--border);
   background: var(--overlay-softer);
+
+  &:empty {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .card-header {
+    padding: 18px 18px 12px;
+  }
+
+  .card-content {
+    padding: 18px;
+  }
+
+  .card-footer {
+    padding: 14px 18px;
+  }
 }

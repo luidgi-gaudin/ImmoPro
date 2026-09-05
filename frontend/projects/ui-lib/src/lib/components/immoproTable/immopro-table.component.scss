@@ -164,3 +164,107 @@ immopro-table {
     width: auto;
   }
 }
+
+/* ============================================================
+   Mode fiches — sous 760 px, un tableau cesse d'être un tableau.
+   ============================================================
+
+   Un tableau de sept colonnes sur un téléphone n'offre que deux
+   mauvaises issues : le défilement horizontal, où l'on lit une ligne
+   à l'aveugle en perdant l'en-tête, ou l'écrasement des colonnes.
+   Chaque ligne devient donc une fiche, et chaque cellule une paire
+   intitulé / valeur — l'intitulé venant de `data-label`.
+
+   N'agit que sur les tableaux marqués `[stacked]="true"` : un tableau
+   à trois colonnes courtes reste très bien lisible tel quel. */
+@media (max-width: 760px) {
+  .ip-table--stacked {
+    display: block;
+
+    thead {
+      /* Masqué à l'œil, conservé pour les lecteurs d'écran qui
+         associent encore cellule et en-tête. */
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    tbody,
+    tbody tr,
+    tbody td {
+      display: block;
+      width: 100%;
+    }
+
+    tbody tr {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      /* Le survol colorait la cellule ; en fiches, c'est la fiche entière. */
+      &:hover td {
+        background: transparent;
+      }
+    }
+
+    tbody td {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 6px 0;
+      border-bottom: none;
+      color: var(--text-primary);
+      text-align: right;
+
+      &::before {
+        content: attr(data-label);
+        flex: 0 0 auto;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-muted);
+        text-align: left;
+      }
+
+      /* Une cellule sans intitulé (colonne d'actions, fiche vide)
+         occupe toute la largeur plutôt que de s'aligner à droite d'un
+         vide. */
+      &:not([data-label]) {
+        justify-content: flex-start;
+        text-align: left;
+      }
+    }
+
+    td.actions,
+    th.actions {
+      width: auto;
+      padding-top: 12px;
+      margin-top: 6px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .ip-table-actions {
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .ip-table-empty {
+      display: block;
+      text-align: center;
+      padding: 36px 16px !important;
+
+      &::before {
+        content: none;
+      }
+    }
+  }
+}

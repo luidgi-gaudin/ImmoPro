@@ -127,3 +127,19 @@
     }
   }
 }
+
+/* En mode fiches, le nom du bien devient le titre de la carte. */
+@media (max-width: 760px) {
+  .name-cell {
+    gap: 12px;
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+
+    .title-text {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+}

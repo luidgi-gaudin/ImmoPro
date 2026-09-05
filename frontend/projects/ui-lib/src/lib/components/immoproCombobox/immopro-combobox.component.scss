@@ -1,0 +1,201 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.ip-combobox {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.ip-combobox__label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.ip-combobox__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ip-combobox__icon {
+  position: absolute;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.ip-combobox__input {
+  width: 100%;
+  /* Place à gauche pour la loupe, à droite pour la croix et le chevron. */
+  padding: 12px 62px 12px 40px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  background-color: var(--overlay-softer);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+    background-color: var(--overlay-soft);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.has-error .ip-combobox__input {
+  border-color: var(--error);
+}
+
+.ip-combobox__clear,
+.ip-combobox__chevron {
+  position: absolute;
+  color: var(--text-muted);
+}
+
+.ip-combobox__clear {
+  right: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 1.1rem;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--overlay-strong);
+  }
+}
+
+.ip-combobox__chevron {
+  right: 12px;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+  transition: transform var(--transition-fast);
+}
+
+.is-open .ip-combobox__chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Liste ─────────────────────────────────────────────────────────────────
+   Positionnée en absolu au-dessus du reste du formulaire : dans une modale,
+   une liste qui pousse le contenu ferait sauter tous les champs suivants. */
+.ip-combobox__list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface-card);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-md);
+  box-shadow: 0 18px 40px -18px rgba(var(--shadow-rgb), 0.45);
+  animation: ip-combobox-in 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ip-combobox__option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+
+  &.is-active {
+    background: var(--primary-glow);
+  }
+
+  &.is-selected .ip-combobox__option-label {
+    color: var(--primary);
+    font-weight: 600;
+  }
+}
+
+.ip-combobox__option-label {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.ip-combobox__option-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.ip-combobox__empty {
+  padding: 14px 12px;
+  font-size: 0.86rem;
+  font-style: italic;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.ip-combobox__error {
+  font-size: 0.78rem;
+  color: var(--error);
+}
+
+@keyframes ip-combobox-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Sur mobile, la liste occupe plus de hauteur : le pouce défile moins. */
+@media (max-width: 640px) {
+  .ip-combobox__list {
+    max-height: 45dvh;
+  }
+
+  .ip-combobox__option {
+    padding: 12px;
+  }
+}

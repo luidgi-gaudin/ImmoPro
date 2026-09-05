@@ -1,7 +1,7 @@
 .tenants-container {
-  max-width: 1200px;
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: 40px;
+  padding: var(--page-gutter);
 }
 
 .name-cell {
@@ -27,4 +27,37 @@
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   color: var(--text-primary);
+}
+
+/* En mode fiches, le nom du locataire devient le titre de la carte plutôt
+   qu'une paire intitulé / valeur : c'est ce par quoi on identifie la ligne. */
+@media (max-width: 760px) {
+  /* La cellule d'adresse porte deux valeurs (voie puis pays). En fiches, les
+     cellules répartissent leurs enfants aux deux bouts : sans ce regroupement,
+     le pays se retrouvait aligné à droite sur la même ligne que la rue. */
+  .address-cell {
+    flex-wrap: wrap;
+
+    > * {
+      flex: 1 1 100%;
+      text-align: right;
+    }
+
+    &::before {
+      flex: 0 0 auto;
+    }
+  }
+
+  .name-cell {
+    gap: 12px;
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+
+    .title-text {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
 }

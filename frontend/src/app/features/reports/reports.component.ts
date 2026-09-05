@@ -75,7 +75,7 @@ import { ReportService, ReportOverview } from '../../core/services/report.servic
 
         <section class="report-section">
           <h2 class="luxury-title" style="font-size: 1.3rem;">Rapport par bien</h2>
-          <immopro-table>
+          <immopro-table [stacked]="true">
             <thead>
               <tr>
                 <th>Bien</th>
@@ -103,14 +103,16 @@ import { ReportService, ReportOverview } from '../../core/services/report.servic
                       <span class="text-muted"> — {{ row.city }}</span>
                     }
                   </td>
-                  <td>{{ row.portfolio_name || '-' }}</td>
-                  <td>
+                  <td data-label="Portefeuille">{{ row.portfolio_name || '-' }}</td>
+                  <td data-label="Statut">
                     <immopro-badge [tone]="row.is_rented ? 'info' : 'success'">{{
                       row.is_rented ? 'Loué' : 'Disponible'
                     }}</immopro-badge>
                   </td>
-                  <td>{{ row.monthly_rent ? formatEur(row.monthly_rent) : '-' }}</td>
-                  <td>
+                  <td data-label="Loyer">
+                    {{ row.monthly_rent ? formatEur(row.monthly_rent) : '-' }}
+                  </td>
+                  <td data-label="Locataire">
                     @if (row.tenant_name && row.lease_id) {
                       <a [routerLink]="['/leases']" [queryParams]="{ lease: row.lease_id }">{{
                         row.tenant_name
@@ -131,7 +133,7 @@ import { ReportService, ReportOverview } from '../../core/services/report.servic
 
         <section class="report-section">
           <h2 class="luxury-title" style="font-size: 1.3rem;">Rapport par locataire</h2>
-          <immopro-table>
+          <immopro-table [stacked]="true">
             <thead>
               <tr>
                 <th>Locataire</th>
@@ -145,9 +147,9 @@ import { ReportService, ReportOverview } from '../../core/services/report.servic
               @for (row of d.par_locataire; track row.id) {
                 <tr>
                   <td class="title-text">{{ row.name }}</td>
-                  <td>{{ formatEur(row.total_paid) }}</td>
-                  <td>{{ formatEur(row.total_due) }}</td>
-                  <td>
+                  <td data-label="Total payé">{{ formatEur(row.total_paid) }}</td>
+                  <td data-label="Total dû">{{ formatEur(row.total_due) }}</td>
+                  <td data-label="Retards">
                     @if (row.late_count > 0) {
                       <immopro-badge tone="danger">{{ row.late_count }}</immopro-badge>
                     } @else {
@@ -201,6 +203,18 @@ import { ReportService, ReportOverview } from '../../core/services/report.servic
       .title-text {
         font-weight: 500;
         color: var(--text-primary);
+      }
+
+      /* En mode fiches, la première cellule tient lieu de titre de carte. */
+      @media (max-width: 760px) {
+        .title-text {
+          font-family: 'Space Grotesk', system-ui, sans-serif;
+          font-size: 1rem;
+          font-weight: 600;
+          padding-bottom: 10px;
+          margin-bottom: 4px;
+          border-bottom: 1px solid var(--border);
+        }
       }
     `,
   ],

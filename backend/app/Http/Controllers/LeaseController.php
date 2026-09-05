@@ -6,8 +6,11 @@ use App\Enums\LeaseStatus;
 use App\Http\Requests\LeaseRequest;
 use App\Http\Resources\LeaseResource;
 use App\Models\Lease;
+use App\Services\Leases\RentScheduleGenerator;
 use App\Support\Database\JsonAggregate;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class LeaseController extends Controller
 {
@@ -69,13 +72,62 @@ class LeaseController extends Controller
             ->through(fn (Lease $lease) => new LeaseResource($lease));
     }
 
-    public function store(LeaseRequest $request)
+    /**
+     * Crée le bail et pose son échéancier dans la foulée.
+     *
+     * Un bail sans échéancier n'est pas exploitable : il faut ensuite ouvrir
+     * trente-six fois le même formulaire pour saisir des mois que le contrat
+     * détermine entièrement. La génération est donc le comportement par défaut,
+     * et non une action à retrouver plus tard.
+     *
+     * `generate_schedule: false` la désactive, pour un bail repris en cours de
+     * route dont les échéances passées seront importées autrement.
+     */
+    public function store(LeaseRequest $request, RentScheduleGenerator $generator)
     {
-        $lease = Lease::create($request->safe()->except('co_tenants'));
+        $lease = Lease::create($request->safe()->except(['co_tenants', 'generate_schedule', 'schedule_months']));
 
         $this->syncCoTenants($lease, $request->validated('co_tenants', []));
 
-        return new LeaseResource($lease->load('coTenants', 'tenant', 'property.portfolio'));
+        if ($request->boolean('generate_schedule', true)) {
+            $months = (int) $request->validated('schedule_months', RentScheduleGenerator::DEFAULT_HORIZON_MONTHS);
+
+            $generator->generate(
+                $lease,
+                to: CarbonImmutable::parse($lease->start_date)->startOfMonth()->addMonths($months - 1),
+            );
+        }
+
+        return new LeaseResource(
+            $this->withSchedule($lease)->load('coTenants', 'tenant', 'property.portfolio')
+        );
+    }
+
+    /**
+     * Recharge le bail avec l'état de son échéancier.
+     *
+     * La création et la modification passent par `Lease::create()` / `update()`,
+     * qui ne connaissent pas les sous-requêtes d'agrégat : sans cette relecture,
+     * la fiche renvoyée annoncerait un échéancier vide juste après l'avoir
+     * généré.
+     */
+    private function withSchedule(Lease $lease): Lease
+    {
+        $fresh = Lease::query()
+            ->withOwner()
+            ->withPaymentSummary()
+            ->whereKey($lease->getKey())
+            ->first();
+
+        if ($fresh === null) {
+            return $lease;
+        }
+
+        // C'est bien la ligne qui vient d'être créée : sans ce report, la
+        // ressource perdrait le 201 que Laravel déduit de ce drapeau.
+        $fresh->wasRecentlyCreated = $lease->wasRecentlyCreated;
+
+        return $fresh;
     }
 
     public function show(Lease $lease)
@@ -91,7 +143,7 @@ class LeaseController extends Controller
     {
         $this->authorize('update', $lease);
 
-        $lease->update($request->safe()->except('co_tenants'));
+        $lease->update($request->safe()->except(['co_tenants', 'generate_schedule', 'schedule_months']));
 
         if ($request->has('co_tenants')) {
             $this->syncCoTenants($lease, $request->validated('co_tenants', []));
@@ -116,9 +168,43 @@ class LeaseController extends Controller
         $lease->coTenants()->sync($syncData);
     }
 
-    public function destroy(Lease $lease)
+    /**
+     * Supprime un bail — sous deux verrous.
+     *
+     * Un bail n'est pas une ligne de liste : c'est un contrat, avec un
+     * échéancier, des quittances remises et, en cas de litige, une valeur
+     * probante. Le supprimer d'un clic depuis l'en-tête de sa fiche était trop
+     * facile pour ce que cela emporte.
+     *
+     * 1. **Un bail actif ne se supprime pas, il se résilie.** La résiliation
+     *    conserve l'historique, libère le bien et donne une date de fin — ce
+     *    que la suppression ne fait pas.
+     * 2. **Un bail dont des loyers ont été encaissés** ne part qu'avec un
+     *    acquittement explicite (`acknowledge`), que l'écran n'envoie qu'après
+     *    recopie du mot de confirmation.
+     *
+     * La suppression reste réversible en base (soft delete) : ces verrous
+     * protègent la gestion courante, pas la donnée elle-même.
+     */
+    public function destroy(Request $request, Lease $lease)
     {
         $this->authorize('delete', $lease);
+
+        if ($lease->statut === LeaseStatus::Actif) {
+            return response()->json([
+                'message' => 'Un bail actif ne peut pas être supprimé. Résiliez-le d\'abord : '
+                    .'la résiliation conserve l\'historique des loyers et libère le bien.',
+                'code' => 'lease_active',
+            ], 409);
+        }
+
+        if (! $request->boolean('acknowledge') && $lease->payments()->whereNotNull('paid_at')->exists()) {
+            return response()->json([
+                'message' => 'Ce bail porte des loyers encaissés et des quittances délivrées. '
+                    .'Confirmez la suppression pour le retirer de la gestion courante.',
+                'code' => 'lease_has_settled_payments',
+            ], 409);
+        }
 
         $lease->delete();
 
@@ -146,7 +232,28 @@ class LeaseController extends Controller
             'end_date' => $data['end_date'],
         ]);
 
-        return new LeaseResource($lease->refresh());
+        // L'échéancier avait été posé jusqu'à l'échéance contractuelle. Un congé
+        // anticipé rend caduques les échéances postérieures : les laisser en
+        // place ferait apparaître le locataire en impayé sur des mois qu'il
+        // n'occupe plus. Seules les échéances non réglées partent — un loyer
+        // encaissé a une quittance, il reste.
+        $dropped = $lease->payments()
+            ->whereNull('paid_at')
+            ->where('period', '>', Carbon::parse($data['end_date'])->endOfMonth()->toDateString())
+            ->delete();
+
+        return response()->json([
+            'message' => $dropped === 0
+                ? 'Bail résilié.'
+                : ($dropped === 1
+                    ? 'Bail résilié. 1 échéance postérieure a été retirée de l\'échéancier.'
+                    : "Bail résilié. {$dropped} échéances postérieures ont été retirées de l'échéancier."),
+            'dropped_payments' => $dropped,
+            // Même enveloppe que la révision de loyer : une action qui a des
+            // effets de bord annonce ce qu'elle a fait, et rend le bail à jour
+            // sous « data ». La ressource nue est réservée au CRUD.
+            'data' => new LeaseResource($this->withSchedule($lease->refresh())),
+        ]);
     }
 
     /**
@@ -182,11 +289,22 @@ class LeaseController extends Controller
             'last_rent_revision_at' => now()->toDateString(),
         ])->save();
 
+        // L'échéancier est posé d'avance : sans report, la révision n'aurait
+        // aucun effet visible avant le mois où les échéances déjà créées
+        // s'épuisent, et le bailleur appellerait l'ancien loyer pendant des
+        // mois. Les échéances déjà réglées ne bougent pas : leur montant est
+        // celui qui figure sur la quittance remise.
+        $repriced = $lease->payments()
+            ->whereNull('paid_at')
+            ->where('period', '>=', now()->startOfMonth()->toDateString())
+            ->update(['amount_rent' => $newRent, 'updated_at' => now()]);
+
         return response()->json([
             'message' => 'Loyer révisé selon la variation de l\'IRL.',
             'old_rent' => $oldRent,
             'new_rent' => $newRent,
-            'data' => new LeaseResource($lease->refresh()),
+            'repriced_payments' => $repriced,
+            'data' => new LeaseResource($this->withSchedule($lease->refresh())),
         ]);
     }
 }

@@ -1,4 +1,12 @@
+/* L'hôte doit remplir sa cellule de grille, sinon deux tuiles côte à côte
+   n'ont pas la même hauteur dès que l'un des intitulés passe à la ligne. */
+:host {
+  display: block;
+  height: 100%;
+}
+
 .stat-card {
+  height: 100%;
   padding: 28px;
   background: var(--surface-card);
   border: 1px solid var(--border);
@@ -59,6 +67,23 @@
       background: rgba(140, 163, 212, 0.08);
       border-color: rgba(140, 163, 212, 0.2);
       color: var(--info);
+    }
+  }
+}
+
+/* Sur téléphone, deux tuiles se partagent la largeur : le remplissage et le
+   corps du chiffre suivent, faute de quoi « 3 120 € » passe à la ligne. */
+@media (max-width: 520px) {
+  .stat-card {
+    padding: 16px 18px;
+
+    .stat-value {
+      font-size: 1.55rem;
+    }
+
+    .stat-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
     }
   }
 }

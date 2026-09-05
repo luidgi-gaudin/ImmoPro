@@ -614,3 +614,164 @@ select {
     display: block !important;
   }
 }
+
+/* ============================================================
+   RESPONSIVE — ce que l'application devient sur un téléphone
+   ============================================================
+
+   L'application était dessinée pour un écran large : marges de 40 px,
+   modales centrées à 600 px, tableaux à sept colonnes, barre supérieure
+   avec un champ de recherche de 480 px. Sur 375 px de large, chacune de
+   ces décisions produit soit du débordement horizontal, soit une page
+   presque vide où il faut faire défiler longtemps pour atteindre le
+   contenu.
+
+   Les règles ci-dessous sont globales parce qu'elles corrigent des
+   éléments globaux (modales, titres, formulaires). Ce qui est propre à
+   un écran reste dans sa feuille de style.
+   ============================================================ */
+
+/* Marge de page uniforme, fluide entre le téléphone et le grand écran.
+   Les conteneurs d'écran s'appuient dessus au lieu de figer 40 px. */
+:root {
+  --page-gutter: clamp(16px, 3.5vw, 40px);
+  --page-max: 1220px;
+}
+
+/* Aucun écran ne doit provoquer de défilement latéral : c'est toujours le
+   symptôme d'un élément plus large que la fenêtre, jamais une intention.
+
+   `clip` et non `hidden` : `overflow-x: hidden` fait du corps de page un
+   conteneur de défilement, ce qui neutralise le `position: sticky` de la barre
+   supérieure. `clip` coupe sans créer de conteneur. */
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+/* Les titres suivent la largeur disponible plutôt qu'une taille fixe :
+   un h1 de 2.4rem sur 375 px occupe trois lignes avant la première
+   information utile. */
+h1 {
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+}
+h2 {
+  font-size: clamp(1.35rem, 4vw, 1.9rem);
+}
+h3 {
+  font-size: clamp(1.15rem, 3.4vw, 1.45rem);
+}
+
+/* Les champs passent à 16 px sous 640 px : en deçà, iOS Safari zoome
+   automatiquement à la mise au point et ne dézoome jamais, ce qui laisse
+   l'écran décalé pour tout le reste de la saisie. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+    padding: 11px 14px;
+  }
+
+  select {
+    padding-right: 38px;
+  }
+}
+
+/* ── Modales : boîte centrée sur grand écran, feuille du bas sur mobile ──
+   Une modale centrée sur un téléphone laisse une bande inutilisable en
+   haut et en bas, et pose ses boutons hors de portée du pouce. */
+@media (max-width: 640px) {
+  .luxury-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .luxury-modal {
+    max-width: 100%;
+    max-height: 92dvh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none;
+    animation: slideUpSheet 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .modal-header {
+    padding: 18px 20px;
+    position: sticky;
+    top: 0;
+    background: var(--surface-card);
+    z-index: 1;
+
+    h3 {
+      font-size: 1.2rem;
+    }
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  /* La barre d'actions reste visible pendant le défilement du formulaire :
+     sur un formulaire long, le bouton d'enregistrement était à trois écrans
+     du champ que l'on venait de remplir. */
+  .modal-footer {
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+    position: sticky;
+    bottom: 0;
+    background: var(--surface-card);
+    flex-direction: column-reverse;
+    gap: 10px;
+
+    > * {
+      width: 100%;
+    }
+  }
+}
+
+@keyframes slideUpSheet {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ── Cibles tactiles ──
+   Les petits boutons d'action des listes font 28 px de côté à la souris.
+   Au doigt, la cible recommandée est de 44 px : on l'obtient par le
+   remplissage, sans grossir l'icône. */
+@media (pointer: coarse) {
+  .btn--sm {
+    padding: 10px 14px;
+  }
+
+  .modal-close {
+    padding: 8px;
+    margin: -8px;
+  }
+}
+
+/* ── Alertes ──
+   Une alerte d'une ligne s'aligne verticalement ; une alerte de trois
+   lignes doit garder son icône en haut. */
+.alert {
+  align-items: flex-start;
+}
+
+/* Impression : la barre latérale et la barre supérieure n'ont rien à faire
+   sur une quittance. */
+@media print {
+  app-sidebar,
+  app-topbar,
+  app-breadcrumb,
+  app-global-search {
+    display: none !important;
+  }
+
+  .has-chrome .app-body {
+    margin-left: 0 !important;
+  }
+}

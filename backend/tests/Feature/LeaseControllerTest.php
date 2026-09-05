@@ -6,6 +6,7 @@ use App\Enums\LeaseStatus;
 use App\Models\Lease;
 use App\Models\Portfolio;
 use App\Models\Property;
+use App\Models\RentPayment;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -215,17 +216,69 @@ class LeaseControllerTest extends TestCase
 
     // ── Destroy ───────────────────────────────────────────────────────────────
 
-    public function test_destroy_soft_deletes_lease_for_owner(): void
+    public function test_destroy_soft_deletes_a_terminated_lease_for_owner(): void
     {
         [$user, $property, $tenant] = $this->createOwnerWithProperty();
         $lease = Lease::factory()->create([
             'property_id' => $property->id,
             'tenant_id' => $tenant->id,
+            'statut' => LeaseStatus::Termine->value,
         ]);
 
         $response = $this->actingAs($user)->deleteJson("/api/leases/{$lease->id}");
 
         $response->assertStatus(200);
+
+        $this->assertSoftDeleted('leases', ['id' => $lease->id]);
+    }
+
+    /**
+     * Un bail en cours se résilie, il ne se supprime pas : la résiliation garde
+     * l'historique des loyers et donne une date de fin, ce que la suppression
+     * ne fait pas.
+     */
+    public function test_destroy_refuses_an_active_lease(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+        $lease = Lease::factory()->active()->create([
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+        ]);
+
+        $this->actingAs($user)
+            ->deleteJson("/api/leases/{$lease->id}")
+            ->assertStatus(409)
+            ->assertJsonPath('code', 'lease_active');
+
+        $this->assertDatabaseHas('leases', ['id' => $lease->id, 'deleted_at' => null]);
+    }
+
+    /**
+     * Un bail dont des loyers ont été encaissés emporte des quittances
+     * délivrées : il ne part qu'avec un acquittement explicite.
+     */
+    public function test_destroy_requires_acknowledgement_when_rents_were_settled(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+        $lease = Lease::factory()->create([
+            'property_id' => $property->id,
+            'tenant_id' => $tenant->id,
+            'statut' => LeaseStatus::Termine->value,
+        ]);
+
+        RentPayment::factory()->create([
+            'lease_id' => $lease->id,
+            'paid_at' => now()->toDateString(),
+        ]);
+
+        $this->actingAs($user)
+            ->deleteJson("/api/leases/{$lease->id}")
+            ->assertStatus(409)
+            ->assertJsonPath('code', 'lease_has_settled_payments');
+
+        $this->actingAs($user)
+            ->deleteJson("/api/leases/{$lease->id}", ['acknowledge' => true])
+            ->assertStatus(200);
 
         $this->assertSoftDeleted('leases', ['id' => $lease->id]);
     }

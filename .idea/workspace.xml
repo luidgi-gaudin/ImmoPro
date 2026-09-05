@@ -6,14 +6,54 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="BackgroundAgentGlobalSettings">
+    <option name="selectedModelId" value="auto" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling.">
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="refactor: improve tenant details layout and styles&#10;&#10;- Enhanced component structure by wrapping content in a unified `.detail-tenant-global` container.&#10;- Adjusted padding and margins for improved spacing consistency across the tenant details and breadcrumb components.&#10;- Updated document section padding for a more cohesive design.">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/laravel-idea.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/laravel-idea.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Enums/LeaseType.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Enums/LeaseType.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/RentPaymentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/RentPaymentController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Requests/LeaseRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Requests/LeaseRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Resources/LeaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Resources/LeaseResource.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/Lease.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Lease.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/tests/Feature/LeaseComplianceTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tests/Feature/LeaseComplianceTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/tests/Feature/LeaseControllerTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tests/Feature/LeaseControllerTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/tests/Unit/LeaseTypeTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tests/Unit/LeaseTypeTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproFilterBar/immopro-filter-bar.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproFilterBar/immopro-filter-bar.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproModal/immopro-modal.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproModal/immopro-modal.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproStatCard/immopro-stat-card.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproStatCard/immopro-stat-card.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/public-api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/public-api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/layout.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/layout.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/lease.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/lease.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenant-detail.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenant-detail.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/breadcrumb/breadcrumb.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/breadcrumb/breadcrumb.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolios.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolios.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/profile/profile.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/profile/profile.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/reports/reports.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/reports/reports.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/topbar/topbar.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/topbar/topbar.component.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/topbar/topbar.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/topbar/topbar.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/styles.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +68,7 @@
   </component>
   <component name="CopilotPersistence">
     <persistenceIdMap>
+      <entry key="_/Users/luidgigaudin/PhpstormProjects/ImmoPro" value="3IMzSjrfVmJmcIkzTrR7RabTENR" />
       <entry key="_C:/Users/LuidgiGAUDIN/PhpstormProjects/ImmoPro" value="3B4g3Pu4zJQQZ8JlE2tvBCAX9MZ" />
       <entry key="_C:/Users/luidg/PhpstormProjects/ImmoPro" value="373kmqohKjTXkLR0zZzjzcBKhxb" />
     </persistenceIdMap>
@@ -42,7 +83,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="8963" />
+    <option name="cachedIndexableFilesCount" value="8961" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -67,12 +108,12 @@
     &quot;assignee&quot;: &quot;luidgi-gaudin&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/luidgi-gaudin/ImmoPro.git",
-    "accountId": "5ead342a-d1a2-47be-81b2-e8a3e4a80a5a"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/luidgi-gaudin/ImmoPro.git&quot;,
+    &quot;accountId&quot;: &quot;5ead342a-d1a2-47be-81b2-e8a3e4a80a5a&quot;
   }
-}]]></component>
+}</component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -83,7 +124,7 @@
         <option name="allowedToolsNames" />
         <option name="enabled" value="false" />
         <option name="name" value="angular-cli" />
-        <option name="source" value="USER" />
+        <option name="source" value="PLUGIN" />
         <option name="userOverride" value="false" />
       </McpServerConfigurationProperties>
     </commands>
@@ -91,61 +132,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0084599445049032" />
-      <entry key="MS500" value="1.5080511351579005" />
-      <entry key="S2" value="2.5432415210228134" />
-      <entry key="S5" value="3.8703561790756384" />
-      <entry key="S10" value="5.289152149202435" />
-      <entry key="S30" value="8.579372735134278" />
-      <entry key="S60" value="11.222463199691514" />
-      <entry key="M2" value="15.016809798935382" />
-      <entry key="M5" value="25.614894435421586" />
-      <entry key="M10" value="35.08781988047334" />
-      <entry key="M15" value="39.6659496540987" />
-      <entry key="M30" value="45.38063266097512" />
-      <entry key="H1" value="50.39991968749588" />
-      <entry key="H2" value="57.165697988642776" />
-      <entry key="H4" value="64.29353111825287" />
-      <entry key="D1" value="74.3245900569712" />
-      <entry key="W1" value="76.6011537115884" />
+      <entry key="MS100" value="2.3859292385561295" />
+      <entry key="MS500" value="4.41489497425408" />
+      <entry key="S2" value="6.934564577274092" />
+      <entry key="S5" value="9.477521011994504" />
+      <entry key="S10" value="10.967034280886105" />
+      <entry key="S30" value="12.250015087729022" />
+      <entry key="S60" value="12.615094800749374" />
+      <entry key="M2" value="12.80499850082438" />
+      <entry key="M5" value="12.921378373242838" />
+      <entry key="M10" value="12.960584897619421" />
+      <entry key="M15" value="12.97370003126703" />
+      <entry key="M30" value="12.986838384071877" />
+      <entry key="H1" value="12.993416281394307" />
+      <entry key="H2" value="12.99670741269255" />
+      <entry key="H4" value="12.998353524302077" />
+      <entry key="D1" value="12.999725562096106" />
+      <entry key="W1" value="12.999960793965826" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.5814073595190088E-11" />
-      <entry key="MS500" value="0.006915263785777697" />
-      <entry key="S2" value="0.2883714012650057" />
-      <entry key="S5" value="0.6081082216200308" />
-      <entry key="S10" value="0.7798129401467685" />
-      <entry key="S30" value="0.9205745138288248" />
-      <entry key="S60" value="0.9817733472198197" />
-      <entry key="M2" value="1.276435674047654" />
-      <entry key="M5" value="2.4025441683351354" />
-      <entry key="M10" value="3.370608960873677" />
-      <entry key="M15" value="3.8225451066684943" />
-      <entry key="M30" value="4.3602202941662735" />
-      <entry key="H1" value="4.666208360607588" />
-      <entry key="H2" value="4.829475244211874" />
-      <entry key="H4" value="4.913810458313574" />
-      <entry key="D1" value="4.985504576302948" />
-      <entry key="W1" value="4.997926006496631" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.00978597762485422" />
-      <entry key="MS500" value="0.5313081160321338" />
-      <entry key="S2" value="1.9712809872664774" />
-      <entry key="S5" value="3.7985657669080104" />
-      <entry key="S10" value="5.5538768215655026" />
-      <entry key="S30" value="9.208400668234923" />
-      <entry key="S60" value="12.014327272587895" />
-      <entry key="M2" value="16.172204384789875" />
-      <entry key="M5" value="27.94901955701645" />
-      <entry key="M10" value="38.41681930426169" />
-      <entry key="M15" value="43.45851885634712" />
-      <entry key="M30" value="49.72454629878714" />
-      <entry key="H1" value="55.05758394808433" />
-      <entry key="H2" value="61.99077533312804" />
-      <entry key="H4" value="69.2051002729379" />
-      <entry key="D1" value="79.30971326646262" />
-      <entry key="W1" value="81.59902500829403" />
+      <entry key="MS100" value="2.2517328458388586" />
+      <entry key="MS500" value="4.265558310742489" />
+      <entry key="S2" value="6.8664162356497505" />
+      <entry key="S5" value="9.437709978756828" />
+      <entry key="S10" value="10.943269066690611" />
+      <entry key="S30" value="12.240959626048863" />
+      <entry key="S60" value="12.610403961917454" />
+      <entry key="M2" value="12.802610515975239" />
+      <entry key="M5" value="12.920412726275105" />
+      <entry key="M10" value="12.960100311826809" />
+      <entry key="M15" value="12.973376580943095" />
+      <entry key="M30" value="12.986676461968038" />
+      <entry key="H1" value="12.993335271036031" />
+      <entry key="H2" value="12.99666689517795" />
+      <entry key="H4" value="12.99833326245981" />
+      <entry key="D1" value="12.999722184693834" />
+      <entry key="W1" value="12.999960311469287" />
     </decayedShown>
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/opt/homebrew/Cellar/php/8.5.9/bin/php">
@@ -295,9 +336,11 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "feat/update",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "fix/logique-et-forntend",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
     "laravel_idea.dialogs.codeGeneration.window.createClass.width": "414",
     "laravel_idea.dialogs.codeGeneration.window.createClass.x": "646",
     "laravel_idea.dialogs.codeGeneration.window.createClass.y": "309",
@@ -317,10 +360,10 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "/Users/luidgigaudin/PhpstormProjects/ImmoPro/frontend/node_modules/prettier",
-    "settings.editor.selected.configurable": "reference.webide.settings.project.settings.php",
+    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\prettier",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "/Users/luidgigaudin/PhpstormProjects/ImmoPro/frontend/node_modules/typescript/lib",
+    "ts.external.directory.path": "C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -351,18 +394,17 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP Request.All in laravel" />
         <item itemvalue="HTTP Request.laravel | auth.user" />
         <item itemvalue="HTTP Request.laravel | auth.register" />
-        <item itemvalue="PHPUnit.AuthControllerTest" />
+        <item itemvalue="HTTP Request.All in laravel" />
+        <item itemvalue="HTTP Request.All in laravel" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-PS-262.9437.196" />
-        <option value="bundled-php-predefined-a98d8de5180a-9522f28f0b20-com.jetbrains.php.sharedIndexes-PS-262.9437.196" />
+        <option value="bundled-php-predefined-a98d8de5180a-9522f28f0b20-com.jetbrains.php.sharedIndexes-PS-262.10315.130" />
       </set>
     </attachedChunks>
   </component>
@@ -385,7 +427,16 @@
       <workItem from="1774943601459" duration="6331000" />
       <workItem from="1775545582346" duration="1294000" />
       <workItem from="1780298277271" duration="741000" />
-      <workItem from="1787581865889" duration="557000" />
+      <workItem from="1786721450191" duration="5094000" />
+      <workItem from="1786747038120" duration="4222000" />
+      <workItem from="1786754446124" duration="2733000" />
+      <workItem from="1786877730675" duration="983000" />
+      <workItem from="1787661536878" duration="8000" />
+      <workItem from="1787738343008" duration="2756000" />
+      <workItem from="1787906791367" duration="11000" />
+      <workItem from="1788468298130" duration="85000" />
+      <workItem from="1788469351985" duration="96000" />
+      <workItem from="1788469455064" duration="3173000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -459,19 +510,22 @@
       <option name="project" value="LOCAL" />
       <updated>1773757443825</updated>
     </task>
-    <task id="LOCAL-00010" summary="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling.">
-      <option name="closed" value="true" />
-      <created>1787570915634</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1787570915634</updated>
-    </task>
-    <option name="localTasksCounter" value="11" />
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus" />
@@ -482,9 +536,7 @@
     <MESSAGE value="feat: implement authentication with login and registration components" />
     <MESSAGE value="chore: remove authentication functionality and related components" />
     <MESSAGE value="feat: update authentication to use API tokens and improve response structure" />
-    <MESSAGE value="fix: escape email address in privacy component for HTML compliance" />
-    <MESSAGE value="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: update authentication to use API tokens and improve response structure" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

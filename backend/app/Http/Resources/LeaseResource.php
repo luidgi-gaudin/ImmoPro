@@ -58,10 +58,20 @@ class LeaseResource extends JsonResource
             'deposit_cap' => $lease->depositCap(),
             'can_revise_rent' => $lease->canReviseRent(),
 
+            // Durée effective et réserve de conformité éventuelle. Le front les
+            // affiche, il ne les calcule pas : une règle de droit écrite des
+            // deux côtés finit par diverger.
+            'duration_months' => $lease->durationInMonths(),
+            'duration_notice' => $lease->durationNotice(),
+
             'property' => $this->property(),
             'tenant' => $this->tenant(),
             'co_tenants' => $this->coTenants(),
             'documents_count' => $lease->documents_count ?? null,
+
+            // État de l'échéancier : présent sur la fiche d'un bail, absent des
+            // listes qui ne l'affichent pas et n'ont donc pas à le calculer.
+            'schedule' => $lease->paymentSchedule(),
         ];
     }
 

@@ -245,11 +245,60 @@
   }
 }
 
+/* Le champ de recherche factice devient un bouton rond sur mobile : sa largeur
+   minimale poussait la barre au-delà de l'écran, et c'est ce débordement qui
+   faisait glisser toute la page latéralement. */
+.topbar-search-compact {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .burger {
     display: flex;
   }
   .user-name-label {
+    display: none;
+  }
+
+  .topbar {
+    gap: 8px;
+    padding: 0 12px;
+  }
+
+  .topbar-left {
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .section-title {
+    font-size: 1.05rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .topbar-center {
+    display: none;
+  }
+
+  .topbar-search-compact {
+    display: flex;
+  }
+
+  .topbar-right {
+    gap: 6px;
+  }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* Sous 380 px, la bascule de thème passe à la trappe avant la cloche et le
+   menu : c'est la seule des trois dont l'absence ne bloque rien. */
+@media (max-width: 380px) {
+  immopro-theme-toggle {
     display: none;
   }
 }

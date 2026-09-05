@@ -1,0 +1,80 @@
+<div class="ip-combobox" [class.is-open]="open()" [class.has-error]="!!error()">
+  @if (label()) {
+    <label class="ip-combobox__label" [attr.for]="inputId()">{{ label() }}</label>
+  }
+
+  <div class="ip-combobox__field">
+    <svg class="ip-combobox__icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <line x1="16.5" y1="16.5" x2="21" y2="21" />
+    </svg>
+
+    <input
+      #field
+      type="text"
+      class="ip-combobox__input"
+      role="combobox"
+      autocomplete="off"
+      spellcheck="false"
+      [id]="inputId()"
+      [value]="displayValue()"
+      [attr.placeholder]="selected() ? selected()!.label : placeholder()"
+      [disabled]="disabled()"
+      [attr.aria-expanded]="open()"
+      [attr.aria-controls]="inputId() + '-listbox'"
+      [attr.aria-activedescendant]="open() ? optionId(activeIndex()) : null"
+      [attr.aria-invalid]="!!error()"
+      aria-autocomplete="list"
+      (focus)="openList()"
+      (click)="openList()"
+      (input)="onInput($event)"
+      (keydown)="onKeydown($event)"
+    />
+
+    @if (selected() && !disabled()) {
+      <button
+        type="button"
+        class="ip-combobox__clear"
+        (click)="clear($event)"
+        [attr.aria-label]="'Effacer ' + (label() || 'la sélection')"
+      >
+        &times;
+      </button>
+    }
+
+    <svg class="ip-combobox__chevron" viewBox="0 0 24 24" aria-hidden="true">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  </div>
+
+  @if (open()) {
+    <ul class="ip-combobox__list" role="listbox" [id]="inputId() + '-listbox'">
+      @for (option of filtered(); track option.value; let i = $index) {
+        <li
+          class="ip-combobox__option"
+          role="option"
+          [id]="optionId(i)"
+          [class.is-active]="i === activeIndex()"
+          [class.is-selected]="selected()?.value === option.value"
+          [attr.aria-selected]="selected()?.value === option.value"
+          (pointerdown)="$event.preventDefault()"
+          (click)="select(option)"
+          (pointerenter)="activeIndex.set(i)"
+        >
+          <span class="ip-combobox__option-label">{{ option.label }}</span>
+          @if (option.hint) {
+            <span class="ip-combobox__option-hint">{{ option.hint }}</span>
+          }
+        </li>
+      } @empty {
+        <li class="ip-combobox__empty" role="presentation">
+          {{ options().length === 0 ? noOptionsMessage() : emptyMessage() }}
+        </li>
+      }
+    </ul>
+  }
+
+  @if (error()) {
+    <span class="ip-combobox__error">{{ error() }}</span>
+  }
+</div>
