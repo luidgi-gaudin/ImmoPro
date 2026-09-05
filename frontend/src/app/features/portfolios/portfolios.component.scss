@@ -1,7 +1,7 @@
 .portfolios-container {
-  max-width: 1200px;
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: 40px;
+  padding: var(--page-gutter);
 }
 
 .portfolios-grid {

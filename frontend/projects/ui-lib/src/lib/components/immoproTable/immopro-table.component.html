@@ -7,7 +7,7 @@
     ></div>
   }
   <div class="ip-table-scroll">
-    <table class="ip-table">
+    <table class="ip-table" [class.ip-table--stacked]="stacked()">
       <ng-content></ng-content>
     </table>
   </div>

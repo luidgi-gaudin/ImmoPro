@@ -2,18 +2,19 @@
   @if (glow()) {
     <div class="card-glow"></div>
   }
-  @if (hasHeader) {
-    <div class="card-header">
-      <ng-content select="[card-title]"></ng-content>
-      <ng-content select="[card-subtitle]"></ng-content>
-    </div>
-  }
+  <!-- `[card-header]` accepté au même titre que `[card-title]` : c'est l'attribut
+       qu'écrivent tous les écrans, et faute d'être déclaré ici, leur en-tête
+       tombait dans le contenu tandis qu'un bandeau vide et bordé s'affichait
+       au-dessus. -->
+  <div class="card-header">
+    <ng-content select="[card-header]"></ng-content>
+    <ng-content select="[card-title]"></ng-content>
+    <ng-content select="[card-subtitle]"></ng-content>
+  </div>
   <div class="card-content">
     <ng-content></ng-content>
   </div>
-  @if (hasFooter) {
-    <div class="card-footer">
-      <ng-content select="[card-footer]"></ng-content>
-    </div>
-  }
+  <div class="card-footer">
+    <ng-content select="[card-footer]"></ng-content>
+  </div>
 </div>

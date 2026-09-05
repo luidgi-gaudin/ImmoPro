@@ -240,8 +240,12 @@ svg[icon] {
   }
 }
 
+/* Quatre indicateurs empilés sur un écran de téléphone, c'est quatre écrans
+   de défilement avant la première alerte. Deux par ligne les font tenir en un
+   seul coup d'œil : ce sont des nombres courts, ils n'ont pas besoin de toute
+   la largeur. */
 @media (max-width: 520px) {
   .kpi-grid {
-    grid-template-columns: 1fr;
+    gap: 12px;
   }
 }

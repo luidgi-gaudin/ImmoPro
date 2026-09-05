@@ -39,7 +39,7 @@
     </immopro-select>
   </immopro-filter-bar>
 
-  <immopro-table [loading]="listLoading()">
+  <immopro-table [loading]="listLoading()" [stacked]="true">
     <thead>
       <tr>
         <th>
@@ -96,21 +96,21 @@
                 >{{ tenant.first_name }} {{ tenant.last_name }}</a
               >
             </td>
-            <td>{{ tenant.email || '-' }}</td>
-            <td>{{ tenant.phone || '-' }}</td>
+            <td data-label="E-mail">{{ tenant.email || '-' }}</td>
+            <td data-label="Téléphone">{{ tenant.phone || '-' }}</td>
             <!-- Un IBAN complet dans un tableau se lit par-dessus l'épaule et
                  se retrouve dans la moindre capture d'écran. Les quatre derniers
                  caractères suffisent à reconnaître un compte ; le détail reste
                  sur la fiche du locataire. -->
-            <td>
+            <td data-label="IBAN">
               <code class="bank-code" [title]="'Détail sur la fiche locataire'">{{
                 mask(tenant.iban)
               }}</code>
             </td>
-            <td>
+            <td data-label="BIC">
               <code class="bank-code">{{ mask(tenant.bic) }}</code>
             </td>
-            <td>
+            <td class="address-cell" data-label="Adresse">
               <span>{{ tenant.address || '-' }}</span>
               @if (tenant.country) {
                 <span

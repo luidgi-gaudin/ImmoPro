@@ -242,9 +242,24 @@
   .ip-filter-bar {
     flex-direction: column;
     align-items: stretch;
+    padding: 14px;
+    gap: 14px;
+  }
+
+  /* En colonne, `flex-basis` s'applique à la **hauteur** : le `flex: 1 1 240px`
+     du champ de recherche lui donnait 240 px de haut, d'où les grands vides qui
+     séparaient la recherche des filtres. Sur cet axe, la base doit être libre. */
+  .ip-filter-search,
+  .ip-filter-slots {
+    flex: 0 0 auto;
+    min-width: 0;
+    width: 100%;
   }
 
   .ip-filter-slots {
+    flex-direction: column;
+    align-items: stretch;
+
     ::ng-deep immopro-select {
       width: 100%;
     }

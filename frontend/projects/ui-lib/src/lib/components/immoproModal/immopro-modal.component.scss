@@ -119,3 +119,45 @@
     transform: none;
   }
 }
+
+/* ── Mobile : feuille du bas plutôt que boîte centrée ──
+   Une boîte centrée sur un téléphone laisse deux bandes mortes et pose ses
+   boutons au milieu de l'écran, hors de portée du pouce. La feuille part du
+   bas, occupe la largeur entière et garde ses actions sous la main. */
+@media (max-width: 640px) {
+  .ip-modal,
+  .ip-modal.wide,
+  .ip-modal.full {
+    max-width: 100%;
+    width: 100%;
+    max-height: 92dvh;
+    margin: 0;
+    margin-top: auto;
+    /* `<dialog>` est centré par défaut : on l'ancre en bas de la fenêtre. */
+    top: auto;
+    bottom: 0;
+    height: auto;
+  }
+
+  .ip-modal__panel {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none;
+  }
+
+  .ip-modal__head {
+    padding: 1rem 1rem 0.5rem;
+  }
+
+  .ip-modal__body {
+    padding: 0.5rem 1rem 1rem;
+  }
+
+  .ip-modal__foot {
+    padding: 0 1rem calc(1rem + env(safe-area-inset-bottom));
+    flex-direction: column-reverse;
+
+    > * {
+      width: 100%;
+    }
+  }
+}

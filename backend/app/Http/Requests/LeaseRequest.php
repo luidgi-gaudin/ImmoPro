@@ -6,6 +6,7 @@ use App\Enums\LeaseStatus;
 use App\Enums\LeaseType;
 use App\Models\Property;
 use App\Models\Tenant;
+use App\Services\Leases\RentScheduleGenerator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
@@ -81,6 +82,12 @@ class LeaseRequest extends FormRequest
                 Rule::notIn([(int) $this->input('tenant_id')]),
             ],
             'co_tenants.*.rent_share' => ['nullable', 'numeric', 'gte:0'],
+
+            // Échéancier posé dès la création : voir LeaseController::store().
+            // Le nombre de mois est un horizon, pas une durée de bail — il est
+            // de toute façon raboté sur la date de fin quand elle existe.
+            'generate_schedule' => ['sometimes', 'boolean'],
+            'schedule_months' => ['sometimes', 'integer', 'between:1,'.RentScheduleGenerator::MAX_MONTHS],
         ];
     }
 
@@ -146,8 +153,20 @@ class LeaseRequest extends FormRequest
     }
 
     /**
-     * Durées légales : 3 ans minimum en location vide (art. 10), 1 an en meublé (art. 25-7),
-     * 9 mois pour le bail étudiant (art. 25-7), 1 à 10 mois pour le bail mobilité (art. 25-12).
+     * Bornes de durée que rien ne permet de franchir.
+     *
+     * La validation ne rejette plus toute durée inférieure à la durée de droit
+     * commun : elle ne rejette que ce qui est illicite en toutes circonstances.
+     *
+     * Un bail vide de deux ans est parfaitement valable lorsqu'un événement
+     * familial ou professionnel justifie la reprise du logement (art. 11) ; le
+     * refuser rendait impossible d'enregistrer un contrat réel. Le motif figure
+     * dans le contrat signé, que l'application stocke en pièce jointe — pas dans
+     * ce formulaire, où il ne serait qu'une case à cocher sans valeur.
+     *
+     * Ce qui reste en deçà de la durée de droit commun est signalé sur la fiche
+     * du bail par `Lease::durationNotice()`, sans bloquer la saisie.
+     *
      * Un bail résilié (statut « termine ») peut avoir une date de fin anticipée.
      */
     private function validateDuration(Validator $validator, LeaseType $type): void
@@ -165,13 +184,13 @@ class LeaseRequest extends FormRequest
         $start = Carbon::parse($this->input('start_date'));
         $end = Carbon::parse($this->input('end_date'));
 
-        $min = $type->minDurationInMonths();
+        $floor = $type->floorDurationInMonths();
 
         // Tolérance d'un jour pour les dates de fin inclusives (ex. 01/09 → 31/05).
-        if ($end->lt($start->copy()->addMonths($min)->subDay())) {
+        if ($end->lt($start->copy()->addMonths($floor)->subDay())) {
             $validator->errors()->add(
                 'end_date',
-                "La durée minimale d'un bail « {$type->label()} » est de {$min} mois (loi n° 89-462)."
+                "Un bail « {$type->label()} » ne peut en aucun cas durer moins de {$floor} mois (loi n° 89-462)."
             );
 
             return;
@@ -182,7 +201,9 @@ class LeaseRequest extends FormRequest
         if ($max !== null && $end->gt($start->copy()->addMonths($max))) {
             $validator->errors()->add(
                 'end_date',
-                "La durée maximale d'un bail « {$type->label()} » est de {$max} mois (loi n° 89-462)."
+                $type === LeaseType::Etudiant
+                    ? 'Au-delà de douze mois, le contrat relève de la location meublée ordinaire : choisissez ce type de bail.'
+                    : "La durée maximale d'un bail « {$type->label()} » est de {$max} mois (loi n° 89-462)."
             );
         }
     }

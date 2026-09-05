@@ -64,7 +64,7 @@
   <div class="alert alert-error">{{ listError() }}</div>
 }
 
-<immopro-table [loading]="listLoading()" loadingText="Chargement des actifs...">
+<immopro-table [loading]="listLoading()" [stacked]="true" loadingText="Chargement des actifs...">
   <thead>
     <tr>
       <th>
@@ -121,22 +121,22 @@
               >{{ property.title }}</a
             >
           </td>
-          <td>
+          <td data-label="Type">
             <span class="capitalize">{{ property.property_type }}</span>
           </td>
-          <td>
+          <td data-label="Adresse">
             <span class="address-text">{{ property.address }}</span>
           </td>
-          <td>{{ property.city }} ({{ property.postal_code }})</td>
-          <td>
+          <td data-label="Ville">{{ property.city }} ({{ property.postal_code }})</td>
+          <td data-label="DPE">
             <immopro-dpe-badge [value]="property.dpe"></immopro-dpe-badge>
           </td>
-          <td>
+          <td data-label="Loyer prévu">
             <strong class="rent-text">{{
               property.monthly_rent ? property.monthly_rent + ' €' : '-'
             }}</strong>
           </td>
-          <td>
+          <td data-label="Statut">
             <immopro-badge [tone]="property.is_rented ? 'info' : 'success'">
               {{ property.is_rented ? 'Loué' : 'Disponible' }}
             </immopro-badge>

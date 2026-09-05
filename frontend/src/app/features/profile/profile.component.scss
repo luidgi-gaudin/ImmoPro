@@ -1,7 +1,7 @@
 .profile-container {
-  max-width: 1200px;
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: 40px;
+  padding: var(--page-gutter);
 }
 
 .profile-grid {
@@ -9,22 +9,28 @@
   grid-template-columns: 1fr 1fr;
   gap: 30px;
   align-items: start;
-  
+
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
   }
 }
 
+/* `min-width: 0` : un élément de grille vaut par défaut `min-width: auto`, ce
+   qui l'empêche de descendre sous la largeur minimale de son contenu. Une
+   rangée de boutons insécables suffisait alors à pousser la colonne à 406 px
+   sur un écran de 375, et le navigateur dézoomait toute la page pour la faire
+   tenir. */
 .profile-column {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .user-details-body {
   display: flex;
   align-items: center;
   gap: 30px;
-  
+
   @media (max-width: 500px) {
     flex-direction: column;
     text-align: center;
@@ -35,17 +41,17 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  
+
   @media (max-width: 500px) {
     align-items: center;
   }
-  
+
   h3 {
     font-size: 1.6rem;
     margin-bottom: 4px;
     font-weight: 500;
   }
-  
+
   p {
     margin: 0 0 10px;
     font-size: 0.9rem;
@@ -64,30 +70,30 @@
   letter-spacing: 0.02em;
   border: 1px solid transparent;
   width: 100%;
-  
+
   .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
     display: inline-block;
   }
-  
+
   &.active-2fa {
     background: rgba(107, 179, 147, 0.06);
     border-color: rgba(107, 179, 147, 0.2);
     color: var(--success);
-    
+
     .dot {
       background-color: var(--success);
       box-shadow: 0 0 8px var(--success);
     }
   }
-  
+
   &.inactive-2fa {
     background: rgba(224, 94, 94, 0.06);
     border-color: rgba(224, 94, 94, 0.2);
     color: var(--error);
-    
+
     .dot {
       background-color: var(--error);
       box-shadow: 0 0 8px var(--error);
@@ -103,7 +109,7 @@
   margin: 15px 0 25px;
   border: 1px solid var(--border);
   box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.1);
-  
+
   img {
     display: block;
     width: 180px;
@@ -127,7 +133,7 @@
     font-weight: 500;
     text-transform: uppercase;
   }
-  
+
   .secret-text {
     font-family: monospace;
     font-size: 0.95rem;
@@ -148,7 +154,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-top: 15px;
-  
+
   code {
     background: var(--overlay-strong);
     border: 1px solid var(--border);

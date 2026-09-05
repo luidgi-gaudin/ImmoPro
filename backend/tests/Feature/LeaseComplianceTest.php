@@ -95,15 +95,46 @@ class LeaseComplianceTest extends TestCase
 
     // ── Durées des baux (art. 10, 25-7, 25-12) ────────────────────────────────
 
-    public function test_bail_nu_rejects_duration_under_three_years(): void
+    /**
+     * Trois ans est la durée de droit commun, pas un plancher : un bail vide
+     * plus court est licite lorsqu'un événement familial ou professionnel
+     * justifie la reprise du logement (art. 11). Le refuser empêchait
+     * d'enregistrer un contrat réel.
+     */
+    public function test_bail_nu_accepts_a_reduced_term_and_flags_it(): void
     {
         [$user, $property, $tenant] = $this->createOwnerWithProperty();
 
         $response = $this->actingAs($user)->postJson('/api/leases', $this->payload($property, $tenant, [
-            'end_date' => '2027-01-01', // 1 an < 3 ans
+            'end_date' => '2028-01-01', // deux ans
+        ]));
+
+        $response->assertStatus(201)->assertJsonPath('duration_months', 24);
+
+        $this->assertStringContainsString('art. 11', $response->json('duration_notice'));
+    }
+
+    /** Un an reste le plancher absolu : l'exception de l'art. 11 ne va pas plus bas. */
+    public function test_bail_nu_rejects_a_term_under_one_year(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+
+        $response = $this->actingAs($user)->postJson('/api/leases', $this->payload($property, $tenant, [
+            'end_date' => '2026-07-01', // six mois
         ]));
 
         $response->assertStatus(422)->assertJsonValidationErrors(['end_date']);
+    }
+
+    /** Un bail de droit commun ne porte aucune réserve. */
+    public function test_a_three_year_bail_nu_carries_no_notice(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+
+        $this->actingAs($user)->postJson('/api/leases', $this->payload($property, $tenant))
+            ->assertStatus(201)
+            ->assertJsonPath('duration_months', 36)
+            ->assertJsonPath('duration_notice', null);
     }
 
     public function test_bail_nu_accepts_open_ended_lease(): void
@@ -164,14 +195,52 @@ class LeaseComplianceTest extends TestCase
         ]))->assertStatus(201);
     }
 
-    public function test_bail_etudiant_rejects_twelve_months(): void
+    /**
+     * Neuf mois est la durée *réduite* que la loi autorise, pas une valeur
+     * imposée. Une année universitaire de septembre à juin en compte dix, et
+     * l'ancienne borne à neuf mois la refusait.
+     */
+    public function test_bail_etudiant_accepts_a_ten_month_academic_year(): void
     {
         [$user, $property, $tenant] = $this->createOwnerWithProperty();
 
         $response = $this->actingAs($user)->postJson('/api/leases', $this->payload($property, $tenant, [
             'type' => 'etudiant',
             'start_date' => '2026-09-01',
-            'end_date' => '2027-08-31',
+            'end_date' => '2027-06-30',
+            'deposit' => null,
+        ]));
+
+        $response->assertStatus(201)->assertJsonPath('duration_months', 10);
+
+        // Passé neuf mois, la reconduction tacite du meublé ordinaire s'applique
+        // de nouveau : c'est le genre de conséquence qu'on découvre trop tard.
+        $this->assertStringContainsString('reconduction tacite', $response->json('duration_notice'));
+    }
+
+    public function test_bail_etudiant_rejects_a_term_under_nine_months(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+
+        $response = $this->actingAs($user)->postJson('/api/leases', $this->payload($property, $tenant, [
+            'type' => 'etudiant',
+            'start_date' => '2026-09-01',
+            'end_date' => '2027-02-28', // six mois
+            'deposit' => null,
+        ]));
+
+        $response->assertStatus(422)->assertJsonValidationErrors(['end_date']);
+    }
+
+    /** Au-delà d'un an, on quitte le régime : c'est un meublé ordinaire. */
+    public function test_bail_etudiant_rejects_more_than_twelve_months(): void
+    {
+        [$user, $property, $tenant] = $this->createOwnerWithProperty();
+
+        $response = $this->actingAs($user)->postJson('/api/leases', $this->payload($property, $tenant, [
+            'type' => 'etudiant',
+            'start_date' => '2026-09-01',
+            'end_date' => '2027-10-31',
             'deposit' => null,
         ]));
 
@@ -208,7 +277,7 @@ class LeaseComplianceTest extends TestCase
             'end_date' => now()->toDateString(),
         ]);
 
-        $response->assertStatus(200)->assertJsonPath('statut', 'termine');
+        $response->assertStatus(200)->assertJsonPath('data.statut', 'termine');
 
         $this->assertFalse($property->fresh()->is_rented);
     }

@@ -1,0 +1,240 @@
+<div class="luxury-modal-overlay no-print" (click)="closed.emit()">
+  <div
+    class="luxury-modal"
+    style="max-width: 800px; max-height: 95vh"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-header">
+      <h3 class="luxury-title">Quittance de Loyer</h3>
+      <button type="button" class="modal-close" (click)="closed.emit()">×</button>
+    </div>
+
+    <div class="modal-body quittance-print-area">
+      <!-- Receipt Layout -->
+      <div class="receipt-box">
+        <div class="receipt-header">
+          <div class="header-left">
+            <h2>QUITTANCE DE LOYER</h2>
+            <span class="receipt-number">N° {{ details().quittance.numero }}</span>
+          </div>
+          <div class="header-right">
+            <span class="logo-txt-quittance">ImmoPro</span>
+          </div>
+        </div>
+
+        <div class="receipt-parties">
+          <div class="party-box bailleur">
+            <span class="section-label">Bailleur :</span>
+            <strong>{{ details().quittance.bailleur.nom }}</strong>
+          </div>
+          <div class="party-box locataire">
+            <span class="section-label">Locataire :</span>
+            <strong>{{ details().quittance.locataire.nom }}</strong>
+          </div>
+        </div>
+
+        <div class="receipt-description">
+          <p>
+            Reçu de <strong>{{ details().quittance.locataire.nom }}</strong> la somme de
+            <strong>{{ details().quittance.detail.total }} €</strong> (loyer et charges compris),
+            pour le paiement du loyer du bien situé au
+            <strong>
+              {{ details().quittance.bien.adresse }}, {{ details().quittance.bien.code_postal }}
+              {{ details().quittance.bien.ville }} </strong
+            >.
+          </p>
+          <p class="receipt-period-desc">
+            Période concernée : du
+            <strong>{{ details().quittance.periode.debut | date: 'dd/MM/yyyy' }}</strong> au
+            <strong>{{ details().quittance.periode.fin | date: 'dd/MM/yyyy' }}</strong
+            >.
+          </p>
+        </div>
+
+        <div class="receipt-breakdown">
+          <h4>Détail du Règlement :</h4>
+          <table class="breakdown-table">
+            <thead>
+              <tr>
+                <th>Loyer principal</th>
+                <th>Provisions pour charges</th>
+                <th>Total reçu</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ details().quittance.detail.loyer }} €</td>
+                <td>{{ details().quittance.detail.charges }} €</td>
+                <td>
+                  <strong>{{ details().quittance.detail.total }} €</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="receipt-meta">
+          <div class="meta-item">
+            <span class="label">Date de paiement :</span>
+            <strong>{{ details().quittance.date_paiement | date: 'dd/MM/yyyy' }}</strong>
+          </div>
+          <div class="meta-item">
+            <span class="label">Fait à :</span>
+            <strong
+              >{{ details().quittance.bien.ville }}, le
+              {{ details().quittance.date_emission | date: 'dd/MM/yyyy' }}</strong
+            >
+          </div>
+        </div>
+
+        <div class="receipt-legal">
+          <p>{{ details().quittance.mention_legale }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <immopro-button variant="ghost" type="button" (onClick)="closed.emit()">
+        Fermer
+      </immopro-button>
+      <immopro-button type="button" (onClick)="print.emit()">
+        Imprimer la quittance
+      </immopro-button>
+    </div>
+  </div>
+</div>
+
+<!-- Print-only block that will display when calling window.print() -->
+<div
+  class="print-only receipt-box"
+  style="display: none; padding: 40px; font-family: sans-serif; line-height: 1.5; color: #000"
+>
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px solid #000;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    "
+  >
+    <div>
+      <h1 style="font-size: 24px; margin: 0; font-family: serif">QUITTANCE DE LOYER</h1>
+      <span style="font-size: 14px; color: #555">N° {{ details().quittance.numero }}</span>
+    </div>
+    <div style="font-size: 20px; font-weight: bold; font-family: serif; color: #8a6d3b">
+      ImmoPro
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; margin-bottom: 30px">
+    <div style="width: 48%; border: 1px solid #ccc; padding: 15px; border-radius: 4px">
+      <span
+        style="
+          font-size: 11px;
+          text-transform: uppercase;
+          color: #666;
+          display: block;
+          margin-bottom: 5px;
+        "
+        >Bailleur :</span
+      >
+      <strong>{{ details().quittance.bailleur.nom }}</strong>
+    </div>
+    <div style="width: 48%; border: 1px solid #ccc; padding: 15px; border-radius: 4px">
+      <span
+        style="
+          font-size: 11px;
+          text-transform: uppercase;
+          color: #666;
+          display: block;
+          margin-bottom: 5px;
+        "
+        >Locataire :</span
+      >
+      <strong>{{ details().quittance.locataire.nom }}</strong>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 30px; font-size: 15px">
+    <p>
+      Reçu de <strong>{{ details().quittance.locataire.nom }}</strong> la somme de
+      <strong>{{ details().quittance.detail.total }} €</strong> (loyer et charges compris), pour le
+      paiement du loyer du bien situé au
+      <strong>
+        {{ details().quittance.bien.adresse }}, {{ details().quittance.bien.code_postal }}
+        {{ details().quittance.bien.ville }} </strong
+      >.
+    </p>
+    <p style="margin-top: 10px">
+      Période concernée : du
+      <strong>{{ details().quittance.periode.debut | date: 'dd/MM/yyyy' }}</strong> au
+      <strong>{{ details().quittance.periode.fin | date: 'dd/MM/yyyy' }}</strong
+      >.
+    </p>
+  </div>
+
+  <div style="margin-bottom: 30px">
+    <h4 style="margin: 0 0 10px; font-size: 14px">Détail du Règlement :</h4>
+    <table style="width: 100%; border-collapse: collapse">
+      <thead>
+        <tr style="background: #f5f5f5">
+          <th style="border: 1px solid #ccc; padding: 10px; text-align: left">Loyer principal</th>
+          <th style="border: 1px solid #ccc; padding: 10px; text-align: left">
+            Provisions pour charges
+          </th>
+          <th style="border: 1px solid #ccc; padding: 10px; text-align: left">Total reçu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border: 1px solid #ccc; padding: 10px">
+            {{ details().quittance.detail.loyer }} €
+          </td>
+          <td style="border: 1px solid #ccc; padding: 10px">
+            {{ details().quittance.detail.charges }} €
+          </td>
+          <td style="border: 1px solid #ccc; padding: 10px">
+            <strong>{{ details().quittance.detail.total }} €</strong>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div
+    style="
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+      margin-bottom: 40px;
+      font-size: 14px;
+    "
+  >
+    <div>
+      <span>Date de paiement :</span>
+      <strong>{{ details().quittance.date_paiement | date: 'dd/MM/yyyy' }}</strong>
+    </div>
+    <div>
+      <span>Fait à :</span>
+      <strong
+        >{{ details().quittance.bien.ville }}, le
+        {{ details().quittance.date_emission | date: 'dd/MM/yyyy' }}</strong
+      >
+    </div>
+  </div>
+
+  <div
+    style="
+      font-size: 11px;
+      color: #555;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+      text-align: justify;
+      font-style: italic;
+    "
+  >
+    <p>{{ details().quittance.mention_legale }}</p>
+  </div>
+</div>

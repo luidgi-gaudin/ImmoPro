@@ -76,6 +76,29 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/leases/{lease}/revise-rent', [LeaseController::class, 'reviseRent'])->name('leases.revise-rent');
     Route::apiResource('leases', LeaseController::class);
 
+    /*
+     * Échéancier de loyer.
+     *
+     * Ces routes sont déclarées avant la ressource : « generate » et
+     * « bulk-pay » seraient sinon captées comme des identifiants d'échéance par
+     * `payments/{payment}`, qui vient ensuite.
+     *
+     * La génération remplace la saisie mois par mois — un bail de trois ans,
+     * c'est trente-six formulaires identiques à la date près. Le pointage, lui,
+     * est le geste quotidien : constater qu'un virement est arrivé ne doit pas
+     * passer par le formulaire complet de l'échéance.
+     */
+    Route::post('/leases/{lease}/payments/generate', [RentPaymentController::class, 'generate'])
+        ->name('leases.payments.generate');
+    Route::post('/leases/{lease}/payments/bulk-pay', [RentPaymentController::class, 'bulkPay'])
+        ->name('leases.payments.bulk-pay');
+    Route::post('/leases/{lease}/payments/{payment}/pay', [RentPaymentController::class, 'pay'])
+        ->scopeBindings()
+        ->name('leases.payments.pay');
+    Route::post('/leases/{lease}/payments/{payment}/unpay', [RentPaymentController::class, 'unpay'])
+        ->scopeBindings()
+        ->name('leases.payments.unpay');
+
     Route::get('/leases/{lease}/payments/{payment}/quittance', [RentPaymentController::class, 'quittance'])
         ->scopeBindings()
         ->name('leases.payments.quittance');

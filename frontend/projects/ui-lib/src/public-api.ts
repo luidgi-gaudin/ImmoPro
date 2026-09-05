@@ -17,3 +17,4 @@ export * from './lib/components/immoproSelect/immopro-select.component';
 export * from './lib/components/immoproThemeToggle/immopro-theme-toggle.component';
 export * from './lib/services/theme.service';
 export * from './lib/components/immoproModal/immopro-modal.component';
+export * from './lib/components/immoproCombobox/immopro-combobox.component';

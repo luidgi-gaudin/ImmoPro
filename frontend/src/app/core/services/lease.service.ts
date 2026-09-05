@@ -74,10 +74,26 @@ export interface Lease {
   /** Éligibilité à la révision annuelle (art. 17-1, loi n° 89-462). */
   can_revise_rent?: boolean;
 
+  /** Durée contractuelle en mois, null pour un bail à tacite reconduction. */
+  duration_months?: number | null;
+
+  /**
+   * Réserve de conformité sur la durée, calculée par le serveur.
+   *
+   * Une durée inférieure au droit commun n'est pas refusée : elle est licite
+   * dans des cas que le logiciel ne peut pas vérifier (motif de reprise pour un
+   * bail vide, art. 11). Elle est signalée, et l'écran se contente d'afficher
+   * ce que le serveur répond.
+   */
+  duration_notice?: string | null;
+
   documents_count?: number | null;
 
   co_tenants?: LeaseCoTenant[];
   photos?: LeasePhoto[];
+
+  /** Voir LeaseSchedule : présent sur la fiche, absent des listes. */
+  schedule?: LeaseSchedule | null;
 }
 
 export interface CoTenantPayload {
@@ -97,6 +113,38 @@ export interface CreateLeasePayload {
   payment_day?: number | null;
   statut?: string;
   co_tenants?: CoTenantPayload[];
+
+  /**
+   * Pose l'échéancier dès la création (comportement par défaut côté serveur).
+   * Un bail sans échéancier oblige à ressaisir à la main des mois que le
+   * contrat détermine entièrement.
+   */
+  generate_schedule?: boolean;
+  schedule_months?: number;
+}
+
+/**
+ * État de l'échéancier d'un bail, calculé par le serveur dans la requête qui
+ * charge déjà la fiche. Absent des listes, qui ne l'affichent pas.
+ */
+export interface LeaseSchedule {
+  count: number;
+  paid_count: number;
+  unpaid_count: number;
+  overdue_count: number;
+  outstanding_amount: number;
+  /** Dernier mois couvert (premier jour du mois), null si aucun. */
+  last_period: string | null;
+  /** Premier mois manquant : sert à préremplir la génération. */
+  next_period: string;
+}
+
+export interface GenerateScheduleResult {
+  message: string;
+  created: number;
+  skipped: number;
+  from: string;
+  to: string;
 }
 
 export interface RentPayment {
@@ -155,27 +203,49 @@ export class LeaseService {
     return this.http.put<Lease>(`${this.apiUrl}/${id}`, lease);
   }
 
-  deleteLease(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  /**
+   * `acknowledge` lève le refus opposé aux baux dont des loyers ont été
+   * encaissés. Le serveur ne l'accepte que sur un bail déjà résilié : un bail
+   * en cours se résilie, il ne se supprime pas.
+   */
+  deleteLease(id: number, acknowledge = false): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
+      body: acknowledge ? { acknowledge: true } : undefined,
+    });
   }
 
   // Lease Actions
-  terminateLease(id: number, endDate: string): Observable<Lease> {
-    return this.http.post<Lease>(`${this.apiUrl}/${id}/terminate`, { end_date: endDate });
+  terminateLease(
+    id: number,
+    endDate: string,
+  ): Observable<{ message: string; dropped_payments: number; data: Lease }> {
+    return this.http.post<{ message: string; dropped_payments: number; data: Lease }>(
+      `${this.apiUrl}/${id}/terminate`,
+      { end_date: endDate },
+    );
   }
 
   reviseRent(
     id: number,
     irlOld: number,
     irlNew: number,
-  ): Observable<{ message: string; old_rent: number; new_rent: number; data: Lease }> {
-    return this.http.post<{ message: string; old_rent: number; new_rent: number; data: Lease }>(
-      `${this.apiUrl}/${id}/revise-rent`,
-      {
-        irl_old: irlOld,
-        irl_new: irlNew,
-      },
-    );
+  ): Observable<{
+    message: string;
+    old_rent: number;
+    new_rent: number;
+    repriced_payments: number;
+    data: Lease;
+  }> {
+    return this.http.post<{
+      message: string;
+      old_rent: number;
+      new_rent: number;
+      repriced_payments: number;
+      data: Lease;
+    }>(`${this.apiUrl}/${id}/revise-rent`, {
+      irl_old: irlOld,
+      irl_new: irlNew,
+    });
   }
 
   // Rent Payments API
@@ -202,6 +272,52 @@ export class LeaseService {
 
   deletePayment(leaseId: number, paymentId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${leaseId}/payments/${paymentId}`);
+  }
+
+  /**
+   * Complète l'échéancier : un appel au lieu de N formulaires.
+   *
+   * L'opération est idempotente côté serveur — les mois déjà présents sont
+   * comptés comme ignorés, jamais dupliqués — ce qui permet d'exposer le bouton
+   * en permanence plutôt que de le réserver à un bail vierge.
+   */
+  generateSchedule(
+    leaseId: number,
+    options: { months?: number; from?: string; to?: string; prorate?: boolean } = {},
+  ): Observable<GenerateScheduleResult> {
+    return this.http.post<GenerateScheduleResult>(
+      `${this.apiUrl}/${leaseId}/payments/generate`,
+      options,
+    );
+  }
+
+  /** Pointe un règlement. Sans date, le serveur retient aujourd'hui. */
+  markPaid(
+    leaseId: number,
+    paymentId: number,
+    payload: { paid_at?: string; payment_method?: string } = {},
+  ): Observable<RentPayment> {
+    return this.http.post<RentPayment>(
+      `${this.apiUrl}/${leaseId}/payments/${paymentId}/pay`,
+      payload,
+    );
+  }
+
+  /** Annule un pointage fait par erreur. */
+  markUnpaid(leaseId: number, paymentId: number): Observable<RentPayment> {
+    return this.http.post<RentPayment>(`${this.apiUrl}/${leaseId}/payments/${paymentId}/unpay`, {});
+  }
+
+  /** Pointe plusieurs échéances en une écriture (rapprochement bancaire). */
+  bulkMarkPaid(
+    leaseId: number,
+    ids: number[],
+    payload: { paid_at?: string; payment_method?: string } = {},
+  ): Observable<{ message: string; updated: number }> {
+    return this.http.post<{ message: string; updated: number }>(
+      `${this.apiUrl}/${leaseId}/payments/bulk-pay`,
+      { ids, ...payload },
+    );
   }
 
   getQuittance(leaseId: number, paymentId: number): Observable<QuittanceData> {
