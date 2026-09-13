@@ -35,4 +35,33 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Fournisseurs d'identité (Sign in with Google / Apple)
+    |--------------------------------------------------------------------------
+    |
+    | Seul l'identifiant client est nécessaire : l'application ne joue pas le
+    | rôle de client OAuth, elle se contente de vérifier le jeton d'identité que
+    | le navigateur a déjà obtenu. Aucun secret ne transite donc par ce serveur,
+    | et il n'y a rien à protéger de plus que ce fichier.
+    |
+    | Cet identifiant n'est pas une donnée décorative : c'est lui que la
+    | revendication `aud` du jeton doit porter. Sans lui, un jeton signé par
+    | Google mais émis pour une autre application serait accepté. Un
+    | fournisseur laissé vide est simplement désactivé.
+    |
+    | Plusieurs valeurs peuvent être déclarées, séparées par une virgule : Apple
+    | émet sous l'identifiant de l'application iOS et sous celui du service web,
+    | qui diffèrent.
+    |
+    */
+
+    'google' => [
+        'client_id' => array_filter(explode(',', (string) env('GOOGLE_CLIENT_ID', ''))),
+    ],
+
+    'apple' => [
+        'client_id' => array_filter(explode(',', (string) env('APPLE_CLIENT_ID', ''))),
+    ],
+
 ];

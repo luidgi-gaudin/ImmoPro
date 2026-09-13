@@ -1,0 +1,147 @@
+/*
+ * Gouttière de page, identique aux autres écrans de l'application.
+ *
+ * Sans elle, le contenu collait aux bords : la coque applicative ne pose aucune
+ * marge, chaque écran apporte la sienne. C'est ce qui laisse une pleine largeur
+ * aux vues qui en ont besoin.
+ */
+.tenant-space {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: var(--page-gutter);
+}
+
+.muted {
+  color: var(--text-secondary, #6b7280);
+}
+
+.empty-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.summary {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+
+  margin-bottom: 1.5rem;
+}
+
+.summary-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+.summary-value {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.5rem;
+  line-height: 1.2;
+
+  // Un impayé se signale par la couleur, mais jamais par elle seule : le
+  // chiffre lui-même change, et le libellé dit de quoi il s'agit.
+  &.is-warning {
+    color: var(--danger, #c0392b);
+  }
+}
+
+.summary-hint {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #6b7280);
+  text-transform: capitalize;
+}
+
+.leases {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.lease-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  margin-bottom: 1rem;
+}
+
+.lease-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.lease-address {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+.lease-facts {
+  display: grid;
+  gap: 0.85rem 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+  margin: 0 0 1rem;
+
+  dt {
+    font-size: 0.78rem;
+    color: var(--text-secondary, #6b7280);
+  }
+
+  dd {
+    margin: 0.1rem 0 0;
+    font-weight: 500;
+  }
+}
+
+.amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.2rem 0.6rem;
+
+    font-size: 0.78rem;
+    color: var(--text-secondary, #6b7280);
+
+    background: var(--surface-muted, #f4f5f7);
+    border-radius: 999px;
+  }
+}
+
+.lease-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border, #e6e8ec);
+}
+
+.action-link {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--accent, #2f6fed);
+}
+
+.link-button {
+  margin-left: 0.5rem;
+  padding: 0;
+
+  font: inherit;
+  color: inherit;
+
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}

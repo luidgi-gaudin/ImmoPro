@@ -2,9 +2,15 @@
 # Lancer : ./vendor/bin/phpstan analyse
 includes:
     - vendor/larastan/larastan/extension.neon
-    # Les 50 erreurs déjà présentes dans le code au moment de l'installation,
-    # gelées pour que l'analyse parte d'une base verte. Seul le code écrit
-    # à partir de maintenant est contrôlé.
+    # Erreurs préexistantes, gelées pour que l'analyse parte d'une base verte.
+    # Seul le code écrit à partir de maintenant est contrôlé.
+    #
+    # Elles étaient 50 à l'installation, elles sont 11. La différence n'a pas
+    # été gelée : elle a disparu d'elle-même en annotant les colonnes
+    # transtypées des modèles, que l'analyse ne pouvait pas déduire d'une
+    # méthode casts(). Régénérer le fichier après une correction est donc
+    # attendu — mais il doit toujours rétrécir.
+    #
     # Pour en résorber : corriger, puis régénérer avec --generate-baseline.
     - phpstan-baseline.neon
 

@@ -1,0 +1,268 @@
+<section class="guarantors">
+  <header class="guarantors-head">
+    <h3 class="luxury-title">Garants</h3>
+
+    <immopro-button size="sm" type="button" (onClick)="openForm()"
+      >Ajouter un garant</immopro-button
+    >
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <p class="text-secondary">Chargement des garants…</p>
+  } @else if (!guarantors().length) {
+    <immopro-empty-state
+      message="Aucun garant n'est rattaché à ce dossier. Une caution solidaire, une garantie Visale ou une assurance loyers impayés se déclarent ici."
+    >
+      <svg
+        icon
+        xmlns="http://www.w3.org/2000/svg"
+        width="32"
+        height="32"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 3 4 6v6c0 4.4 3.4 8.4 8 9 4.6-.6 8-4.6 8-9V6Z" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
+    </immopro-empty-state>
+  } @else {
+    <ul class="guarantor-list">
+      @for (guarantor of guarantors(); track guarantor.id) {
+        <li>
+          <immopro-card>
+            <header class="guarantor-head">
+              <div>
+                <strong class="guarantor-name">{{ guarantor.display_name }}</strong>
+                <span class="guarantor-type">{{ typeLabel(guarantor) }}</span>
+              </div>
+
+              <div class="guarantor-flags">
+                @if (guarantor.is_expired) {
+                  <immopro-badge tone="danger">Engagement échu</immopro-badge>
+                }
+
+                @if (coversRent(guarantor) === true) {
+                  <immopro-badge tone="success">Revenus suffisants</immopro-badge>
+                } @else if (coversRent(guarantor) === false) {
+                  <!-- Règle d'usage, pas règle de droit : signalée, jamais
+                       bloquante. C'est au bailleur de décider. -->
+                  <immopro-badge tone="warning">Sous 3× le loyer</immopro-badge>
+                }
+              </div>
+            </header>
+
+            <dl class="guarantor-facts">
+              @if (guarantor.email) {
+                <div>
+                  <dt>E-mail</dt>
+                  <dd>{{ guarantor.email }}</dd>
+                </div>
+              }
+              @if (guarantor.phone) {
+                <div>
+                  <dt>Téléphone</dt>
+                  <dd>{{ guarantor.phone }}</dd>
+                </div>
+              }
+              @if (guarantor.monthly_income) {
+                <div>
+                  <dt>Revenus mensuels</dt>
+                  <dd>{{ +guarantor.monthly_income | number: '1.0-2' }} €</dd>
+                </div>
+              }
+              @if (guarantor.contract_reference) {
+                <div>
+                  <dt>Numéro de dossier</dt>
+                  <dd>{{ guarantor.contract_reference }}</dd>
+                </div>
+              }
+              @if (guarantor.ends_on) {
+                <div>
+                  <dt>Fin de l'engagement</dt>
+                  <dd>{{ guarantor.ends_on | date: 'dd/MM/yyyy' }}</dd>
+                </div>
+              }
+              @if (guarantor.max_amount) {
+                <div>
+                  <dt>Plafond</dt>
+                  <dd>{{ +guarantor.max_amount | number: '1.0-2' }} €</dd>
+                </div>
+              }
+            </dl>
+
+            <footer class="guarantor-actions">
+              <button type="button" class="link-button" (click)="openForm(guarantor)">
+                Modifier
+              </button>
+              <button type="button" class="link-button danger" (click)="remove(guarantor)">
+                Retirer
+              </button>
+            </footer>
+          </immopro-card>
+        </li>
+      }
+    </ul>
+  }
+</section>
+
+@if (formOpen()) {
+  <div class="modal-backdrop" (click)="closeForm()">
+    <div class="modal-panel" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <h3 class="luxury-title">{{ editing() ? 'Modifier le garant' : 'Ajouter un garant' }}</h3>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="modal-form-grid">
+          <immopro-select inputId="guarantee-type" label="Nature de la garantie">
+            <select id="guarantee-type" formControlName="guarantee_type">
+              @for (type of guaranteeTypes; track type.value) {
+                <option [value]="type.value">{{ type.label }}</option>
+              }
+            </select>
+          </immopro-select>
+
+          <!-- Une caution est une personne : sans nom, l'acte ne désigne
+               personne et ne s'exécute contre personne. -->
+          @if (isPersonal()) {
+            <immopro-input
+              id="guarantor-first-name"
+              label="Prénom"
+              formControlName="first_name"
+              placeholder="Marie"
+            ></immopro-input>
+
+            <immopro-input
+              id="guarantor-last-name"
+              label="Nom"
+              formControlName="last_name"
+              placeholder="Dupont"
+            ></immopro-input>
+
+            <immopro-input
+              id="guarantor-birth-date"
+              label="Date de naissance"
+              type="date"
+              formControlName="birth_date"
+            ></immopro-input>
+
+            <immopro-input
+              id="guarantor-profession"
+              label="Profession"
+              formControlName="profession"
+              placeholder="Cadre"
+            ></immopro-input>
+
+            <immopro-input
+              id="guarantor-income"
+              label="Revenus mensuels (€)"
+              type="number"
+              formControlName="monthly_income"
+              placeholder="3600"
+            ></immopro-input>
+          } @else {
+            <immopro-input
+              id="guarantor-company"
+              label="Organisme"
+              formControlName="company_name"
+              placeholder="Action Logement"
+            ></immopro-input>
+
+            <immopro-input
+              id="guarantor-contract"
+              label="Numéro de dossier"
+              formControlName="contract_reference"
+              placeholder="VISALE-12345678"
+            ></immopro-input>
+          }
+
+          <immopro-input
+            id="guarantor-email"
+            label="E-mail"
+            type="email"
+            formControlName="email"
+            placeholder="marie@exemple.com"
+          ></immopro-input>
+
+          <immopro-input
+            id="guarantor-phone"
+            label="Téléphone"
+            type="tel"
+            formControlName="phone"
+            placeholder="06 01 02 03 04"
+          ></immopro-input>
+
+          @if (isPersonal()) {
+            <immopro-input
+              id="guarantor-address"
+              label="Adresse"
+              formControlName="address"
+              placeholder="8 rue des Lilas"
+            ></immopro-input>
+
+            <immopro-input
+              id="guarantor-postal-code"
+              label="Code postal"
+              formControlName="postal_code"
+              placeholder="69000"
+            ></immopro-input>
+
+            <immopro-input
+              id="guarantor-city"
+              label="Ville"
+              formControlName="city"
+              placeholder="Lyon"
+            ></immopro-input>
+          }
+
+          <immopro-input
+            id="guarantor-starts"
+            label="Début de l'engagement"
+            type="date"
+            formControlName="starts_on"
+          ></immopro-input>
+
+          <!-- Un cautionnement à durée déterminée s'éteint à son terme, et le
+               bailleur qui l'ignore croit couvert un impayé qui ne l'est plus. -->
+          <immopro-input
+            id="guarantor-ends"
+            label="Fin de l'engagement"
+            type="date"
+            formControlName="ends_on"
+          ></immopro-input>
+
+          <immopro-input
+            id="guarantor-max"
+            label="Plafond de l'engagement (€)"
+            type="number"
+            formControlName="max_amount"
+            placeholder="30000"
+          ></immopro-input>
+        </div>
+
+        <immopro-input
+          id="guarantor-notes"
+          label="Notes"
+          formControlName="notes"
+          placeholder="Précisions sur l'acte de cautionnement"
+          style="margin-top: 16px"
+        ></immopro-input>
+
+        <div class="modal-footer">
+          <immopro-button variant="ghost" type="button" (onClick)="closeForm()">
+            Annuler
+          </immopro-button>
+          <immopro-button type="submit" [loading]="saving()" [disabled]="saving()">
+            {{ editing() ? 'Enregistrer' : 'Ajouter le garant' }}
+          </immopro-button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

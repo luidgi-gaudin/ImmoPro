@@ -111,6 +111,7 @@ class Lease extends Model
         'type',
         'start_date',
         'end_date',
+        'duration_months',
         'monthly_rent',
         'charges',
         'deposit',
@@ -265,6 +266,7 @@ class Lease extends Model
             'charges' => 'decimal:2',
             'deposit' => 'decimal:2',
             'last_rent_revision_at' => 'date',
+            'duration_months' => 'integer',
             'statut' => LeaseStatus::class,
         ];
     }
@@ -299,13 +301,36 @@ class Lease extends Model
     }
 
     /**
-     * Durée contractuelle du bail en mois, null s'il n'a pas de terme.
+     * Durée contractuelle du bail en mois, null quand elle est inconnue.
      *
-     * Comptée en mois entiers, avec la tolérance d'un jour des dates de fin
-     * inclusives : un bail du 1er septembre au 31 mai dure bien neuf mois, pas
-     * huit.
+     * La durée saisie au contrat prime sur l'écart entre les deux dates, et ce
+     * n'est pas une préférence de style : les deux divergent dès la première
+     * reconduction tacite. Un bail de trois ans reconduit une fois court sur
+     * six ans de dates, mais reste un bail de trois ans — c'est cette durée-là
+     * qui commande le préavis et le régime applicable, et c'est elle que
+     * `durationNotice()` doit examiner.
+     *
+     * À défaut, l'écart entre les dates sert de repli, avec la tolérance d'un
+     * jour des dates de fin inclusives : un bail du 1er septembre au 31 mai
+     * dure bien neuf mois, pas huit.
      */
     public function durationInMonths(): ?int
+    {
+        if ($this->duration_months !== null) {
+            return $this->duration_months;
+        }
+
+        return $this->elapsedDurationInMonths();
+    }
+
+    /**
+     * Nombre de mois couverts par les dates, reconductions comprises.
+     *
+     * À ne pas confondre avec la durée contractuelle : c'est l'étendue réelle
+     * de l'occupation, utile pour un décompte, pas pour un contrôle de
+     * conformité.
+     */
+    public function elapsedDurationInMonths(): ?int
     {
         if ($this->end_date === null) {
             return null;

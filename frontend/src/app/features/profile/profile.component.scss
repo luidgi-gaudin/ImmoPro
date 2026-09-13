@@ -166,3 +166,160 @@
     color: var(--text-primary);
   }
 }
+
+/* ── Photo de profil ──────────────────────────────────────────────────── */
+
+.profile-photo {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.photo-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  margin-top: 1rem;
+}
+
+/*
+ * Le champ « fichier » natif est masqué et déclenché par ce libellé : son
+ * apparence n'est pas stylable et diffère d'un navigateur à l'autre. Le
+ * `<label>` reste cliquable au clavier, ce qu'un `<div>` ne serait pas.
+ */
+.photo-button {
+  display: inline-block;
+  padding: 0.45rem 0.9rem;
+
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  background: var(--surface-muted, #f4f5f7);
+  border: 1px solid var(--border, #d8dce3);
+  border-radius: 8px;
+  cursor: pointer;
+
+  &.is-busy {
+    opacity: 0.6;
+    cursor: progress;
+  }
+}
+
+.verify-warning {
+  margin: 0.6rem 0 0;
+  font-size: 0.82rem;
+  color: var(--danger, #c0392b);
+}
+
+/* ── Adresse e-mail ───────────────────────────────────────────────────── */
+
+.email-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+
+  margin-top: 0.75rem;
+}
+
+/* ── Comptes externes ─────────────────────────────────────────────────── */
+
+.provider-list {
+  display: grid;
+  gap: 0.6rem;
+
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    padding: 0.65rem 0.8rem;
+
+    background: var(--surface-muted, #f4f5f7);
+    border-radius: 8px;
+  }
+}
+
+/* ── Préférences de notification ──────────────────────────────────────── */
+
+.topic-list {
+  display: grid;
+  gap: 1rem;
+
+  margin: 0 0 1.25rem;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--border, #e6e8ec);
+  }
+
+  li:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+}
+
+.topic-text {
+  display: grid;
+  gap: 0.15rem;
+  max-width: 32rem;
+
+  span {
+    font-size: 0.82rem;
+  }
+}
+
+.topic-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.channel-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.link-button {
+  padding: 0;
+
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #6b7280);
+
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent, #2f6fed);
+    outline-offset: 2px;
+  }
+}

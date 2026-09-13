@@ -37,6 +37,32 @@
         <option value="0">Sans bail en cours</option>
       </select>
     </immopro-select>
+
+    <immopro-select label="Garant" inputId="tenant-filter-garant">
+      <select
+        id="tenant-filter-garant"
+        [value]="list.filterValue('avec_garant')"
+        (change)="list.setFilter('avec_garant', $any($event.target).value)"
+      >
+        <option value="">Peu importe</option>
+        <option value="1">Avec garant</option>
+        <option value="0">Sans garant</option>
+      </select>
+    </immopro-select>
+
+    <!-- Les dossiers clos sortent de la liste par défaut : c'est ce que
+         l'archivage sert à faire. Ce filtre est le seul moyen de les revoir. -->
+    <immopro-select label="Archives" inputId="tenant-filter-archives">
+      <select
+        id="tenant-filter-archives"
+        [value]="list.filterValue('archives')"
+        (change)="list.setFilter('archives', $any($event.target).value)"
+      >
+        @for (option of archiveOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </immopro-select>
   </immopro-filter-bar>
 
   <immopro-table [loading]="listLoading()" [stacked]="true">
@@ -138,6 +164,74 @@
                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
                   </svg>
                 </immopro-icon-button>
+                @if (!tenant.has_account && tenant.email) {
+                  <immopro-icon-button
+                    size="sm"
+                    label="Inviter à ouvrir son espace"
+                    (onClick)="inviteTenant(tenant)"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M4 4h16v16H4z" />
+                      <polyline points="4 6 12 13 20 6" />
+                    </svg>
+                  </immopro-icon-button>
+                }
+
+                @if (tenant.is_archived) {
+                  <immopro-icon-button
+                    size="sm"
+                    label="Réactiver le dossier"
+                    (onClick)="unarchiveTenant(tenant)"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M3 12a9 9 0 1 0 3-6.7" />
+                      <polyline points="3 4 3 10 9 10" />
+                    </svg>
+                  </immopro-icon-button>
+                } @else {
+                  <immopro-icon-button
+                    size="sm"
+                    label="Archiver le dossier"
+                    (onClick)="archiveTenant(tenant)"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect x="3" y="4" width="18" height="4" />
+                      <path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8" />
+                      <line x1="10" y1="13" x2="14" y2="13" />
+                    </svg>
+                  </immopro-icon-button>
+                }
+
                 <immopro-icon-button
                   size="sm"
                   tone="danger"
@@ -240,6 +334,38 @@
                     : 'Minimum 2 caractères'
                   : null
               "
+            ></immopro-input>
+
+            <immopro-input
+              id="tenant-birth-date"
+              label="Date de naissance"
+              type="date"
+              formControlName="birth_date"
+            ></immopro-input>
+
+            <immopro-input
+              id="tenant-birth-place"
+              label="Lieu de naissance"
+              formControlName="birth_place"
+              placeholder="Lyon"
+            ></immopro-input>
+
+            <immopro-select inputId="tenant-id-type" label="Pièce d'identité">
+              <select id="tenant-id-type" formControlName="identity_document_type">
+                <option value="">Non renseignée</option>
+                @for (type of identityDocumentTypes; track type.value) {
+                  <option [value]="type.value">{{ type.label }}</option>
+                }
+              </select>
+            </immopro-select>
+
+            <!-- Chiffré au repos comme l'IBAN : c'est une donnée
+                 d'identification directe, qui ouvre l'usurpation d'identité. -->
+            <immopro-input
+              id="tenant-id-number"
+              label="Numéro de la pièce"
+              formControlName="identity_document_number"
+              placeholder="940612345678"
             ></immopro-input>
 
             <immopro-input
