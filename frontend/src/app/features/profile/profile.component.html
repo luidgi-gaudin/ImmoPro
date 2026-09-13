@@ -176,12 +176,6 @@
             En attente de confirmation : <strong>{{ user()?.pending_email }}</strong>
           </div>
 
-          @if (emailDebugCode()) {
-            <div class="alert alert-info">
-              Environnement de développement — code : <strong>{{ emailDebugCode() }}</strong>
-            </div>
-          }
-
           <form [formGroup]="emailCodeForm" (ngSubmit)="confirmEmailChange()">
             <immopro-input
               id="email-code"

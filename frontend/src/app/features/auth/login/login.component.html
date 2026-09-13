@@ -36,14 +36,6 @@
       >.
     </p>
 
-    <!-- Développement uniquement : en production le serveur ne renvoie
-         jamais le code, et ce bloc reste invisible. -->
-    @if (debugCode()) {
-      <div class="alert alert-info">
-        Environnement de développement — code : <strong>{{ debugCode() }}</strong>
-      </div>
-    }
-
     <form [formGroup]="codeForm" (ngSubmit)="onVerifyEmail()" class="form-grid">
       <immopro-input
         id="verification_code"
