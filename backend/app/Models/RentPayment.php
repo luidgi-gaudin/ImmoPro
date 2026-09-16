@@ -11,24 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
 
-/**
- * Échéance de loyer.
- *
- * Les transtypages sont déclarés dans casts() et deux attributs sont calculés ;
- * ces annotations en donnent le type résultant, que l'analyse statique ne
- * déduit ni d'une méthode de transtypage ni d'un accesseur.
- *
- * @property int $id
- * @property int $lease_id
- * @property Carbon|null $period
- * @property Carbon|null $paid_at
- * @property string $amount_rent
- * @property string $amount_charges
- * @property RentPaymentStatus $status
- * @property float $total
- */
 class RentPayment extends Model
 {
     use Filterable, HasFactory, RlsProtected, SoftDeletes;

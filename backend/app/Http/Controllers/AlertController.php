@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\AlertSeverity;
 use App\Enums\AlertType;
 use App\Http\Resources\AlertResource;
 use App\Models\Alert;
-use App\Models\RentPayment;
-use App\Services\Notifications\TenantNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -67,17 +64,10 @@ class AlertController extends Controller
     }
 
     /**
-     * Relance le locataire pour un loyer impayé.
-     *
-     * Envoie réellement le message, là où cette route se contentait d'un
-     * horodatage. « Relancé le 12 septembre » sans que rien ne parte est pire
-     * qu'un bouton absent : le bailleur croit avoir agi, le locataire n'a rien
-     * reçu, et le litige se construit sur cette croyance.
-     *
-     * Le canal suit les préférences du locataire quand il a un compte, et se
-     * rabat sur l'adresse du dossier sinon. Voir TenantNotifier.
+     * Relance du locataire pour un loyer impayé. Version in-app : la relance est
+     * horodatée (l'envoi email/SMS relève d'une itération ultérieure).
      */
-    public function remind(Request $request, Alert $alert, TenantNotifier $notifier): JsonResponse|AlertResource
+    public function remind(Request $request, Alert $alert): JsonResponse|AlertResource
     {
         $this->authorize('update', $alert);
 
@@ -87,51 +77,11 @@ class AlertController extends Controller
             ], 422);
         }
 
-        $payment = $alert->alertable_id === null
-            ? null
-            : RentPayment::with('lease.tenant')->find($alert->alertable_id);
-
-        $tenant = $payment?->lease?->tenant;
-
-        $channels = $tenant === null ? [] : $notifier->send(
-            tenant: $tenant,
-            type: AlertType::RelanceLoyer,
-            subject: 'Rappel : loyer en attente de règlement',
-            body: $alert->message,
-            about: $payment,
-            severity: AlertSeverity::Warning,
-            // Une relance par échéance et par jour : trois clics sur le bouton
-            // ne doivent pas remplir la cloche du locataire trois fois.
-            dedupKey: "relance_loyer:payment:{$alert->alertable_id}:".now()->toDateString(),
-        );
-
         $alert->forceFill([
             'reminded_at' => now(),
             'read_at' => $alert->read_at ?? now(),
         ])->save();
 
-        /*
-         * L'horodatage est posé même quand rien ne part, et la réponse le dit.
-         *
-         * Échouer ici serait pire : le bailleur a bien effectué son geste, et
-         * l'absence de destinataire joignable n'est pas une erreur de sa part.
-         * Mais le taire le serait tout autant — « relancé le 12 septembre »
-         * alors que personne n'a rien reçu, c'est la croyance sur laquelle se
-         * construisent les litiges.
-         */
-        if ($channels === []) {
-            return response()->json([
-                'data' => new AlertResource($alert),
-                'channels' => [],
-                'message' => 'Relance notée, mais aucun message n\'est parti : ce locataire n\'a '
-                    .'ni adresse e-mail ni espace en ligne.',
-            ]);
-        }
-
-        return response()->json([
-            'data' => new AlertResource($alert),
-            'channels' => $channels,
-            'message' => 'Le locataire a été relancé.',
-        ]);
+        return new AlertResource($alert);
     }
 }
