@@ -13,51 +13,16 @@ export interface Property {
   id: number;
   title: string;
   property_type: string;
-
-  // Adresse détaillée. L'adresse tenait en une ligne libre : un immeuble de
-  // trente lots y était trente fois la même chaîne, et rien ne distinguait le
-  // 3e gauche du 5e droite.
   address: string;
-  address_complement?: string | null;
-  floor?: string | null;
-  apartment_number?: string | null;
   city: string;
   postal_code: string;
-
-  /** Adresse sur une ligne, composée par le serveur. */
-  full_address?: string;
-
+  dpe: string;
   rooms: number | null;
   area_sqm: number | null;
-  is_furnished?: boolean;
   has_balcony: boolean;
   has_garden: boolean;
-  has_terrace?: boolean;
   has_parking: boolean;
-  has_garage?: boolean;
   has_cave: boolean;
-
-  /** Étiquette énergie du diagnostic. */
-  dpe: string;
-
-  /** Étiquette « gaz à effet de serre » : le DPE en porte deux depuis 2021. */
-  ges?: string | null;
-
-  dpe_date?: string | null;
-  dpe_expires_on?: string | null;
-  dpe_is_expired?: boolean;
-
-  ownership_type?: string | null;
-  syndic_name?: string | null;
-  syndic_contact?: string | null;
-  syndic_email?: string | null;
-  syndic_phone?: string | null;
-  syndic_address?: string | null;
-  lot_number?: number | null;
-
-  /** « loue », « vacant » ou « en_travaux ». */
-  occupancy_status?: string | null;
-
   is_rented: boolean;
   monthly_rent: number | null;
   description: string | null;
@@ -97,38 +62,16 @@ export interface Portfolio {
 export interface CreatePropertyPayload {
   title: string;
   property_type: string;
-
   address: string;
-  address_complement?: string | null;
-  floor?: string | null;
-  apartment_number?: string | null;
   city: string;
   postal_code: string;
-
+  dpe: string;
   rooms?: number | null;
   area_sqm?: number | null;
-  is_furnished?: boolean;
   has_balcony?: boolean;
   has_garden?: boolean;
-  has_terrace?: boolean;
   has_parking?: boolean;
-  has_garage?: boolean;
   has_cave?: boolean;
-
-  dpe: string;
-  ges?: string | null;
-  dpe_date?: string | null;
-  dpe_expires_on?: string | null;
-
-  ownership_type?: string | null;
-  syndic_name?: string | null;
-  syndic_contact?: string | null;
-  syndic_email?: string | null;
-  syndic_phone?: string | null;
-  syndic_address?: string | null;
-  lot_number?: number | null;
-
-  occupancy_status?: string | null;
   is_rented?: boolean;
   monthly_rent?: number | null;
   description?: string | null;

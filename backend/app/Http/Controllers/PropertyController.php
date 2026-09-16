@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Dpe;
 use App\Enums\LeaseStatus;
-use App\Http\Requests\PropertyRequest;
+use App\Enums\PropertyType;
 use App\Models\Portfolio;
 use App\Models\Property;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PropertyController extends Controller
 {
@@ -34,11 +36,31 @@ class PropertyController extends Controller
         return response()->json($page->toArray() + ['portfolio' => $portfolio->toSummary()]);
     }
 
-    public function store(PropertyRequest $request, Portfolio $portfolio)
+    public function store(Request $request, Portfolio $portfolio)
     {
         $this->authorize('update', $portfolio);
 
-        return $portfolio->properties()->create($request->propertyData());
+        $data = $request->validate([
+            'title' => ['required', 'string'],
+            'property_type' => ['required', Rule::enum(PropertyType::class)],
+            'address' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'postal_code' => ['required', 'string'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
+            'dpe' => ['required', Rule::enum(Dpe::class)],
+            'rooms' => ['nullable', 'integer'],
+            'area_sqm' => ['nullable', 'numeric'],
+            'has_balcony' => ['boolean'],
+            'has_garden' => ['boolean'],
+            'has_parking' => ['boolean'],
+            'has_cave' => ['boolean'],
+            'is_rented' => ['boolean'],
+            'monthly_rent' => ['nullable', 'numeric'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        return $portfolio->properties()->create($data);
     }
 
     /**
@@ -57,11 +79,31 @@ class PropertyController extends Controller
         );
     }
 
-    public function update(PropertyRequest $request, Portfolio $portfolio, Property $property)
+    public function update(Request $request, Portfolio $portfolio, Property $property)
     {
         $this->authorize('update', $portfolio);
 
-        $property->update($request->propertyData());
+        $data = $request->validate([
+            'title' => ['required', 'string'],
+            'property_type' => ['required', Rule::enum(PropertyType::class)],
+            'address' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'postal_code' => ['required', 'string'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
+            'dpe' => ['required', Rule::enum(Dpe::class)],
+            'rooms' => ['nullable', 'integer'],
+            'area_sqm' => ['nullable', 'numeric'],
+            'has_balcony' => ['boolean'],
+            'has_garden' => ['boolean'],
+            'has_parking' => ['boolean'],
+            'has_cave' => ['boolean'],
+            'is_rented' => ['boolean'],
+            'monthly_rent' => ['nullable', 'numeric'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        $property->update($data);
 
         return $property;
     }

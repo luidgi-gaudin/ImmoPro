@@ -59,7 +59,7 @@ export class TenantsComponent {
   protected readonly list = createListQuery({
     defaultSort: 'last_name',
     defaultDirection: 'asc',
-    filterKeys: ['country', 'loue', 'avec_garant', 'archives'],
+    filterKeys: ['country', 'loue'],
   });
 
   readonly activeChips = computed<FilterChip[]>(() => {
@@ -73,20 +73,6 @@ export class TenantsComponent {
         key: 'loue',
         label: 'Bail actif',
         value: filters['loue'] === '1' ? 'Sous contrat' : 'Sans contrat',
-      });
-    }
-    if (filters['avec_garant']) {
-      chips.push({
-        key: 'avec_garant',
-        label: 'Garant',
-        value: filters['avec_garant'] === '1' ? 'Avec garant' : 'Sans garant',
-      });
-    }
-    if (filters['archives']) {
-      chips.push({
-        key: 'archives',
-        label: 'Archives',
-        value: filters['archives'] === 'seuls' ? 'Dossiers clos' : 'Clos inclus',
       });
     }
     return chips;
@@ -110,21 +96,6 @@ export class TenantsComponent {
   protected readonly skeletonRows = Array.from({ length: 8 });
   createForm: FormGroup;
 
-  /** Natures de pièce d'identité acceptées au dossier. */
-  readonly identityDocumentTypes = [
-    { value: 'carte_identite', label: "Carte nationale d'identité" },
-    { value: 'passeport', label: 'Passeport' },
-    { value: 'titre_sejour', label: 'Titre de séjour' },
-    { value: 'permis_conduire', label: 'Permis de conduire' },
-    { value: 'autre', label: 'Autre pièce' },
-  ];
-
-  readonly archiveOptions = [
-    { value: '', label: 'Dossiers actifs' },
-    { value: 'inclus', label: 'Actifs et clos' },
-    { value: 'seuls', label: 'Dossiers clos' },
-  ];
-
   createModalOpen = signal(false);
   editingTenant = signal<Tenant | null>(null);
   loading = signal(false);
@@ -136,10 +107,6 @@ export class TenantsComponent {
     this.createForm = this.fb.group({
       first_name: ['', [Validators.required, Validators.minLength(2)]],
       last_name: ['', [Validators.required, Validators.minLength(2)]],
-      birth_date: [''],
-      birth_place: [''],
-      identity_document_type: [''],
-      identity_document_number: [''],
       email: ['', [Validators.email]],
       phone: [''],
       iban: [''],
@@ -227,10 +194,6 @@ export class TenantsComponent {
     this.createForm.reset({
       first_name: tenant?.first_name ?? '',
       last_name: tenant?.last_name ?? '',
-      birth_date: tenant?.birth_date ?? '',
-      birth_place: tenant?.birth_place ?? '',
-      identity_document_type: tenant?.identity_document_type ?? '',
-      identity_document_number: tenant?.identity_document_number ?? '',
       email: tenant?.email ?? '',
       phone: tenant?.phone ?? '',
       iban: tenant?.iban ?? '',
@@ -316,61 +279,6 @@ export class TenantsComponent {
         },
       });
     }
-  }
-
-  /* ----------------------------------------------------------------------
-   | Archivage et invitation
-   |----------------------------------------------------------------------*/
-
-  /**
-   * Clôt un dossier sans l'effacer.
-   *
-   * Distinct de la suppression, qui répond à « créé par erreur ». Ici le
-   * dossier a servi : la prescription des loyers court sur trois ans, et
-   * l'ancien locataire peut réclamer son dépôt de garantie bien après.
-   */
-  async archiveTenant(tenant: Tenant): Promise<void> {
-    const confirmed = await this.confirm.ask({
-      title: `Archiver le dossier de ${tenant.first_name} ${tenant.last_name} ?`,
-      message:
-        'Le dossier sortira de la liste de travail sans être supprimé. Vous le retrouverez ' +
-        'par le filtre « Dossiers clos ».',
-      confirmLabel: 'Archiver',
-    });
-
-    if (!confirmed) {
-      return;
-    }
-
-    this.tenantService.archiveTenant(tenant.id).subscribe({
-      next: () => {
-        this.list.refresh();
-        this.notifications.success('Dossier archivé.');
-      },
-      error: (error: unknown) => this.notifications.fromHttp(error, "L'archivage a échoué."),
-    });
-  }
-
-  unarchiveTenant(tenant: Tenant): void {
-    this.tenantService.unarchiveTenant(tenant.id).subscribe({
-      next: () => {
-        this.list.refresh();
-        this.notifications.success('Dossier réactivé.');
-      },
-      error: (error: unknown) => this.notifications.fromHttp(error, 'La réactivation a échoué.'),
-    });
-  }
-
-  /** Invite le locataire à ouvrir son espace en ligne. */
-  inviteTenant(tenant: Tenant): void {
-    this.tenantService.inviteTenant(tenant.id).subscribe({
-      next: (response) => {
-        this.notifications.success(response.message);
-        this.list.refresh();
-      },
-      error: (error: unknown) =>
-        this.notifications.fromHttp(error, "L'invitation n'a pas pu être envoyée."),
-    });
   }
 
   get firstName() {

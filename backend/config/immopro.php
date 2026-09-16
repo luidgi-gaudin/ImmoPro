@@ -69,28 +69,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Codes à usage unique
-    |--------------------------------------------------------------------------
-    |
-    | Employés pour vérifier une adresse e-mail à l'inscription et confirmer un
-    | changement d'adresse. Le code est stocké haché ; ces trois réglages sont
-    | ce qui l'empêche d'être deviné ou transformé en robinet à courriels.
-    |
-    | `max_attempts` est le plus important : six chiffres, c'est un million de
-    | combinaisons, et quelques milliers d'essais suffisent à tomber juste assez
-    | souvent pour que l'attaque en vaille la peine. Le monter au-delà d'une
-    | dizaine revient à désactiver la protection.
-    |
-    */
-
-    'otp' => [
-        'validity_minutes' => (int) env('OTP_VALIDITY_MINUTES', 10),
-        'max_attempts' => (int) env('OTP_MAX_ATTEMPTS', 5),
-        'resend_interval_seconds' => (int) env('OTP_RESEND_INTERVAL', 60),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Documents
     |--------------------------------------------------------------------------
     |

@@ -66,18 +66,6 @@ class LeaseRequest extends FormRequest
                 'date',
                 'after:start_date',
             ],
-            /*
-             * Durée portée par le contrat, distincte de l'écart entre les
-             * dates. Facultative : elle se déduit des dates tant que le bail
-             * n'a pas été reconduit, et l'imposer obligerait à ressaisir une
-             * information déjà présente sur la quasi-totalité des baux.
-             *
-             * Le plafond de 120 mois n'est pas une règle de droit mais un
-             * garde-fou de saisie : au-delà de dix ans, c'est une faute de
-             * frappe, pas un bail d'habitation.
-             */
-            'duration_months' => ['nullable', 'integer', 'between:1,120'],
-
             'monthly_rent' => ['required', 'numeric', 'gt:0'],
             'charges' => ['nullable', 'numeric', 'gte:0'],
             'deposit' => ['nullable', 'numeric', 'gte:0'],
