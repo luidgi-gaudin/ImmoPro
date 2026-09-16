@@ -269,29 +269,6 @@
             ></immopro-input>
 
             <immopro-input
-              id="property-address-complement"
-              label="Complément (bâtiment, résidence)"
-              formControlName="address_complement"
-              placeholder="Bâtiment B, escalier 2"
-            ></immopro-input>
-
-            <!-- Texte et non nombre : « RDC » et « entresol » sont des réponses
-                 aussi valables que « 3 ». -->
-            <immopro-input
-              id="property-floor"
-              label="Étage"
-              formControlName="floor"
-              placeholder="RDC, 3, entresol"
-            ></immopro-input>
-
-            <immopro-input
-              id="property-apartment"
-              label="Numéro d'appartement"
-              formControlName="apartment_number"
-              placeholder="31"
-            ></immopro-input>
-
-            <immopro-input
               id="property-city"
               label="Ville"
               formControlName="city"
@@ -316,48 +293,6 @@
                 <option value="">Choisir un DPE</option>
                 @for (value of dpeValues; track value) {
                   <option [value]="value">{{ value }}</option>
-                }
-              </select>
-            </immopro-select>
-
-            <!-- Le DPE porte deux étiquettes depuis 2021, et elles ne
-                 coïncident pas : un logement chauffé à l'électricité peut être
-                 classé E en énergie et B en GES. -->
-            <immopro-select inputId="property-ges" label="Classe GES">
-              <select id="property-ges" formControlName="ges">
-                <option value="">Non renseignée</option>
-                @for (value of dpeValues; track value) {
-                  <option [value]="value">{{ value }}</option>
-                }
-              </select>
-            </immopro-select>
-
-            <immopro-input
-              id="property-dpe-date"
-              label="Date du diagnostic"
-              type="date"
-              formControlName="dpe_date"
-            ></immopro-input>
-
-            <immopro-input
-              id="property-dpe-expiry"
-              label="Fin de validité (calculée si vide)"
-              type="date"
-              formControlName="dpe_expires_on"
-            ></immopro-input>
-
-            <immopro-select inputId="property-occupancy" label="État locatif">
-              <select id="property-occupancy" formControlName="occupancy_status">
-                @for (status of occupancyStatuses; track status.value) {
-                  <option [value]="status.value">{{ status.label }}</option>
-                }
-              </select>
-            </immopro-select>
-
-            <immopro-select inputId="property-ownership" label="Régime de propriété">
-              <select id="property-ownership" formControlName="ownership_type">
-                @for (type of ownershipTypes; track type.value) {
-                  <option [value]="type.value">{{ type.label }}</option>
                 }
               </select>
             </immopro-select>
@@ -405,72 +340,12 @@
                 Parking
               </label>
               <label class="luxury-checkbox">
-                <input type="checkbox" formControlName="has_terrace" />
-                <span class="checkmark"></span>
-                Terrasse
-              </label>
-              <label class="luxury-checkbox">
-                <input type="checkbox" formControlName="has_garage" />
-                <span class="checkmark"></span>
-                Garage
-              </label>
-              <label class="luxury-checkbox">
                 <input type="checkbox" formControlName="has_cave" />
                 <span class="checkmark"></span>
                 Cave
               </label>
-              <label class="luxury-checkbox">
-                <input type="checkbox" formControlName="is_furnished" />
-                <span class="checkmark"></span>
-                Meublé
-              </label>
             </div>
           </div>
-
-          <!-- Bloc syndicat : n'apparaît qu'en copropriété. En monopropriété,
-               ces informations n'existent pas, et un champ vide laisserait
-               croire à un dossier incomplet. -->
-          @if (isCoOwned) {
-            <div class="modal-form-grid" style="margin-top: 20px">
-              <immopro-input
-                id="property-syndic-name"
-                label="Nom du syndicat"
-                formControlName="syndic_name"
-                placeholder="Cabinet Foncia"
-              ></immopro-input>
-
-              <immopro-input
-                id="property-syndic-contact"
-                label="Interlocuteur"
-                formControlName="syndic_contact"
-                placeholder="Marie Durand"
-              ></immopro-input>
-
-              <immopro-input
-                id="property-syndic-email"
-                label="E-mail du syndicat"
-                type="email"
-                formControlName="syndic_email"
-                placeholder="contact@syndic.fr"
-              ></immopro-input>
-
-              <immopro-input
-                id="property-syndic-phone"
-                label="Téléphone du syndicat"
-                type="tel"
-                formControlName="syndic_phone"
-                placeholder="01 23 45 67 89"
-              ></immopro-input>
-
-              <immopro-input
-                id="property-lot"
-                label="Numéro de lot"
-                type="number"
-                formControlName="lot_number"
-                placeholder="42"
-              ></immopro-input>
-            </div>
-          }
 
           <immopro-input
             id="property-description"

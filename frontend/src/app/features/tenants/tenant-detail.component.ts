@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  computed,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import {
@@ -17,7 +10,6 @@ import {
 import { TenantService, Tenant } from '../../core/services/tenant.service';
 import { LeaseService, Lease } from '../../core/services/lease.service';
 import { DocumentsPanelComponent } from '../../shared/components/documents-panel/documents-panel.component';
-import { GuarantorsPanelComponent } from '../../shared/components/guarantors-panel/guarantors-panel.component';
 import { maskBankIdentifier } from '../../core/format/bank-identifier';
 
 @Component({
@@ -31,7 +23,6 @@ import { maskBankIdentifier } from '../../core/format/bank-identifier';
     ImmoproBadgeComponent,
     ImmoproEmptyStateComponent,
     DocumentsPanelComponent,
-    GuarantorsPanelComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -58,21 +49,6 @@ import { maskBankIdentifier } from '../../core/format/bank-identifier';
               <p class="text-secondary" style="margin-top: 4px;">
                 {{ t.email || 'Aucun email renseigné' }}
               </p>
-
-              <div class="tenant-flags">
-                @if (t.is_archived) {
-                  <immopro-badge tone="neutral">Dossier archivé</immopro-badge>
-                }
-
-                <!-- Dit d'un coup d'œil si le locataire peut consulter son
-                     bail et déposer ses justificatifs, ou s'il faut encore
-                     l'inviter. -->
-                @if (t.has_account) {
-                  <immopro-badge tone="success">Espace locataire actif</immopro-badge>
-                } @else {
-                  <immopro-badge tone="warning">Sans espace en ligne</immopro-badge>
-                }
-              </div>
             </div>
           </div>
 
@@ -80,20 +56,6 @@ import { maskBankIdentifier } from '../../core/format/bank-identifier';
             <div class="detail-item">
               <span class="label text-muted">Téléphone</span>
               <strong class="value">{{ t.phone || '-' }}</strong>
-            </div>
-            <div class="detail-item">
-              <span class="label text-muted">Date de naissance</span>
-              <strong class="value">{{
-                t.birth_date ? (t.birth_date | date: 'dd/MM/yyyy') : '-'
-              }}</strong>
-            </div>
-            <div class="detail-item">
-              <span class="label text-muted">Lieu de naissance</span>
-              <strong class="value">{{ t.birth_place || '-' }}</strong>
-            </div>
-            <div class="detail-item">
-              <span class="label text-muted">Pièce d'identité</span>
-              <strong class="value">{{ identityLabel(t) }}</strong>
             </div>
             <div class="detail-item">
               <span class="label text-muted">Adresse</span>
@@ -176,9 +138,6 @@ import { maskBankIdentifier } from '../../core/format/bank-identifier';
           }
         </div>
 
-        <!-- Les garants du dossier : caution personnelle, Visale, assurance. -->
-        <app-guarantors-panel [tenantId]="t.id" [monthlyRent]="currentRent()" />
-
         <!-- Pièce d'identité, justificatifs de revenus, acte de cautionnement. -->
         <div class="documents-section">
           <app-documents-panel
@@ -222,12 +181,6 @@ import { maskBankIdentifier } from '../../core/format/bank-identifier';
       }
       .documents-section {
         margin-top: 24px;
-      }
-      .tenant-flags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 8px;
       }
       .reveal {
         align-self: flex-start;
@@ -326,41 +279,6 @@ import { maskBankIdentifier } from '../../core/format/bank-identifier';
 export class TenantDetailComponent implements OnInit {
   /** Les coordonnées bancaires ne s'affichent qu'à la demande. */
   protected readonly bankVisible = signal(false);
-
-  /**
-   * Loyer du bail actif, pour vérifier la règle des trois fois le loyer.
-   *
-   * Sans bail en cours, la question ne se pose pas : un dossier de candidature
-   * n'a pas encore de loyer à couvrir.
-   */
-  protected readonly currentRent = computed(() => {
-    const active = this.tenantLeases().find((lease) => lease.statut === 'actif');
-
-    return active ? Number(active.monthly_rent) : null;
-  });
-
-  /** Nature de la pièce d'identité, en toutes lettres. */
-  protected identityLabel(tenant: Tenant): string {
-    const labels: Record<string, string> = {
-      carte_identite: "Carte nationale d'identité",
-      passeport: 'Passeport',
-      titre_sejour: 'Titre de séjour',
-      permis_conduire: 'Permis de conduire',
-      autre: 'Autre pièce',
-    };
-
-    const label = tenant.identity_document_type
-      ? (labels[tenant.identity_document_type] ?? tenant.identity_document_type)
-      : null;
-
-    if (!label) {
-      return '-';
-    }
-
-    return tenant.identity_document_number
-      ? `${label} · ${tenant.identity_document_number}`
-      : label;
-  }
 
   protected mask(value: string | null | undefined): string {
     return maskBankIdentifier(value);

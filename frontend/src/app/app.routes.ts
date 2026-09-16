@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { roleGuard } from './core/guards/role.guard';
 
 /**
  * Chaque route déclare son `title` (lu par la `TitleStrategy`) et, dans ses
@@ -172,64 +171,6 @@ export const routes: Routes = [
           breadcrumb: 'Rapports',
           noindex: true,
         },
-      },
-      /*
-       * Espace locataire.
-       *
-       * Sous le même garde d'authentification que le reste, plus un garde de
-       * profil : un bailleur qui atterrirait ici ne verrait rien, et
-       * l'expliquer coûte moins qu'un écran vide inexpliqué.
-       */
-      {
-        path: 'espace-locataire',
-        canActivateChild: [roleGuard('locataire')],
-        data: { breadcrumb: 'Mon espace', noindex: true },
-        children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            loadComponent: () =>
-              import('./features/tenant-space/tenant-space.component').then(
-                (m) => m.TenantSpaceComponent,
-              ),
-            title: 'Mon espace locataire',
-            data: {
-              description:
-                'Votre logement, votre bail et vos échéances de loyer, réunis au même endroit.',
-              breadcrumb: 'Mon espace',
-              noindex: true,
-            },
-          },
-          {
-            path: 'baux/:id',
-            loadComponent: () =>
-              import('./features/tenant-space/tenant-space-lease.component').then(
-                (m) => m.TenantSpaceLeaseComponent,
-              ),
-            title: 'Mon bail',
-            data: {
-              description: 'Détail de votre bail et historique de vos paiements.',
-              breadcrumb: 'Mon bail',
-              breadcrumbParents: [{ label: 'Mon espace', url: '/espace-locataire' }],
-              noindex: true,
-            },
-          },
-          {
-            path: 'documents',
-            loadComponent: () =>
-              import('./features/tenant-space/tenant-space-documents.component').then(
-                (m) => m.TenantSpaceDocumentsComponent,
-              ),
-            title: 'Mes documents',
-            data: {
-              description:
-                'Consultez les pièces de votre dossier et transmettez vos justificatifs.',
-              breadcrumb: 'Mes documents',
-              breadcrumbParents: [{ label: 'Mon espace', url: '/espace-locataire' }],
-              noindex: true,
-            },
-          },
-        ],
       },
       {
         path: 'profile',

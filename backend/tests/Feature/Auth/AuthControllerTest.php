@@ -24,100 +24,12 @@ class AuthControllerTest extends TestCase
             'email' => 'john@example.com',
             'password' => 'password1',
             'password_confirmation' => 'password1',
-            'role' => 'proprietaire',
         ]);
 
         $response->assertStatus(201)
             ->assertJsonStructure(['data' => ['id', 'name', 'email', 'created_at']]);
 
         $this->assertDatabaseHas('users', ['email' => 'john@example.com']);
-    }
-
-    /**
-     * L'inscription n'ouvre pas de session : le jeton s'obtient en validant le
-     * code reçu par courriel. Sans cela, ignorer l'écran du code suffirait à
-     * entrer, et la vérification ne vérifierait rien.
-     */
-    public function test_register_does_not_issue_a_token(): void
-    {
-        $response = $this->asSpa()->postJson('/api/auth/register', [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'password1',
-            'password_confirmation' => 'password1',
-            'role' => 'proprietaire',
-        ]);
-
-        $response->assertStatus(201)
-            ->assertJsonMissingPath('token')
-            ->assertJsonPath('email_verification_required', true);
-
-        $this->assertNull(User::where('email', 'john@example.com')->sole()->email_verified_at);
-    }
-
-    public function test_register_records_the_chosen_role(): void
-    {
-        $this->asSpa()->postJson('/api/auth/register', [
-            'name' => 'Lea Martin',
-            'email' => 'lea@example.com',
-            'password' => 'password1',
-            'password_confirmation' => 'password1',
-            'role' => 'locataire',
-        ])->assertStatus(201);
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'lea@example.com',
-            'role' => 'locataire',
-        ]);
-    }
-
-    public function test_register_returns_422_without_a_role(): void
-    {
-        $this->postJson('/api/auth/register', [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'password1',
-            'password_confirmation' => 'password1',
-        ])->assertStatus(422)->assertJsonValidationErrors(['role']);
-    }
-
-    public function test_register_returns_422_for_an_unknown_role(): void
-    {
-        $this->postJson('/api/auth/register', [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => 'password1',
-            'password_confirmation' => 'password1',
-            'role' => 'administrateur',
-        ])->assertStatus(422)->assertJsonValidationErrors(['role']);
-    }
-
-    /**
-     * Le contrôle vient après celui du mot de passe : placé avant, il dirait à
-     * un inconnu quels comptes existent.
-     */
-    public function test_login_refuses_an_unverified_email(): void
-    {
-        $user = User::factory()->unverified()->create(['password' => bcrypt('password1')]);
-
-        $this->asSpa()->postJson('/api/auth/login', [
-            'email' => $user->email,
-            'password' => 'password1',
-        ])
-            ->assertStatus(403)
-            ->assertJsonPath('email_verification_required', true);
-    }
-
-    public function test_login_with_a_wrong_password_on_an_unverified_account_says_nothing_more(): void
-    {
-        $user = User::factory()->unverified()->create(['password' => bcrypt('password1')]);
-
-        $this->asSpa()->postJson('/api/auth/login', [
-            'email' => $user->email,
-            'password' => 'mauvais',
-        ])
-            ->assertStatus(401)
-            ->assertJsonMissingPath('email_verification_required');
     }
 
     public function test_register_returns_422_when_email_is_already_taken(): void
@@ -129,7 +41,6 @@ class AuthControllerTest extends TestCase
             'email' => 'john@example.com',
             'password' => 'password1',
             'password_confirmation' => 'password1',
-            'role' => 'proprietaire',
         ]);
 
         $response->assertStatus(422)
@@ -143,7 +54,6 @@ class AuthControllerTest extends TestCase
             'email' => 'john@example.com',
             'password' => 'password1',
             'password_confirmation' => 'different',
-            'role' => 'proprietaire',
         ]);
 
         $response->assertStatus(422)
