@@ -6,54 +6,26 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
-  <component name="BackgroundAgentGlobalSettings">
-    <option name="selectedModelId" value="auto" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="refactor: improve tenant details layout and styles&#10;&#10;- Enhanced component structure by wrapping content in a unified `.detail-tenant-global` container.&#10;- Adjusted padding and margins for improved spacing consistency across the tenant details and breadcrumb components.&#10;- Updated document section padding for a more cohesive design.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/laravel-idea.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/laravel-idea.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+    <list default="true" id="70640d29-c653-4e49-8888-3e9af883d093" name="Changes" comment="feat: remove development-only debug code display from email verification forms">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Enums/LeaseType.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Enums/LeaseType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/LeaseController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/RentPaymentController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/RentPaymentController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Requests/LeaseRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Requests/LeaseRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Resources/LeaseResource.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Resources/LeaseResource.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Lease.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Lease.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/tests/Feature/LeaseComplianceTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tests/Feature/LeaseComplianceTest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/tests/Feature/LeaseControllerTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tests/Feature/LeaseControllerTest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/tests/Unit/LeaseTypeTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tests/Unit/LeaseTypeTest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproCard/immopro-card.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproFilterBar/immopro-filter-bar.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproFilterBar/immopro-filter-bar.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproModal/immopro-modal.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproModal/immopro-modal.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproStatCard/immopro-stat-card.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproStatCard/immopro-stat-card.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/lib/components/immoproTable/immopro-table.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/projects/ui-lib/src/public-api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/projects/ui-lib/src/public-api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/layout.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/layout.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/lease.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/lease.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/dashboard/dashboard.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/documents/documents.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/leases/leases.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolio-properties.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolios.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/portfolios/portfolios.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/profile/profile.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/profile/profile.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/reports/reports.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/reports/reports.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/tenants/tenants.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/topbar/topbar.component.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/topbar/topbar.component.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/app/shared/components/topbar/topbar.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/shared/components/topbar/topbar.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/styles.scss" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/styles.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.env.example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Console/Commands/TestMail.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Console/Commands/TestMail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/AuthController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/AuthController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/EmailOtpController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Auth/EmailOtpController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/ProfileController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/ProfileController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Notifications/EmailOtpNotification.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Notifications/EmailOtpNotification.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Services/Auth/EmailOtpService.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Services/Auth/EmailOtpService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Services/Auth/TenantAccountLinker.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Services/Auth/TenantAccountLinker.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/backend/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/tests/Feature/Auth/EmailOtpTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tests/Feature/Auth/EmailOtpTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/tests/Feature/ProfileControllerTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tests/Feature/ProfileControllerTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/tests/Unit/EmailOtpServiceTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tests/Unit/EmailOtpServiceTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/core/services/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/core/services/auth.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/login/login.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/auth/register/register.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/auth/register/register.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/features/profile/profile.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/features/profile/profile.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +40,6 @@
   </component>
   <component name="CopilotPersistence">
     <persistenceIdMap>
-      <entry key="_/Users/luidgigaudin/PhpstormProjects/ImmoPro" value="3IMzSjrfVmJmcIkzTrR7RabTENR" />
       <entry key="_C:/Users/LuidgiGAUDIN/PhpstormProjects/ImmoPro" value="3B4g3Pu4zJQQZ8JlE2tvBCAX9MZ" />
       <entry key="_C:/Users/luidg/PhpstormProjects/ImmoPro" value="373kmqohKjTXkLR0zZzjzcBKhxb" />
     </persistenceIdMap>
@@ -83,7 +54,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="8961" />
+    <option name="cachedIndexableFilesCount" value="8971" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -124,7 +95,7 @@
         <option name="allowedToolsNames" />
         <option name="enabled" value="false" />
         <option name="name" value="angular-cli" />
-        <option name="source" value="PLUGIN" />
+        <option name="source" value="USER" />
         <option name="userOverride" value="false" />
       </McpServerConfigurationProperties>
     </commands>
@@ -132,61 +103,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="2.3859292385561295" />
-      <entry key="MS500" value="4.41489497425408" />
-      <entry key="S2" value="6.934564577274092" />
-      <entry key="S5" value="9.477521011994504" />
-      <entry key="S10" value="10.967034280886105" />
-      <entry key="S30" value="12.250015087729022" />
-      <entry key="S60" value="12.615094800749374" />
-      <entry key="M2" value="12.80499850082438" />
-      <entry key="M5" value="12.921378373242838" />
-      <entry key="M10" value="12.960584897619421" />
-      <entry key="M15" value="12.97370003126703" />
-      <entry key="M30" value="12.986838384071877" />
-      <entry key="H1" value="12.993416281394307" />
-      <entry key="H2" value="12.99670741269255" />
-      <entry key="H4" value="12.998353524302077" />
-      <entry key="D1" value="12.999725562096106" />
-      <entry key="W1" value="12.999960793965826" />
+      <entry key="MS100" value="2.029796942152037" />
+      <entry key="MS500" value="4.832976261714319" />
+      <entry key="S2" value="9.258220665819804" />
+      <entry key="S5" value="11.255306797444105" />
+      <entry key="S10" value="12.079395665480908" />
+      <entry key="S30" value="12.681667916105846" />
+      <entry key="S60" value="12.839352367395408" />
+      <entry key="M2" value="12.921870511597627" />
+      <entry key="M5" value="13.688242064551662" />
+      <entry key="M10" value="19.045299398185705" />
+      <entry key="M15" value="26.53911174491098" />
+      <entry key="M30" value="45.62426352152784" />
+      <entry key="H1" value="66.21731163265262" />
+      <entry key="H2" value="84.70142162307644" />
+      <entry key="H4" value="99.61072198537724" />
+      <entry key="D1" value="118.23048427403597" />
+      <entry key="W1" value="122.29208593012088" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="0.0" />
-      <entry key="S60" value="0.0" />
-      <entry key="M2" value="0.0" />
-      <entry key="M5" value="0.0" />
-      <entry key="M10" value="0.0" />
-      <entry key="M15" value="0.0" />
-      <entry key="M30" value="0.0" />
-      <entry key="H1" value="0.0" />
-      <entry key="H2" value="0.0" />
-      <entry key="H4" value="0.0" />
-      <entry key="D1" value="0.0" />
-      <entry key="W1" value="0.0" />
+      <entry key="S5" value="5.938292000554568E-169" />
+      <entry key="S10" value="7.706031404398547E-85" />
+      <entry key="S30" value="9.169360751686302E-29" />
+      <entry key="S60" value="9.798312672384019E-15" />
+      <entry key="M2" value="1.275172568204231E-7" />
+      <entry key="M5" value="0.003806268244803837" />
+      <entry key="M10" value="0.1341597921174251" />
+      <entry key="M15" value="0.44561721075979494" />
+      <entry key="M30" value="1.488720266073634" />
+      <entry key="H1" value="2.7265688060126143" />
+      <entry key="H2" value="3.6916975332279938" />
+      <entry key="H4" value="4.296170254831921" />
+      <entry key="D1" value="4.875131108717251" />
+      <entry key="W1" value="4.981967017034251" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="2.2517328458388586" />
-      <entry key="MS500" value="4.265558310742489" />
-      <entry key="S2" value="6.8664162356497505" />
-      <entry key="S5" value="9.437709978756828" />
-      <entry key="S10" value="10.943269066690611" />
-      <entry key="S30" value="12.240959626048863" />
-      <entry key="S60" value="12.610403961917454" />
-      <entry key="M2" value="12.802610515975239" />
-      <entry key="M5" value="12.920412726275105" />
-      <entry key="M10" value="12.960100311826809" />
-      <entry key="M15" value="12.973376580943095" />
-      <entry key="M30" value="12.986676461968038" />
-      <entry key="H1" value="12.993335271036031" />
-      <entry key="H2" value="12.99666689517795" />
-      <entry key="H4" value="12.99833326245981" />
-      <entry key="D1" value="12.999722184693834" />
-      <entry key="W1" value="12.999960311469287" />
+      <entry key="MS100" value="1.9111200840047795" />
+      <entry key="MS500" value="4.765980688520525" />
+      <entry key="S2" value="9.226422616628966" />
+      <entry key="S5" value="11.239968980904393" />
+      <entry key="S10" value="12.071190201128768" />
+      <entry key="S30" value="12.678802394991518" />
+      <entry key="S60" value="12.837902562230077" />
+      <entry key="M2" value="12.921141241821287" />
+      <entry key="M5" value="13.691625871557491" />
+      <entry key="M10" value="19.17757830670736" />
+      <entry key="M15" value="26.981034965335166" />
+      <entry key="M30" value="47.107267622293456" />
+      <entry key="H1" value="68.93879369102768" />
+      <entry key="H2" value="88.3897038256917" />
+      <entry key="H4" value="103.90490407086973" />
+      <entry key="D1" value="123.10523742162694" />
+      <entry key="W1" value="127.27399768547006" />
     </decayedShown>
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/opt/homebrew/Cellar/php/8.5.9/bin/php">
@@ -336,11 +307,9 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "fix/logique-et-forntend",
+    "git-widget-placeholder": "features/finalisation-des-features",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
     "laravel_idea.dialogs.codeGeneration.window.createClass.width": "414",
     "laravel_idea.dialogs.codeGeneration.window.createClass.x": "646",
     "laravel_idea.dialogs.codeGeneration.window.createClass.y": "309",
@@ -360,10 +329,10 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\prettier",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "prettierjs.PrettierConfiguration.Package": "/Users/luidgigaudin/PhpstormProjects/ImmoPro/frontend/node_modules/prettier",
+    "settings.editor.selected.configurable": "reference.webide.settings.project.settings.php",
     "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "C:\\Users\\LuidgiGAUDIN\\PhpstormProjects\\ImmoPro\\frontend\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "/Users/luidgigaudin/PhpstormProjects/ImmoPro/frontend/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -394,17 +363,18 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="HTTP Request.All in laravel" />
         <item itemvalue="HTTP Request.laravel | auth.user" />
         <item itemvalue="HTTP Request.laravel | auth.register" />
-        <item itemvalue="HTTP Request.All in laravel" />
-        <item itemvalue="HTTP Request.All in laravel" />
+        <item itemvalue="PHPUnit.AuthControllerTest" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-php-predefined-a98d8de5180a-9522f28f0b20-com.jetbrains.php.sharedIndexes-PS-262.10315.130" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-PS-262.9437.196" />
+        <option value="bundled-php-predefined-a98d8de5180a-9522f28f0b20-com.jetbrains.php.sharedIndexes-PS-262.9437.196" />
       </set>
     </attachedChunks>
   </component>
@@ -427,16 +397,7 @@
       <workItem from="1774943601459" duration="6331000" />
       <workItem from="1775545582346" duration="1294000" />
       <workItem from="1780298277271" duration="741000" />
-      <workItem from="1786721450191" duration="5094000" />
-      <workItem from="1786747038120" duration="4222000" />
-      <workItem from="1786754446124" duration="2733000" />
-      <workItem from="1786877730675" duration="983000" />
-      <workItem from="1787661536878" duration="8000" />
-      <workItem from="1787738343008" duration="2756000" />
-      <workItem from="1787906791367" duration="11000" />
-      <workItem from="1788468298130" duration="85000" />
-      <workItem from="1788469351985" duration="96000" />
-      <workItem from="1788469455064" duration="3173000" />
+      <workItem from="1787581865889" duration="557000" />
     </task>
     <task id="LOCAL-00001" summary="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus">
       <option name="closed" value="true" />
@@ -510,22 +471,43 @@
       <option name="project" value="LOCAL" />
       <updated>1773757443825</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling.">
+      <option name="closed" value="true" />
+      <created>1787570915634</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1787570915634</updated>
+    </task>
+    <task id="LOCAL-00011" summary="feat: add role-based route access control and implement new enums for property and identity document types">
+      <option name="closed" value="true" />
+      <created>1789259068941</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1789259068941</updated>
+    </task>
+    <task id="LOCAL-00012" summary="feat: add command to test email configuration and provide detailed error reporting">
+      <option name="closed" value="true" />
+      <created>1789315215190</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1789315215190</updated>
+    </task>
+    <task id="LOCAL-00013" summary="feat: remove development-only debug code display from email verification forms">
+      <option name="closed" value="true" />
+      <created>1789315354949</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1789315354949</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Correction des commandes de développement dans composer.json pour simplifier l'exécution des processus" />
@@ -536,7 +518,12 @@
     <MESSAGE value="feat: implement authentication with login and registration components" />
     <MESSAGE value="chore: remove authentication functionality and related components" />
     <MESSAGE value="feat: update authentication to use API tokens and improve response structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: update authentication to use API tokens and improve response structure" />
+    <MESSAGE value="fix: escape email address in privacy component for HTML compliance" />
+    <MESSAGE value="feat: implement foreign key indexing, documents table, row-level security, and frontend confirmation dialog  &#10;&#10;- Added missing foreign key indexes for relational integrity and improved performance.  &#10;- Created a polymorphic `documents` table for file attachments with expirations and notes.  &#10;- Enabled PostgreSQL Row Level Security for enhanced tenant data isolation and integrity.  &#10;- Replaced `window.confirm` with an application-themed confirmation dialog, including cascading deletion safeguards.  &#10;- Frontend updates include API utility, masked bank identifiers, and enhanced confirmation handling." />
+    <MESSAGE value="feat: add role-based route access control and implement new enums for property and identity document types" />
+    <MESSAGE value="feat: add command to test email configuration and provide detailed error reporting" />
+    <MESSAGE value="feat: remove development-only debug code display from email verification forms" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: remove development-only debug code display from email verification forms" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

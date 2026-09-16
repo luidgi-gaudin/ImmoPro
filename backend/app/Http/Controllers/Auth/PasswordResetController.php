@@ -78,14 +78,22 @@ class PasswordResetController extends Controller
      */
     public function update(Request $request): JsonResponse
     {
+        $user = $request->user();
+
+        /*
+         * Un compte ouvert par Google ou Apple n'a pas de mot de passe : lui en
+         * réclamer un « actuel » l'empêcherait d'en définir un, et donc de se
+         * détacher un jour de son fournisseur. Il n'y a rien à confirmer, et le
+         * jeton de session fait déjà preuve d'identité.
+         */
+        $settingFirstPassword = ! $user->hasUsablePassword();
+
         $validated = $request->validate([
-            'current_password' => ['required', 'string'],
+            'current_password' => [$settingFirstPassword ? 'nullable' : 'required', 'string'],
             'password' => ['required', 'confirmed', PasswordRule::defaults()],
         ]);
 
-        $user = $request->user();
-
-        if (! Hash::check($validated['current_password'], $user->password)) {
+        if (! $settingFirstPassword && ! Hash::check($validated['current_password'], $user->password)) {
             throw ValidationException::withMessages([
                 'current_password' => 'Le mot de passe actuel est incorrect.',
             ]);

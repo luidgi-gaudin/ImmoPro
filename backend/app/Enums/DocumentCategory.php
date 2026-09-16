@@ -19,13 +19,18 @@ enum DocumentCategory: string
 {
     case BailSigne = 'bail_signe';
     case EtatDesLieux = 'etat_des_lieux';
+    case EtatDesLieuxEntree = 'etat_des_lieux_entree';
+    case EtatDesLieuxSortie = 'etat_des_lieux_sortie';
     case Quittance = 'quittance';
+    case RecuPaiement = 'recu_paiement';
+    case JustificatifPaiement = 'justificatif_paiement';
     case Dpe = 'dpe';
     case Diagnostic = 'diagnostic';
     case AssuranceHabitation = 'assurance_habitation';
     case AttestationAssurance = 'attestation_assurance';
     case PieceIdentite = 'piece_identite';
     case JustificatifRevenus = 'justificatif_revenus';
+    case JustificatifDomicile = 'justificatif_domicile';
     case ActeCaution = 'acte_caution';
     case Mandat = 'mandat';
     case ReglementCopropriete = 'reglement_copropriete';
@@ -38,13 +43,18 @@ enum DocumentCategory: string
         return match ($this) {
             self::BailSigne => 'Bail signé',
             self::EtatDesLieux => 'État des lieux',
+            self::EtatDesLieuxEntree => 'État des lieux d\'entrée',
+            self::EtatDesLieuxSortie => 'État des lieux de sortie',
             self::Quittance => 'Quittance de loyer',
+            self::RecuPaiement => 'Reçu de paiement',
+            self::JustificatifPaiement => 'Justificatif de paiement',
             self::Dpe => 'Diagnostic de performance énergétique',
             self::Diagnostic => 'Diagnostic technique',
             self::AssuranceHabitation => 'Assurance propriétaire non occupant',
             self::AttestationAssurance => 'Attestation d\'assurance du locataire',
             self::PieceIdentite => 'Pièce d\'identité',
             self::JustificatifRevenus => 'Justificatif de revenus',
+            self::JustificatifDomicile => 'Justificatif de domicile',
             self::ActeCaution => 'Acte de cautionnement',
             self::Mandat => 'Mandat de gestion',
             self::ReglementCopropriete => 'Règlement de copropriété',
@@ -67,13 +77,16 @@ enum DocumentCategory: string
     public function attachableTo(): array
     {
         return match ($this) {
-            self::BailSigne, self::EtatDesLieux, self::Quittance,
-            self::AttestationAssurance, self::ActeCaution => [Lease::class],
+            self::BailSigne, self::EtatDesLieux, self::EtatDesLieuxEntree,
+            self::EtatDesLieuxSortie, self::Quittance, self::RecuPaiement,
+            self::JustificatifPaiement, self::AttestationAssurance,
+            self::ActeCaution => [Lease::class],
 
             self::Dpe, self::Diagnostic, self::ReglementCopropriete,
             self::TaxeFonciere, self::AssuranceHabitation => [Property::class],
 
-            self::PieceIdentite, self::JustificatifRevenus => [Tenant::class],
+            self::PieceIdentite, self::JustificatifRevenus,
+            self::JustificatifDomicile => [Tenant::class],
 
             self::Mandat => [Portfolio::class, Property::class],
 
@@ -101,6 +114,44 @@ enum DocumentCategory: string
     }
 
     /**
+     * Le locataire peut-il déposer cette pièce depuis son espace ?
+     *
+     * Le dépôt par le locataire est un droit d'écriture sur le dossier du
+     * bailleur : il doit rester borné à ce qu'on lui demande de fournir.
+     * Une attestation d'assurance, oui — c'est une obligation annuelle
+     * (art. 7 g de la loi de 1989). Une quittance, non : c'est le bailleur qui
+     * l'émet, et laisser déposer la sienne ouvrirait la porte à un faux
+     * justificatif de paiement versé au dossier.
+     */
+    public function isTenantUploadable(): bool
+    {
+        return match ($this) {
+            self::AttestationAssurance,
+            self::JustificatifPaiement,
+            self::PieceIdentite,
+            self::JustificatifRevenus,
+            self::JustificatifDomicile,
+            self::EtatDesLieuxEntree,
+            self::EtatDesLieuxSortie,
+            self::Autre => true,
+            default => false,
+        };
+    }
+
+    /**
+     * Catégories que le locataire peut déposer depuis son espace.
+     *
+     * @return list<self>
+     */
+    public static function tenantUploadable(): array
+    {
+        return array_values(array_filter(
+            self::cases(),
+            fn (self $category) => $category->isTenantUploadable()
+        ));
+    }
+
+    /**
      * Catalogue destiné au front, pour que le menu déroulant et les règles de
      * rattachement viennent d'une seule source.
      *
@@ -116,6 +167,7 @@ enum DocumentCategory: string
                 $category->attachableTo()
             ),
             'validity_months' => $category->validityMonths(),
+            'tenant_uploadable' => $category->isTenantUploadable(),
         ], self::cases());
     }
 }

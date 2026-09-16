@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AlertType;
 use App\Enums\DocumentCategory;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Resources\DocumentResource;
@@ -10,6 +11,7 @@ use App\Models\Lease;
 use App\Models\Portfolio;
 use App\Models\Property;
 use App\Models\Tenant;
+use App\Services\Notifications\TenantNotifier;
 use App\Support\Rls;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
@@ -69,7 +71,7 @@ class DocumentController extends Controller
             ->header('Cache-Control', 'private, max-age=86400');
     }
 
-    public function store(DocumentRequest $request): JsonResponse
+    public function store(DocumentRequest $request, TenantNotifier $notifier): JsonResponse
     {
         $file = $request->file('file');
         $category = DocumentCategory::from($request->validated('category'));
@@ -101,7 +103,49 @@ class DocumentController extends Controller
             'notes' => $request->validated('notes'),
         ]);
 
+        $this->notifyTenant($document, $notifier);
+
         return (new DocumentResource($document))->response()->setStatusCode(201);
+    }
+
+    /**
+     * Prévient le locataire d'une pièce déposée dans son dossier.
+     *
+     * Une quittance déposée sans que personne ne le sache n'a servi à rien :
+     * le locataire continue de la réclamer, le bailleur croit l'avoir fournie.
+     *
+     * Seules les pièces rattachées à un bail ou à une fiche locataire sont
+     * concernées : un diagnostic rangé sur le bien peut relever de la gestion
+     * du bailleur, et l'annoncer à chaque dépôt transformerait la boîte du
+     * locataire en journal d'activité.
+     */
+    private function notifyTenant(Document $document, TenantNotifier $notifier): void
+    {
+        $tenant = match ($document->documentable_type) {
+            Tenant::class => Tenant::find($document->documentable_id),
+            Lease::class => Lease::with('tenant')->find($document->documentable_id)?->tenant,
+            default => null,
+        };
+
+        if ($tenant === null) {
+            return;
+        }
+
+        $isReceipt = $document->category === DocumentCategory::Quittance;
+
+        $notifier->send(
+            tenant: $tenant,
+            type: $isReceipt ? AlertType::QuittanceDisponible : AlertType::DocumentPartage,
+            subject: $isReceipt
+                ? 'Une nouvelle quittance est disponible'
+                : 'Une pièce a été ajoutée à votre dossier',
+            body: sprintf('« %s » (%s) est consultable depuis votre espace.',
+                $document->name,
+                $document->category->label(),
+            ),
+            about: $document,
+            dedupKey: 'document_partage:document:'.$document->id,
+        );
     }
 
     /**

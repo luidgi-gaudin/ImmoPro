@@ -1,0 +1,38 @@
+# Ouvrier de file d'attente ImmoPro — unité systemd.
+#
+# Alternative au fichier Supervisor voisin, pour les hôtes qui n'ont que
+# systemd. Choisissez l'un ou l'autre, pas les deux.
+#
+#   sudo cp immopro-worker.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now immopro-worker
+#   sudo systemctl status immopro-worker
+#
+# Après chaque déploiement : php artisan queue:restart
+# L'ouvrier garde le code en mémoire et continuerait sinon à exécuter
+# l'ancienne version.
+
+[Unit]
+Description=Ouvrier de file d'attente ImmoPro
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/immopro/backend
+
+# Voir le fichier Supervisor voisin pour le détail des options.
+ExecStart=/usr/bin/php /var/www/immopro/backend/artisan queue:work \
+    --tries=3 --backoff=10 --max-time=3600 --sleep=1
+
+# `--max-time` fait sortir l'ouvrier proprement au bout d'une heure ; systemd
+# le relance. C'est la parade la plus simple aux fuites de mémoire d'un
+# processus de longue durée.
+Restart=always
+RestartSec=5
+
+StandardOutput=append:/var/log/immopro/worker.log
+StandardError=append:/var/log/immopro/worker.log
+
+[Install]
+WantedBy=multi-user.target

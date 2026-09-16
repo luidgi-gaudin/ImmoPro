@@ -1,9 +1,17 @@
 <immopro-auth-card
-  [title]="twoFactorRequired() ? 'Double Authentification' : 'Bon retour'"
+  [title]="
+    verificationRequired()
+      ? 'Vérifiez votre adresse'
+      : twoFactorRequired()
+        ? 'Double Authentification'
+        : 'Bon retour'
+  "
   [subtitle]="
-    twoFactorRequired()
-      ? 'Veuillez saisir votre code de sécurité pour continuer'
-      : 'Connectez-vous à votre espace ImmoPro'
+    verificationRequired()
+      ? 'Votre compte est créé, il ne manque que la confirmation de votre adresse'
+      : twoFactorRequired()
+        ? 'Veuillez saisir votre code de sécurité pour continuer'
+        : 'Connectez-vous à votre espace ImmoPro'
   "
 >
   <!-- Session expirée : ce n'est pas une erreur de l'utilisateur, et le dire
@@ -21,8 +29,60 @@
     </div>
   }
 
+  <!-- Adresse non vérifiée : le compte n'est pas en faute, il est inachevé. -->
+  @if (verificationRequired()) {
+    <p class="code-target">
+      Code envoyé à <strong>{{ pendingEmail() }}</strong
+      >.
+    </p>
+
+    <form [formGroup]="codeForm" (ngSubmit)="onVerifyEmail()" class="form-grid">
+      <immopro-input
+        id="verification_code"
+        label="Code de vérification"
+        formControlName="code"
+        placeholder="000000"
+        [error]="
+          (submitted() || verificationCode?.touched) && verificationCode?.invalid
+            ? 'Saisissez les six chiffres reçus par e-mail'
+            : null
+        "
+      ></immopro-input>
+
+      <immopro-button type="submit" [loading]="loading()" [disabled]="loading()">
+        Valider mon adresse
+      </immopro-button>
+    </form>
+
+    <div class="code-actions">
+      <button
+        type="button"
+        class="link-button"
+        [disabled]="resendIn() > 0 || loading()"
+        (click)="requestCode()"
+      >
+        @if (resendIn() > 0) {
+          Nouveau code possible dans {{ resendIn() }} s
+        } @else {
+          Renvoyer un code
+        }
+      </button>
+
+      <button type="button" class="link-button" (click)="cancelVerification()">
+        Revenir à la connexion
+      </button>
+    </div>
+  }
+
   <!-- Standard Login Form -->
-  @if (!twoFactorRequired()) {
+  @if (!twoFactorRequired() && !verificationRequired()) {
+    <app-social-sign-in
+      verb="Continuer avec"
+      [disabled]="loading()"
+      (credential)="onSocialCredential($event)"
+      (failed)="onSocialFailure($event)"
+    ></app-social-sign-in>
+
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
       <immopro-input
         id="email"
@@ -62,7 +122,14 @@
         Se connecter
       </immopro-button>
     </form>
-  } @else {
+  }
+
+  <!--
+    Condition explicite plutôt qu'un @else : la branche « sinon » du bloc
+    précédent se déclencherait aussi pendant la vérification d'adresse, et
+    l'écran afficherait alors deux formulaires de code superposés.
+  -->
+  @if (twoFactorRequired()) {
     <!-- Two-Factor Authentication Form -->
     <form [formGroup]="twoFactorForm" (ngSubmit)="onTwoFactorSubmit()" class="form-grid">
       @if (!useRecoveryCode()) {

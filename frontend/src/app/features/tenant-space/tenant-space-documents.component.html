@@ -1,0 +1,117 @@
+<div class="tenant-space">
+  <immopro-page-header
+    title="Mes documents"
+    subtitle="Les pièces de votre dossier, et celles que vous transmettez"
+  ></immopro-page-header>
+
+  <p class="back">
+    <a routerLink="/espace-locataire">← Retour à mon espace</a>
+  </p>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  <immopro-card>
+    <h2 class="section-title">Déposer une pièce</h2>
+    <p class="muted">
+      Formats acceptés : PDF, image ou document bureautique, {{ maxSizeMb() }} Mo au maximum.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="upload-form">
+      <immopro-select inputId="target" label="Concerne">
+        <select id="target" formControlName="target">
+          @for (target of targets(); track target.value) {
+            <option [value]="target.value">{{ target.label }}</option>
+          }
+        </select>
+      </immopro-select>
+
+      <immopro-select inputId="category" label="Nature du document">
+        <select id="category" formControlName="category">
+          <option value="">Choisir…</option>
+          @for (category of applicableCategories(); track category.value) {
+            <option [value]="category.value">{{ category.label }}</option>
+          }
+        </select>
+      </immopro-select>
+
+      <immopro-input
+        id="doc-name"
+        label="Intitulé (facultatif)"
+        formControlName="name"
+        placeholder="Attestation 2026"
+      ></immopro-input>
+
+      <immopro-input
+        id="issued_on"
+        label="Date du document"
+        type="date"
+        formControlName="issued_on"
+      ></immopro-input>
+
+      <immopro-input
+        id="expires_on"
+        label="Fin de validité"
+        type="date"
+        formControlName="expires_on"
+      ></immopro-input>
+
+      <div class="file-field">
+        <label for="document-file">Fichier</label>
+        <input id="document-file" type="file" (change)="onFileSelected($event)" />
+        @if (file(); as chosen) {
+          <span class="file-chosen">{{ chosen.name }}</span>
+        }
+      </div>
+
+      <div class="upload-actions">
+        <immopro-button type="submit" [loading]="uploading()" [disabled]="uploading()">
+          Transmettre
+        </immopro-button>
+      </div>
+    </form>
+  </immopro-card>
+
+  <h2 class="section-title spaced">Pièces de mon dossier</h2>
+
+  @if (loading()) {
+    <p class="muted">Chargement…</p>
+  } @else if (!documents().length) {
+    <immopro-card>
+      <p class="muted">Aucune pièce n'a encore été déposée dans votre dossier.</p>
+    </immopro-card>
+  } @else {
+    <ul class="documents">
+      @for (document of documents(); track document.id) {
+        <li>
+          <immopro-card>
+            <div class="document-row">
+              <div class="document-main">
+                <h3 class="document-name">{{ document.name }}</h3>
+                <p class="document-meta">
+                  {{ document.category_label }} · {{ document.size_label }}
+                  @if (document.issued_on) {
+                    · du {{ document.issued_on | date: 'dd/MM/yyyy' }}
+                  }
+                </p>
+              </div>
+
+              <div class="document-side">
+                @if (document.is_expired || document.expires_soon) {
+                  <immopro-badge [tone]="expiryTone(document)">
+                    {{ expiryLabel(document) }}
+                  </immopro-badge>
+                }
+
+                <button type="button" class="action-link" (click)="download(document)">
+                  Télécharger
+                </button>
+              </div>
+            </div>
+          </immopro-card>
+        </li>
+      }
+    </ul>
+  }
+</div>
