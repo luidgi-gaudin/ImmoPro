@@ -27,6 +27,11 @@ use Illuminate\Support\Facades\DB;
  * elle relit le bénéficiaire dans la session plutôt que de le recevoir en
  * paramètre. Sous SQLite, où il n'y a pas de policy, la même règle s'écrit
  * directement.
+ *
+ * Ce dédoublement a un coût qu'il faut connaître : les tests tournent sur
+ * SQLite et n'empruntent donc jamais le chemin de production. Une panne propre
+ * à PostgreSQL y passe inaperçue — c'est exactement ce qui est arrivé à
+ * l'identité posée en session, longtemps lue sur une requête qui n'en a pas.
  */
 class TenantAccountLinker
 {
@@ -39,10 +44,29 @@ class TenantAccountLinker
             return 0;
         }
 
-        if (Rls::active()) {
-            // L'identité doit être posée : la fonction lit `app_user_id()`.
-            Rls::ensureBound();
+        /*
+         * L'identité est posée explicitement, et non déduite de la session
+         * authentifiée.
+         *
+         * C'est tout le problème de ce rattachement : il survient au moment
+         * précis où personne n'est encore connecté. La validation du code et la
+         * connexion Google se font sur des routes publiques — le compte y est
+         * retrouvé par son adresse, pas par un jeton. Un `ensureBound()` y
+         * lisait donc un utilisateur nul, posait un paramètre vide, et
+         * `claim_tenant_profiles()` ne trouvait rien à réclamer. Le dossier
+         * restait détaché, sans la moindre erreur, et seulement en production.
+         *
+         * Aucun risque d'élévation : ce service n'est appelé qu'avec un compte
+         * dont l'identité vient d'être établie — code vérifié, jeton du
+         * fournisseur validé, ou session déjà ouverte.
+         *
+         * Posée dans tous les cas, y compris hors PostgreSQL où elle ne coûte
+         * rien : le comportement reste le même d'un pilote à l'autre, et les
+         * tests peuvent vérifier ce que la production dépend.
+         */
+        Rls::bind($user->id);
 
+        if (Rls::active()) {
             return (int) (DB::selectOne('select public.claim_tenant_profiles() as linked')->linked ?? 0);
         }
 

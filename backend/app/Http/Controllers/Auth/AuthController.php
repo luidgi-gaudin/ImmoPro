@@ -42,7 +42,6 @@ class AuthController extends Controller
             'role' => $request->role()->value,
         ]);
 
-        $code = null;
         $sent = true;
 
         /*
@@ -58,7 +57,7 @@ class AuthController extends Controller
          * depuis l'écran de vérification.
          */
         try {
-            $code = $otp->send($user, OtpPurpose::EmailVerification);
+            $otp->send($user, OtpPurpose::EmailVerification);
         } catch (Throwable $exception) {
             $sent = false;
 
@@ -71,9 +70,6 @@ class AuthController extends Controller
             'otp' => [
                 'expires_in_minutes' => $otp->validityMinutes(),
                 'resend_after_seconds' => $otp->resendIntervalSeconds(),
-                // Hors production seulement : évite d'ouvrir une boîte de
-                // réception pour dérouler le parcours en local ou en test.
-                'debug_code' => $code,
             ],
             'message' => $sent
                 ? 'Un code de vérification vient de vous être envoyé par e-mail.'

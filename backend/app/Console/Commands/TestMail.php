@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
@@ -20,7 +22,7 @@ class TestMail extends Command
     protected $signature = 'immopro:mail-test
                             {destinataire : Adresse à laquelle envoyer le message d\'essai}';
 
-    protected $description = 'Vérifie la configuration d\'envoi de courriels';
+    protected $description = 'Vérifie la configuration d\'envoi de courriels et l\'état de la file';
 
     public function handle(): int
     {
@@ -64,7 +66,85 @@ class TestMail extends Command
         $this->info("Message envoyé à {$to}.");
         $this->line('Vérifiez la boîte de réception, et le dossier « indésirables ».');
 
-        return self::SUCCESS;
+        return $this->reportQueue() ? self::SUCCESS : self::FAILURE;
+    }
+
+    /**
+     * État de la file d'attente.
+     *
+     * Le message d'essai ci-dessus part en direct : il prouve que le serveur de
+     * messagerie répond, et rien de plus. Or les codes à usage unique et les
+     * relances passent, eux, par la file. Un serveur de messagerie parfaitement
+     * réglé n'envoie donc toujours rien si aucun ouvrier ne dépile — et c'est
+     * la panne la plus déroutante qui soit, puisque tout paraît correct.
+     *
+     * D'où ce second volet : il regarde ce qui attend, et depuis quand.
+     *
+     * @return bool Vrai si la chaîne complète paraît saine.
+     */
+    private function reportQueue(): bool
+    {
+        $this->newLine();
+        $this->line('File d\'attente');
+
+        $connection = (string) config('queue.default');
+
+        if ($connection === 'sync') {
+            $this->line('  Connexion « sync » : les messages partent sans file, aucun ouvrier requis.');
+
+            return true;
+        }
+
+        if ($connection !== 'database') {
+            $this->line("  Connexion « {$connection} » : état non vérifiable depuis ici.");
+            $this->line('  Assurez-vous qu\'un ouvrier tourne : php artisan queue:work');
+
+            return true;
+        }
+
+        $pending = DB::table('jobs')->count();
+        $failed = DB::table('failed_jobs')->count();
+
+        $oldest = DB::table('jobs')->min('available_at');
+
+        $this->table(['Indicateur', 'Valeur'], [
+            ['Connexion', $connection],
+            ['Tâches en attente', (string) $pending],
+            ['Tâches échouées', (string) $failed],
+            ['Plus ancienne en attente', $oldest === null
+                ? '—'
+                : CarbonImmutable::createFromTimestamp((int) $oldest)->diffForHumans()],
+        ]);
+
+        $healthy = true;
+
+        /*
+         * Une file qui contient de vieilles tâches est une file que personne ne
+         * dépile. Le seuil est volontairement bas : un ouvrier en marche vide
+         * la sienne en quelques secondes, et une tâche vieille de cinq minutes
+         * ne s'explique pas autrement que par son absence.
+         */
+        if ($oldest !== null && CarbonImmutable::createFromTimestamp((int) $oldest)->lt(now()->subMinutes(5))) {
+            $this->error('Des tâches attendent depuis plus de cinq minutes : aucun ouvrier ne dépile.');
+            $this->line('  Lancez : php artisan queue:work');
+            $this->line('  En production, confiez-le à un superviseur pour qu\'il redémarre tout seul.');
+
+            $healthy = false;
+        }
+
+        if ($failed > 0) {
+            $this->warn("{$failed} tâche(s) ont définitivement échoué.");
+            $this->line('  Pour en lire la raison : php artisan queue:failed');
+            $this->line('  Pour les rejouer une fois la panne corrigée : php artisan queue:retry all');
+
+            $healthy = false;
+        }
+
+        if ($healthy && $pending === 0) {
+            $this->info('Aucune tâche en souffrance.');
+        }
+
+        return $healthy;
     }
 
     private function reportConfiguration(): void

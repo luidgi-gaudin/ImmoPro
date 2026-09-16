@@ -57,14 +57,6 @@ export class RegisterComponent {
   /** Adresse à laquelle le code a été envoyé, affichée sur l'écran du code. */
   readonly pendingEmail = signal('');
 
-  /**
-   * Code rendu par le serveur hors production.
-   *
-   * Évite d'ouvrir une boîte de réception pour dérouler le parcours en local.
-   * En production, le serveur ne le renvoie jamais et ce bloc reste invisible.
-   */
-  readonly debugCode = signal<string | null>(null);
-
   /** Secondes restant avant qu'un nouveau code puisse être demandé. */
   readonly resendIn = signal(0);
 
@@ -150,7 +142,6 @@ export class RegisterComponent {
       next: (response) => {
         this.loading.set(false);
         this.pendingEmail.set(this.form.get('email')?.value);
-        this.debugCode.set(response.otp?.debug_code ?? null);
         this.startResendCountdown(response.otp?.resend_after_seconds ?? 60);
         this.submitted.set(false);
         this.step.set('code');
@@ -203,7 +194,6 @@ export class RegisterComponent {
     this.authService.sendOtp(this.pendingEmail()).subscribe({
       next: (response) => {
         this.loading.set(false);
-        this.debugCode.set(response.otp?.debug_code ?? null);
         this.notice.set('Un nouveau code vient de vous être envoyé.');
         this.startResendCountdown(response.otp?.resend_after_seconds ?? 60);
       },

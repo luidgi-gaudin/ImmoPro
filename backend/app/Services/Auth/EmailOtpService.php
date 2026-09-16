@@ -34,16 +34,19 @@ class EmailOtpService
     /**
      * Émet un code et l'envoie.
      *
+     * Ne rend rien : le code ne doit exister qu'en trois endroits — la mémoire
+     * du serveur le temps de l'envoi, la charge utile de la tâche en file, et
+     * la boîte de réception du destinataire. Le faire remonter jusqu'à la
+     * réponse HTTP le rendrait lisible dans l'onglet réseau du navigateur, ce
+     * qui vide de son sens le fait de l'avoir haché en base.
+     *
      * `$sendTo` détourne l'envoi vers une autre adresse que celle du compte.
      * Indispensable au changement d'adresse : le code doit partir vers la
      * **nouvelle** boîte, puisque c'est son accès qu'il s'agit de prouver.
      * L'envoyer à l'ancienne ne prouverait rien et livrerait le code à une
      * boîte que l'utilisateur veut justement quitter.
-     *
-     * Renvoie le code en clair uniquement hors production, pour que les tests
-     * et le développement local n'aient pas à ouvrir une boîte de réception.
      */
-    public function send(User $user, OtpPurpose $purpose, ?string $sendTo = null): ?string
+    public function send(User $user, OtpPurpose $purpose, ?string $sendTo = null): void
     {
         $this->guardResendInterval($user);
 
@@ -64,8 +67,6 @@ class EmailOtpService
         } else {
             Notification::route('mail', [$sendTo => $user->name])->notify($notification);
         }
-
-        return app()->environment('production') ? null : $code;
     }
 
     /**

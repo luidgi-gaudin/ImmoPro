@@ -91,7 +91,7 @@ class ProfileController extends Controller
          * Le code part vers la **nouvelle** adresse, pas vers celle du compte :
          * c'est l'accès à cette boîte-là qu'il s'agit de prouver.
          */
-        $code = $otp->send($user, OtpPurpose::EmailChange, sendTo: $validated['email']);
+        $otp->send($user, OtpPurpose::EmailChange, sendTo: $validated['email']);
 
         return response()->json([
             'message' => "Un code a été envoyé à {$validated['email']}.",
@@ -99,7 +99,6 @@ class ProfileController extends Controller
             'otp' => [
                 'expires_in_minutes' => $otp->validityMinutes(),
                 'resend_after_seconds' => $otp->resendIntervalSeconds(),
-                'debug_code' => $code,
             ],
         ]);
     }

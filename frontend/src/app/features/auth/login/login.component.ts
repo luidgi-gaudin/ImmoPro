@@ -63,7 +63,6 @@ export class LoginComponent {
    */
   readonly verificationRequired = signal(false);
   readonly pendingEmail = signal('');
-  readonly debugCode = signal<string | null>(null);
   readonly resendIn = signal(0);
 
   readonly codeForm: FormGroup;
@@ -173,7 +172,6 @@ export class LoginComponent {
     this.authService.sendOtp(this.pendingEmail()).subscribe({
       next: (response) => {
         this.loading.set(false);
-        this.debugCode.set(response.otp?.debug_code ?? null);
         this.startResendCountdown(response.otp?.resend_after_seconds ?? 60);
       },
       error: (error: unknown) => {

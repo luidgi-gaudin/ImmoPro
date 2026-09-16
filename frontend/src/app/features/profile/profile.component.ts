@@ -65,12 +65,6 @@ export class ProfileComponent implements OnInit {
   readonly identitySaving = signal(false);
   readonly emailSaving = signal(false);
 
-  /**
-   * Code rendu par le serveur hors production, pour dérouler le parcours en
-   * local sans ouvrir de boîte de réception.
-   */
-  readonly emailDebugCode = signal<string | null>(null);
-
   /* --- Photo de profil ------------------------------------------------ */
 
   readonly avatarSaving = signal(false);
@@ -232,7 +226,6 @@ export class ProfileComponent implements OnInit {
     this.authService.requestEmailChange(this.emailForm.value).subscribe({
       next: (res) => {
         this.emailSaving.set(false);
-        this.emailDebugCode.set(res.otp?.debug_code ?? null);
         this.successMessage.set(res.message);
         this.loadProfile();
       },
@@ -260,7 +253,6 @@ export class ProfileComponent implements OnInit {
         this.successMessage.set(res.message);
         this.emailForm.reset();
         this.emailCodeForm.reset();
-        this.emailDebugCode.set(null);
         // Une adresse vérifiée débloque les courriels : l'écran doit le dire.
         this.loadPreferences();
       },
@@ -275,7 +267,6 @@ export class ProfileComponent implements OnInit {
     this.authService.cancelEmailChange().subscribe({
       next: (res) => {
         this.user.set(res.data);
-        this.emailDebugCode.set(null);
         this.emailForm.reset();
         this.emailCodeForm.reset();
         this.successMessage.set(res.message);

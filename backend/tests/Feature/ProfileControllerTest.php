@@ -27,6 +27,31 @@ class ProfileControllerTest extends TestCase
         Notification::fake();
     }
 
+    /**
+     * Code porté par la notification interceptée.
+     *
+     * Lu sur la notification, jamais sur la réponse HTTP : l'API ne le rend
+     * pas, et ne doit pas le rendre. Le changement d'adresse l'envoie hors du
+     * compte, à la nouvelle boîte, d'où la lecture sur un envoi « à la volée ».
+     */
+    private function sentCode(): string
+    {
+        $code = null;
+
+        Notification::assertSentOnDemand(
+            EmailOtpNotification::class,
+            function ($notification) use (&$code) {
+                $code = $notification->code;
+
+                return true;
+            }
+        );
+
+        $this->assertNotNull($code, 'Aucun code n\'a été envoyé.');
+
+        return (string) $code;
+    }
+
     /* ----------------------------------------------------------------------
      | Informations personnelles
      |----------------------------------------------------------------------*/
@@ -157,10 +182,12 @@ class ProfileControllerTest extends TestCase
             'password' => bcrypt('password1'),
         ]);
 
-        $code = $this->actingAs($user)->postJson('/api/auth/profile/email', [
+        $this->actingAs($user)->postJson('/api/auth/profile/email', [
             'email' => 'nouvelle@example.com',
             'password' => 'password1',
-        ])->json('otp.debug_code');
+        ])->assertStatus(200);
+
+        $code = $this->sentCode();
 
         $this->actingAs($user)->postJson('/api/auth/profile/email/confirm', ['code' => $code])
             ->assertStatus(200)
@@ -180,10 +207,12 @@ class ProfileControllerTest extends TestCase
             'password' => bcrypt('password1'),
         ]);
 
-        $code = $this->actingAs($user)->postJson('/api/auth/profile/email', [
+        $this->actingAs($user)->postJson('/api/auth/profile/email', [
             'email' => 'nouvelle@example.com',
             'password' => 'password1',
-        ])->json('otp.debug_code');
+        ])->assertStatus(200);
+
+        $code = $this->sentCode();
 
         $wrong = $code === '000000' ? '999999' : '000000';
 
@@ -197,10 +226,12 @@ class ProfileControllerTest extends TestCase
     {
         $user = User::factory()->create(['password' => bcrypt('password1')]);
 
-        $code = $this->actingAs($user)->postJson('/api/auth/profile/email', [
+        $this->actingAs($user)->postJson('/api/auth/profile/email', [
             'email' => 'convoitee@example.com',
             'password' => 'password1',
-        ])->json('otp.debug_code');
+        ])->assertStatus(200);
+
+        $code = $this->sentCode();
 
         User::factory()->create(['email' => 'convoitee@example.com']);
 
@@ -246,10 +277,12 @@ class ProfileControllerTest extends TestCase
             'email' => 'lea@example.com',
         ]);
 
-        $code = $this->actingAs($user)->postJson('/api/auth/profile/email', [
+        $this->actingAs($user)->postJson('/api/auth/profile/email', [
             'email' => 'lea@example.com',
             'password' => 'password1',
-        ])->json('otp.debug_code');
+        ])->assertStatus(200);
+
+        $code = $this->sentCode();
 
         $this->actingAs($user)->postJson('/api/auth/profile/email/confirm', ['code' => $code])
             ->assertStatus(200);

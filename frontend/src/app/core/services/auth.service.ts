@@ -76,13 +76,13 @@ export interface User {
 /**
  * Ce que le serveur répond quand un code vient d'être envoyé.
  *
- * `debug_code` n'est renseigné qu'en dehors de la production : il évite
- * d'ouvrir une boîte de réception pour dérouler le parcours en local.
+ * Le code lui-même n'y figure pas, et ne doit jamais y figurer : une réponse
+ * se lit dans l'onglet réseau du navigateur, et un code lisible là annulerait
+ * tout l'intérêt de le hacher en base.
  */
 export interface OtpChallenge {
   expires_in_minutes: number;
   resend_after_seconds: number;
-  debug_code?: string | null;
 }
 
 export interface NotificationTopic {

@@ -45,10 +45,8 @@ class EmailOtpController extends Controller
 
         $user = User::where('email', $validated['email'])->first();
 
-        $code = null;
-
         if ($user !== null && ! $user->hasVerifiedEmail()) {
-            $code = $otp->send($user, OtpPurpose::EmailVerification);
+            $otp->send($user, OtpPurpose::EmailVerification);
         }
 
         return response()->json([
@@ -56,7 +54,6 @@ class EmailOtpController extends Controller
             'otp' => [
                 'expires_in_minutes' => $otp->validityMinutes(),
                 'resend_after_seconds' => $otp->resendIntervalSeconds(),
-                'debug_code' => $code,
             ],
         ]);
     }

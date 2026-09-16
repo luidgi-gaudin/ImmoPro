@@ -28,6 +28,16 @@ class EmailOtpTest extends TestCase
         Cache::flush();
     }
 
+    /**
+     * Inscrit un compte et rend le code réellement envoyé.
+     *
+     * Le code est lu sur la notification interceptée, jamais sur la réponse
+     * HTTP : l'API ne le rend pas, et ne doit pas le rendre. Un code qui
+     * traverserait la réponse serait lisible dans l'onglet réseau du
+     * navigateur, ce qui viderait de son sens le fait de l'avoir haché en base.
+     *
+     * @return array{0: string, 1: User}
+     */
     private function register(array $overrides = []): array
     {
         Notification::fake();
@@ -42,7 +52,25 @@ class EmailOtpTest extends TestCase
 
         $response->assertStatus(201);
 
-        return [$response->json('otp.debug_code'), User::where('email', $response->json('data.email'))->sole()];
+        $user = User::where('email', $response->json('data.email'))->sole();
+
+        return [$this->sentCode($user), $user];
+    }
+
+    /** Code porté par la notification interceptée pour ce compte. */
+    private function sentCode(User $user): string
+    {
+        $code = null;
+
+        Notification::assertSentTo($user, EmailOtpNotification::class, function ($notification) use (&$code) {
+            $code = $notification->code;
+
+            return true;
+        });
+
+        $this->assertNotNull($code, 'Aucun code n\'a été envoyé.');
+
+        return (string) $code;
     }
 
     public function test_registration_sends_a_code(): void
@@ -189,6 +217,39 @@ class EmailOtpTest extends TestCase
         $this->postJson('/api/auth/otp/send', ['email' => 'connu@example.com'])
             ->assertStatus(200)
             ->assertJsonPath('message', $known->json('message'));
+    }
+
+    /**
+     * Le code ne doit apparaître nulle part dans la réponse.
+     *
+     * Il l'a fait un temps, pour dérouler le parcours en local sans ouvrir de
+     * boîte de réception. C'était commode et c'était une faille : la réponse se
+     * lit dans l'onglet réseau du navigateur, et un code lisible là annule tout
+     * l'intérêt de le hacher en base.
+     */
+    public function test_the_code_never_travels_in_the_response(): void
+    {
+        Notification::fake();
+
+        $registration = $this->postJson('/api/auth/register', [
+            'name' => 'Jean Dupont',
+            'email' => 'jean@example.com',
+            'password' => 'password1',
+            'password_confirmation' => 'password1',
+            'role' => 'proprietaire',
+        ])->assertStatus(201);
+
+        $user = User::where('email', 'jean@example.com')->sole();
+        $code = $this->sentCode($user);
+
+        $this->assertStringNotContainsString($code, $registration->getContent());
+
+        $user->forceFill(['otp_sent_at' => now()->subHour()])->save();
+
+        $resend = $this->postJson('/api/auth/otp/send', ['email' => 'jean@example.com'])
+            ->assertStatus(200);
+
+        $this->assertStringNotContainsString($this->sentCode($user->refresh()), $resend->getContent());
     }
 
     public function test_verifying_an_unknown_address_says_nothing_more_than_a_wrong_code(): void
