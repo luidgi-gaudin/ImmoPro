@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\MeasureQueryBudget;
 use App\Models\PersonalAccessToken;
 use Illuminate\Auth\AuthenticationException;
@@ -23,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // s'exécute avant lui. Un compteur placé après ne verrait ni la requête
         // du jeton, ni l'ouverture de connexion.
         $middleware->prependToGroup('api', MeasureQueryBudget::class);
+
+        // `role:locataire` / `role:proprietaire` sur un groupe de routes.
+        $middleware->alias(['role' => EnsureRole::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         /*

@@ -90,9 +90,28 @@ export class PortfolioPropertiesComponent {
   propertyTypes = [
     { label: 'Appartement', value: 'appartement' },
     { label: 'Maison', value: 'maison' },
+    // La ligne la plus fréquente d'un parc urbain : l'annoncer comme un
+    // appartement d'une pièce oblige à relire la surface pour comprendre.
+    { label: 'Studio', value: 'studio' },
     { label: 'Terrain', value: 'terrain' },
+    { label: 'Autre', value: 'autre' },
   ];
+
+  /** Les deux étiquettes du diagnostic partagent la même échelle. */
   dpeValues = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
+  ownershipTypes = [
+    { label: 'Monopropriété', value: 'monopropriete' },
+    { label: 'Copropriété', value: 'copropriete' },
+  ];
+
+  occupancyStatuses = [
+    { label: 'Vacant', value: 'vacant' },
+    { label: 'Loué', value: 'loue' },
+    // « Pas loué » couvrait deux situations que rien ne rapproche : un
+    // logement à relouer et un logement qu'on refait.
+    { label: 'En travaux', value: 'en_travaux' },
+  ];
   rentedOptions = [
     { value: '1', label: 'Loué' },
     { value: '0', label: 'Disponible' },
@@ -161,20 +180,45 @@ export class PortfolioPropertiesComponent {
     this.propertyForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(2)]],
       property_type: ['', [Validators.required]],
+
       address: ['', [Validators.required]],
+      address_complement: [''],
+      floor: [''],
+      apartment_number: [''],
       city: ['', [Validators.required]],
       postal_code: ['', [Validators.required]],
-      dpe: ['', [Validators.required]],
+
       rooms: [null],
       area_sqm: [null],
+      is_furnished: [false],
       has_balcony: [false],
       has_garden: [false],
+      has_terrace: [false],
       has_parking: [false],
+      has_garage: [false],
       has_cave: [false],
-      is_rented: [false],
+
+      dpe: ['', [Validators.required]],
+      ges: [''],
+      dpe_date: [''],
+      dpe_expires_on: [''],
+
+      ownership_type: ['monopropriete'],
+      syndic_name: [''],
+      syndic_contact: [''],
+      syndic_email: [''],
+      syndic_phone: [''],
+      lot_number: [null],
+
+      occupancy_status: ['vacant'],
       monthly_rent: [null],
       description: [''],
     });
+  }
+
+  /** Le bloc « syndicat » n'a de sens que pour un bien en copropriété. */
+  get isCoOwned(): boolean {
+    return this.propertyForm.get('ownership_type')?.value === 'copropriete';
   }
 
   addProperty() {
@@ -227,17 +271,39 @@ export class PortfolioPropertiesComponent {
     this.propertyForm.reset({
       title: property?.title ?? '',
       property_type: property?.property_type ?? '',
+
       address: property?.address ?? '',
+      address_complement: property?.address_complement ?? '',
+      floor: property?.floor ?? '',
+      apartment_number: property?.apartment_number ?? '',
       city: property?.city ?? '',
       postal_code: property?.postal_code ?? '',
-      dpe: property?.dpe ?? '',
+
       rooms: property?.rooms ?? null,
       area_sqm: property?.area_sqm ?? null,
+      is_furnished: property?.is_furnished ?? false,
       has_balcony: property?.has_balcony ?? false,
       has_garden: property?.has_garden ?? false,
+      has_terrace: property?.has_terrace ?? false,
       has_parking: property?.has_parking ?? false,
+      has_garage: property?.has_garage ?? false,
       has_cave: property?.has_cave ?? false,
-      is_rented: property?.is_rented ?? false,
+
+      dpe: property?.dpe ?? '',
+      ges: property?.ges ?? '',
+      dpe_date: property?.dpe_date ?? '',
+      dpe_expires_on: property?.dpe_expires_on ?? '',
+
+      ownership_type: property?.ownership_type ?? 'monopropriete',
+      syndic_name: property?.syndic_name ?? '',
+      syndic_contact: property?.syndic_contact ?? '',
+      syndic_email: property?.syndic_email ?? '',
+      syndic_phone: property?.syndic_phone ?? '',
+      lot_number: property?.lot_number ?? null,
+
+      // L'état locatif se déduit du booléen historique quand la fiche est
+      // antérieure à son introduction.
+      occupancy_status: property?.occupancy_status ?? (property?.is_rented ? 'loue' : 'vacant'),
       monthly_rent: property?.monthly_rent ?? null,
       description: property?.description ?? '',
     });
@@ -251,6 +317,26 @@ export class PortfolioPropertiesComponent {
     this.editingProperty.set(null);
   }
 
+  /**
+   * Charge utile envoyée au serveur, chaînes vides ramenées à `null`.
+   *
+   * Une date vide échouerait à la validation, et un syndic laissé vide sur une
+   * monopropriété serait rejeté comme une contradiction alors que l'utilisateur
+   * n'a simplement rien saisi.
+   */
+  private cleanPayload(): CreatePropertyPayload {
+    const raw = this.propertyForm.value as Record<string, unknown>;
+
+    const cleaned = Object.fromEntries(
+      Object.entries(raw).map(([key, value]) => [
+        key,
+        typeof value === 'string' && value.trim() === '' ? null : value,
+      ]),
+    );
+
+    return cleaned as unknown as CreatePropertyPayload;
+  }
+
   submitProperty() {
     this.submitted.set(true);
     this.ctx.error.set(null);
@@ -258,7 +344,7 @@ export class PortfolioPropertiesComponent {
     if (this.propertyForm.invalid) return;
 
     this.saving.set(true);
-    const payload = this.propertyForm.value as CreatePropertyPayload;
+    const payload = this.cleanPayload();
     const isEdit = !!this.editingProperty();
     const previousProperties = this.properties();
 
@@ -269,9 +355,14 @@ export class PortfolioPropertiesComponent {
         ...payload,
         has_balcony: payload.has_balcony || false,
         has_garden: payload.has_garden || false,
+        has_terrace: payload.has_terrace || false,
         has_parking: payload.has_parking || false,
+        has_garage: payload.has_garage || false,
         has_cave: payload.has_cave || false,
-        is_rented: payload.is_rented || false,
+        is_furnished: payload.is_furnished || false,
+        // L'affichage optimiste doit dire la même chose que le serveur dira :
+        // c'est l'état locatif qui commande, le booléen s'en déduit.
+        is_rented: payload.occupancy_status === 'loue',
         rooms: payload.rooms || null,
         area_sqm: payload.area_sqm || null,
         monthly_rent: payload.monthly_rent || null,
@@ -307,9 +398,14 @@ export class PortfolioPropertiesComponent {
         ...payload,
         has_balcony: payload.has_balcony || false,
         has_garden: payload.has_garden || false,
+        has_terrace: payload.has_terrace || false,
         has_parking: payload.has_parking || false,
+        has_garage: payload.has_garage || false,
         has_cave: payload.has_cave || false,
-        is_rented: payload.is_rented || false,
+        is_furnished: payload.is_furnished || false,
+        // L'affichage optimiste doit dire la même chose que le serveur dira :
+        // c'est l'état locatif qui commande, le booléen s'en déduit.
+        is_rented: payload.occupancy_status === 'loue',
         rooms: payload.rooms || null,
         area_sqm: payload.area_sqm || null,
         monthly_rent: payload.monthly_rent || null,

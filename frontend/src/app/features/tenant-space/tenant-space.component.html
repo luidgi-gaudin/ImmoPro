@@ -1,0 +1,147 @@
+<div class="tenant-space">
+  <immopro-page-header
+    title="Mon espace locataire"
+    [subtitle]="userName() ? 'Bonjour ' + userName() : 'Vos logements et vos documents'"
+  ></immopro-page-header>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      {{ error() }}
+      <button type="button" class="link-button" (click)="load()">Réessayer</button>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="muted">Chargement de votre dossier…</p>
+  } @else if (!hasFiles()) {
+    <immopro-card>
+      <h2 class="empty-title">Aucun dossier rattaché</h2>
+      <p class="muted">
+        {{
+          notice() ??
+            'Votre bailleur doit enregistrer votre adresse e-mail sur votre fiche locataire pour que
+           votre dossier apparaisse ici.'
+        }}
+      </p>
+    </immopro-card>
+  } @else {
+    @if (overview()?.summary; as summary) {
+      <section class="summary" aria-label="Résumé de mes échéances">
+        <immopro-card>
+          <span class="summary-label">Baux en cours</span>
+          <strong class="summary-value">{{ summary.active_leases }}</strong>
+        </immopro-card>
+
+        <!--
+        « En retard » ne compte que les échéances dont la date de paiement est
+        passée. Les suivantes sont des rendez-vous, pas des dettes : les
+        additionner ici annoncerait un an de loyers à quelqu'un qui ne doit rien.
+      -->
+        <immopro-card>
+          <span class="summary-label">Échéances en retard</span>
+          <strong class="summary-value" [class.is-warning]="summary.overdue_count > 0">
+            {{ summary.overdue_count }}
+          </strong>
+          @if (summary.overdue_count === 0) {
+            <span class="summary-hint">Vous êtes à jour</span>
+          }
+        </immopro-card>
+
+        <immopro-card>
+          <span class="summary-label">Montant en retard</span>
+          <strong class="summary-value" [class.is-warning]="summary.overdue_amount > 0">
+            {{ summary.overdue_amount | number: '1.2-2' }} €
+          </strong>
+        </immopro-card>
+
+        <immopro-card>
+          <span class="summary-label">Prochaine échéance</span>
+          @if (summary.next_due) {
+            <strong class="summary-value">
+              {{ summary.next_due.amount | number: '1.2-2' }} €
+            </strong>
+            <span class="summary-hint">
+              à venir · {{ summary.next_due.period | date: 'MMMM yyyy' }}
+            </span>
+          } @else {
+            <strong class="summary-value">—</strong>
+            <span class="summary-hint">Aucune échéance à venir</span>
+          }
+        </immopro-card>
+      </section>
+    }
+
+    <section class="leases" aria-label="Mes logements">
+      @for (lease of overview()?.leases ?? []; track lease.id) {
+        <immopro-card>
+          <header class="lease-head">
+            <div>
+              <h2 class="lease-title">{{ lease.property?.title ?? 'Logement' }}</h2>
+              <p class="lease-address">{{ lease.property?.full_address }}</p>
+            </div>
+
+            <immopro-badge [tone]="leaseTone(lease)">{{ lease.statut }}</immopro-badge>
+          </header>
+
+          <dl class="lease-facts">
+            <div>
+              <dt>Type de bail</dt>
+              <dd>{{ lease.type_label }}</dd>
+            </div>
+            <div>
+              <dt>Loyer + charges</dt>
+              <dd>{{ lease.total_due | number: '1.2-2' }} €</dd>
+            </div>
+            <div>
+              <dt>Début</dt>
+              <dd>{{ lease.start_date | date: 'dd/MM/yyyy' }}</dd>
+            </div>
+            <div>
+              <dt>Fin</dt>
+              <dd>{{ lease.end_date ? (lease.end_date | date: 'dd/MM/yyyy') : 'Reconduction' }}</dd>
+            </div>
+            @if (lease.payment_day) {
+              <div>
+                <dt>Jour de paiement</dt>
+                <dd>le {{ lease.payment_day }} du mois</dd>
+              </div>
+            }
+            @if (lease.property?.area_sqm) {
+              <div>
+                <dt>Surface</dt>
+                <dd>{{ lease.property?.area_sqm }} m²</dd>
+              </div>
+            }
+            @if (lease.property?.rooms) {
+              <div>
+                <dt>Pièces</dt>
+                <dd>{{ lease.property?.rooms }}</dd>
+              </div>
+            }
+            @if (lease.property?.dpe) {
+              <div>
+                <dt>DPE / GES</dt>
+                <dd>{{ lease.property?.dpe }} / {{ lease.property?.ges ?? '—' }}</dd>
+              </div>
+            }
+          </dl>
+
+          @if (amenities(lease).length) {
+            <ul class="amenities">
+              @for (amenity of amenities(lease); track amenity) {
+                <li>{{ amenity }}</li>
+              }
+            </ul>
+          }
+
+          <footer class="lease-actions">
+            <a class="action-link" [routerLink]="['/espace-locataire/baux', lease.id]">
+              Historique des paiements
+            </a>
+            <a class="action-link" routerLink="/espace-locataire/documents">Mes documents</a>
+          </footer>
+        </immopro-card>
+      }
+    </section>
+  }
+</div>

@@ -1,0 +1,87 @@
+<div class="tenant-space">
+  <immopro-page-header
+    [title]="lease()?.property?.title ?? 'Mon bail'"
+    [subtitle]="lease()?.property?.full_address ?? null"
+  ></immopro-page-header>
+
+  <p class="back">
+    <a routerLink="/espace-locataire">← Retour à mon espace</a>
+  </p>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  } @else if (loading()) {
+    <p class="muted">Chargement de votre bail…</p>
+  } @else if (lease(); as lease) {
+    <immopro-card>
+      <dl class="lease-facts">
+        <div>
+          <dt>Type de bail</dt>
+          <dd>{{ lease.type_label }}</dd>
+        </div>
+        <div>
+          <dt>Loyer hors charges</dt>
+          <dd>{{ lease.monthly_rent | number: '1.2-2' }} €</dd>
+        </div>
+        <div>
+          <dt>Charges</dt>
+          <dd>{{ lease.charges | number: '1.2-2' }} €</dd>
+        </div>
+        <div>
+          <dt>Dépôt de garantie</dt>
+          <dd>{{ lease.deposit !== null ? (lease.deposit | number: '1.2-2') + ' €' : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Début</dt>
+          <dd>{{ lease.start_date | date: 'dd/MM/yyyy' }}</dd>
+        </div>
+        <div>
+          <dt>Durée contractuelle</dt>
+          <dd>{{ lease.duration_months ? lease.duration_months + ' mois' : '—' }}</dd>
+        </div>
+      </dl>
+    </immopro-card>
+
+    <h2 class="section-title">Historique des paiements</h2>
+
+    @if (!lease.payments?.length) {
+      <immopro-card>
+        <p class="muted">Aucune échéance n'a encore été enregistrée sur ce bail.</p>
+      </immopro-card>
+    } @else {
+      <div class="table-scroll">
+        <table class="payments">
+          <caption class="visually-hidden">
+            Échéances de loyer, de la plus récente à la plus ancienne
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Période</th>
+              <th scope="col">Loyer</th>
+              <th scope="col">Charges</th>
+              <th scope="col">Total</th>
+              <th scope="col">Statut</th>
+              <th scope="col">Réglé le</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (payment of lease.payments ?? []; track payment.id) {
+              <tr>
+                <td class="period">{{ payment.period | date: 'MMMM yyyy' }}</td>
+                <td>{{ payment.amount_rent | number: '1.2-2' }} €</td>
+                <td>{{ payment.amount_charges | number: '1.2-2' }} €</td>
+                <td>{{ payment.total | number: '1.2-2' }} €</td>
+                <td>
+                  <immopro-badge [tone]="statusTone(payment)">{{
+                    statusLabel(payment)
+                  }}</immopro-badge>
+                </td>
+                <td>{{ payment.paid_at ? (payment.paid_at | date: 'dd/MM/yyyy') : '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>
